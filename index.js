@@ -1,0 +1,23 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const { sequelize } = require('./config/db');
+const path = require('path');
+const app = express();
+
+const userRoutes = require('./routes/user_route');
+
+const baseUrl = '/api/ott';
+app.use(cors());
+app.use(bodyParser.json());
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use(`${baseUrl}/user`,userRoutes);
+
+const PORT = process.env.PORT || 3000;
+
+sequelize.sync().then(() => {
+    console.log('Database synced');
+    app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+}).catch(err => console.error('Database connection error:', err));
