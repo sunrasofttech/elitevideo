@@ -6,6 +6,8 @@ const path = require('path');
 const app = express();
 
 const userRoutes = require('./routes/user_route');
+const movieLanguageRoute = require('./routes/movie_language_route');
+const adminRoute = require('./routes/admin_route');
 
 const baseUrl = '/api/ott';
 app.use(cors());
@@ -14,6 +16,8 @@ app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(`${baseUrl}/user`,userRoutes);
+app.use(`${baseUrl}/movie-language`,movieLanguageRoute);
+app.use(`${baseUrl}/admin`,adminRoute);
 
 const PORT = process.env.PORT || 3000;
 
