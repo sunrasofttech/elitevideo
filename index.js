@@ -9,6 +9,8 @@ const userRoutes = require('./routes/user_route');
 const movieLanguageRoute = require('./routes/movie_language_route');
 const adminRoute = require('./routes/admin_route');
 const genreRoute = require('./routes/genre_route');
+const AdminSettingRoute = require('./routes/admin_setting_route');
+
 
 const baseUrl = '/api/ott';
 app.use(cors());
@@ -20,6 +22,7 @@ app.use(`${baseUrl}/user`,userRoutes);
 app.use(`${baseUrl}/movie-language`,movieLanguageRoute);
 app.use(`${baseUrl}/admin`,adminRoute);
 app.use(`${baseUrl}/genre`,genreRoute);
+app.use(`${baseUrl}/admin-setting`,AdminSettingRoute);
 
 const PORT = process.env.PORT || 3000;
 
