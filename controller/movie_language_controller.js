@@ -2,10 +2,10 @@ const MovieLanguage = require('../model/movie_language_model');
 
 exports.createMovieLanguage = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name,status } = req.body;
     const cover_img = req.file ? req.file.path : null;
 
-    const movieLang = await MovieLanguage.create({ name, cover_img });
+    const movieLang = await MovieLanguage.create({ name,status,cover_img });
 
     res.status(201).json({
       status: true,
@@ -24,7 +24,7 @@ exports.createMovieLanguage = async (req, res) => {
 exports.updateMovieLanguage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name } = req.body;
+    const { name,status } = req.body;
     const cover_img = req.file ? req.file.path : null;
 
     const movieLang = await MovieLanguage.findByPk(id);
@@ -38,6 +38,7 @@ exports.updateMovieLanguage = async (req, res) => {
     }
 
     movieLang.name = name || movieLang.name;
+    movieLang.status = status || movieLang.status;
     if (cover_img) movieLang.cover_img = cover_img;
 
     await movieLang.save();

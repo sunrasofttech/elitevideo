@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 
-const MovieLanguage = sequelize.define('MovieLanguage', {
+const Genre = sequelize.define('Genre', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -27,8 +27,8 @@ const MovieLanguage = sequelize.define('MovieLanguage', {
   },
 },
   {
-    tableName: 'movie_language',
+    tableName: 'genre',
     timestamps: true,
   });
 
-module.exports = MovieLanguage;
+module.exports = Genre;
