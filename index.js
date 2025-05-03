@@ -10,6 +10,7 @@ const movieLanguageRoute = require('./routes/movie_language_route');
 const adminRoute = require('./routes/admin_route');
 const genreRoute = require('./routes/genre_route');
 const AdminSettingRoute = require('./routes/admin_setting_route');
+const MusicCategoryRoute = require('./routes/music_category_route');
 
 
 const baseUrl = '/api/ott';
@@ -23,6 +24,7 @@ app.use(`${baseUrl}/movie-language`,movieLanguageRoute);
 app.use(`${baseUrl}/admin`,adminRoute);
 app.use(`${baseUrl}/genre`,genreRoute);
 app.use(`${baseUrl}/admin-setting`,AdminSettingRoute);
+app.use(`${baseUrl}/music-category`,MusicCategoryRoute);
 
 const PORT = process.env.PORT || 3000;
 
