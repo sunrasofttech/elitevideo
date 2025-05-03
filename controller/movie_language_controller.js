@@ -1,4 +1,5 @@
 const MovieLanguage = require('../model/movie_language_model');
+const { Op } = require('sequelize');
 
 exports.createMovieLanguage = async (req, res) => {
   try {
@@ -60,7 +61,16 @@ exports.updateMovieLanguage = async (req, res) => {
 // Get All
 exports.getAllMovieLanguages = async (req, res) => {
   try {
-    const languages = await MovieLanguage.findAll();
+    const { name } = req.query;
+
+    const whereClause = {};
+    if (name) {
+      whereClause.name = {
+        [Op.like]: `%${name}%`,
+      };
+    }
+
+    const languages = await MovieLanguage.findAll({ where: whereClause });
 
     res.status(200).json({
       status: true,

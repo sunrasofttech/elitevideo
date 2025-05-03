@@ -1,4 +1,5 @@
 const Genre = require('../model/genre_model');
+const { Op } = require('sequelize');
 
 // Create
 exports.createGenre = async (req, res) => {
@@ -61,7 +62,16 @@ exports.updateGenre = async (req, res) => {
 // Get All
 exports.getAllGenres = async (req, res) => {
   try {
-    const genres = await Genre.findAll();
+    const { name } = req.query;
+
+    const whereClause = {};
+    if (name) {
+      whereClause.name = {
+        [Op.like]: `%${name}%`,
+      };
+    }
+
+    const genres = await Genre.findAll({where: whereClause});
 
     res.status(200).json({
       status: true,
