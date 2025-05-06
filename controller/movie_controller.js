@@ -1,6 +1,8 @@
 const Movie = require('../model/movie_model');
 const MovieLanguage = require('../model/movie_language_model');
 const Genre = require('../model/genre_model');
+const CastCrew = require('../model/cast_crew_model');
+
 
 exports.addMovie = async (req, res) => {
     try {
@@ -115,12 +117,14 @@ exports.getAllMovies = async (req, res) => {
 
 exports.getMovieById = async (req, res) => {
     try {
-        const movie = await Movie.findByPk(req.params.id, {
+        const { id } = req.params;
+        const movie = await Movie.findByPk(id, {
             include: [
                 { model: MovieLanguage, as: 'language' },
                 { model: Genre, as: 'genre' }
             ]
         });
+
         if (!movie) {
             return res.status(404).json({
                 status: false,
@@ -128,10 +132,18 @@ exports.getMovieById = async (req, res) => {
                 data: null
             });
         }
+
+        const castCrewList = await CastCrew.findAll({
+            where: { movie_id: id }
+        });
+        const movieData = movie.toJSON();
+
+        movieData.cast_crew = castCrewList;
+
         res.json({
             status: true,
             message: 'Movie fetched successfully',
-            data: movie
+            data: movieData
         });
     } catch (err) {
         res.status(500).json({
@@ -159,6 +171,31 @@ exports.deleteMovie = async (req, res) => {
         res.status(500).json({
             status: false,
             message: 'Failed to delete movie',
+            data: err.message
+        });
+    }
+};
+
+exports.getHighlightedMovies = async (req, res) => {
+    try {
+        const highlightedMovies = await Movie.findAll({
+            where: { is_highlighted: true },
+            include: [
+                { model: MovieLanguage, as: 'language' },
+                { model: Genre, as: 'genre' }
+            ],
+            order: [['createdAt', 'DESC']],
+        });
+
+        res.json({
+            status: true,
+            message: 'Highlighted movies fetched successfully',
+            data: highlightedMovies
+        });
+    } catch (err) {
+        res.status(500).json({
+            status: false,
+            message: 'Failed to fetch highlighted movies',
             data: err.message
         });
     }

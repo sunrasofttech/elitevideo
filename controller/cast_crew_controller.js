@@ -68,6 +68,30 @@ exports.getCastCrewById = async (req, res) => {
     }
 };
 
+exports.getCastCrewByMovieId = async (req, res) => {
+    try {
+        const { movieId } = req.params;
+
+        const castCrewList = await CastCrew.findAll({
+            where: { movie_id: movieId },
+            include: [{ model: Movie, as: 'movie' }]
+        });
+
+        res.json({
+            status: true,
+            message: 'Cast/Crew fetched successfully',
+            data: castCrewList
+        });
+    } catch (err) {
+        res.status(500).json({
+            status: false,
+            message: 'Failed to fetch Cast/Crew by Movie ID',
+            data: err.message
+        });
+    }
+};
+
+
 exports.updateCastCrew = async (req, res) => {
     try {
         const { id } = req.params;

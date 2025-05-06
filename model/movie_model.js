@@ -91,6 +91,11 @@ const MovieModel = sequelize.define('MovieModel', {
         allowNull:false,
         defaultValue:false,
     },
+    // is_watchlist:{
+    //     type:DataTypes.BOOLEAN,
+    //     allowNull:false,
+    //     defaultValue:false,
+    // },
     released_by:{
         type: DataTypes.STRING,
         allowNull: true,
