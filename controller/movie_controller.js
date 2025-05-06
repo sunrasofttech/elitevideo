@@ -3,6 +3,7 @@ const MovieLanguage = require('../model/movie_language_model');
 const Genre = require('../model/genre_model');
 const CastCrew = require('../model/cast_crew_model');
 const MovieCategory = require('../model/movie_category_model');
+const { Op } = require('sequelize');
 
 
 exports.addMovie = async (req, res) => {
@@ -143,6 +144,23 @@ exports.getMovieById = async (req, res) => {
 
         movieData.cast_crew = castCrewList;
 
+      // show recomandation movie 
+        const recommendedMovies = await Movie.findAll({
+            where: {
+                movie_category: movie.movie_category,
+                id: { [Op.ne]: id },
+            },
+            include: [
+                { model: MovieLanguage, as: 'language' },
+                { model: Genre, as: 'genre' },
+                { model: MovieCategory, as: 'category' }
+            ],
+            limit: 10
+        });
+
+        movieData.recommended_movies = recommendedMovies;
+
+
         res.json({
             status: true,
             message: 'Movie fetched successfully',
@@ -185,7 +203,8 @@ exports.getHighlightedMovies = async (req, res) => {
             where: { is_highlighted: true },
             include: [
                 { model: MovieLanguage, as: 'language' },
-                { model: Genre, as: 'genre' }
+                { model: Genre, as: 'genre' },
+                { model: MovieCategory, as:'category'}
             ],
             order: [['createdAt', 'DESC']],
         });
@@ -210,7 +229,8 @@ exports.getWatchlistMovies = async (req, res) => {
             where: { is_watchlist: true },
             include: [
                 { model: MovieLanguage, as: 'language' },
-                { model: Genre, as: 'genre' }
+                { model: Genre, as: 'genre' },
+                { model: MovieCategory, as:'category'}
             ],
             order: [['createdAt', 'DESC']],
         });
@@ -225,6 +245,55 @@ exports.getWatchlistMovies = async (req, res) => {
             status: false,
             message: 'Failed to fetch watchlist movies',
             data: err.message
+        });
+    }
+};
+
+exports.getMostViewedMovies = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+        const search = req.query.search || '';
+
+        const { count, rows: movies } = await Movie.findAndCountAll({
+            where: {
+                [Op.or]: [
+                    { movie_name: { [Op.like]: `%${search}%` } },
+                    { released_by: { [Op.like]: `%${search}%` } },
+                    { '$language.name$': { [Op.like]: `%${search}%` } },
+                    { '$genre.name$': { [Op.like]: `%${search}%` } },
+                    { '$category.name$': { [Op.like]: `%${search}%` } },
+                ]
+            },
+            order: [['view_count', 'DESC']],
+            limit,
+            offset,
+            include: [
+                { model: MovieLanguage, as: 'language' },
+                { model: Genre, as: 'genre' },
+                { model: MovieCategory, as: 'category' },
+            ],
+        });
+
+        const rankedMovies = movies.map((movie, index) => ({
+            rank: offset + index + 1,
+            ...movie.toJSON(),
+        }));
+
+        res.status(200).json({
+            status: true,
+            message: "Get all most viewed movies",
+            currentPage: page,
+            totalPages: Math.ceil(count / limit),
+            totalItems: count,
+            data: rankedMovies,
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: false,
+            message: 'Failed to fetch movies.',
+            error: error.message,
         });
     }
 };
