@@ -16,6 +16,14 @@ const Admin = sequelize.define('Admin', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  profile_img:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  email:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

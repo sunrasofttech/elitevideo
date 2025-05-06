@@ -1,6 +1,7 @@
 const Admin = require('../model/admin_model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
 
 const API_SECRET = process.env.API_SECRET;
 
@@ -49,7 +50,8 @@ exports.login = async (req, reply) => {
 exports.editAdmin = async (req, reply) => {
   try {
     const { id } = req.params;
-    const { name, password } = req.body;
+    const { name, password,email } = req.body;
+    const profile_img = req.file ? req.file.path :path;
 
     const admin = await Admin.findByPk(id);
     if (!admin) {
@@ -57,8 +59,12 @@ exports.editAdmin = async (req, reply) => {
     }
 
     if (name) admin.name = name;
+    if (email) admin.email = email;
     if (password) {
       admin.password = await bcrypt.hash(password, 10);
+    }
+    if (profile_img) {
+      admin.profile_img = profile_img;
     }
 
     await admin.save();
@@ -89,9 +95,7 @@ exports.getAdminById = async (req, reply) => {
   try {
     const { id } = req.params;
 
-    const admin = await Admin.findByPk(id, {
-      attributes: ['id', 'name', 'createdAt'],
-    });
+    const admin = await Admin.findByPk(id);
 
     if (!admin) {
       return reply.status(404).send({ status: false, message: 'Admin not found' });
