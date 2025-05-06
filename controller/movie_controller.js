@@ -3,6 +3,7 @@ const MovieLanguage = require('../model/movie_language_model');
 const Genre = require('../model/genre_model');
 const CastCrew = require('../model/cast_crew_model');
 const MovieCategory = require('../model/movie_category_model');
+const MovieRating = require('../model/movie_rating_model');
 const { Op } = require('sequelize');
 
 
@@ -92,7 +93,7 @@ exports.getAllMovies = async (req, res) => {
             include: [
                 { model: MovieLanguage, as: 'language' },
                 { model: Genre, as: 'genre' },
-                { model: MovieCategory, as:'category'}
+                { model: MovieCategory, as: 'category' }
             ],
             limit: parseInt(limit),
             offset: parseInt(offset),
@@ -125,7 +126,12 @@ exports.getMovieById = async (req, res) => {
             include: [
                 { model: MovieLanguage, as: 'language' },
                 { model: Genre, as: 'genre' },
-                { model: MovieCategory, as:'category'}
+                { model: MovieCategory, as: 'category' },
+                {
+                    model: MovieRating,
+                    as: 'ratings',
+                    attributes: ['rating', 'user_id']
+                }
             ]
         });
 
@@ -144,7 +150,7 @@ exports.getMovieById = async (req, res) => {
 
         movieData.cast_crew = castCrewList;
 
-      // show recomandation movie 
+        // show recomandation movie 
         const recommendedMovies = await Movie.findAll({
             where: {
                 movie_category: movie.movie_category,
@@ -204,7 +210,7 @@ exports.getHighlightedMovies = async (req, res) => {
             include: [
                 { model: MovieLanguage, as: 'language' },
                 { model: Genre, as: 'genre' },
-                { model: MovieCategory, as:'category'}
+                { model: MovieCategory, as: 'category' }
             ],
             order: [['createdAt', 'DESC']],
         });
@@ -230,7 +236,7 @@ exports.getWatchlistMovies = async (req, res) => {
             include: [
                 { model: MovieLanguage, as: 'language' },
                 { model: Genre, as: 'genre' },
-                { model: MovieCategory, as:'category'}
+                { model: MovieCategory, as: 'category' }
             ],
             order: [['createdAt', 'DESC']],
         });

@@ -14,6 +14,7 @@ const MusicCategoryRoute = require('./routes/music_category_route');
 const MovieCategoryRoute = require('./routes/movie_category_route');
 const MovieRoute = require('./routes/movie_route');
 const CastCrewRoute = require('./routes/cast_crew_route');
+const MovieRatingRoute = require('./routes/movie_rating_route');
 
 const baseUrl = '/api/ott';
 app.use(cors());
@@ -30,6 +31,7 @@ app.use(`${baseUrl}/music-category`,MusicCategoryRoute);
 app.use(`${baseUrl}/movie-category`,MovieCategoryRoute);
 app.use(`${baseUrl}/movie`,MovieRoute);
 app.use(`${baseUrl}/movie/cast-crew`,CastCrewRoute);
+app.use(`${baseUrl}/movie-rating`,MovieRatingRoute);
 
 const PORT = process.env.PORT || 3000;
 
