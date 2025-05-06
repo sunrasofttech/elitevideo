@@ -1,7 +1,6 @@
 const MovieRating = require('../model/movie_rating_model');
 const MovieModel = require('../model/movie_model');
 
-// Add a new rating
 exports.addRating = async (req, res) => {
   try {
     const { movie_id, user_id, rating } = req.body;
@@ -15,11 +14,16 @@ exports.addRating = async (req, res) => {
       return res.status(404).json({ status: false, message: "Movie not found" });
     }
 
+    // Check if rating exists
     const existing = await MovieRating.findOne({ where: { movie_id, user_id } });
     if (existing) {
-      return res.status(409).json({ status: false, message: "User has already rated this movie" });
+      // Update rating
+      existing.rating = rating;
+      await existing.save();
+      return res.status(200).json({ status: true, message: "Rating updated successfully", rating: existing });
     }
 
+    // Create new rating
     const newRating = await MovieRating.create({ movie_id, user_id, rating });
     return res.status(201).json({ status: true, message: "Rating added successfully", rating: newRating });
   } catch (error) {

@@ -146,11 +146,23 @@ exports.getMovieById = async (req, res) => {
         const castCrewList = await CastCrew.findAll({
             where: { movie_id: id }
         });
-        const movieData = movie.toJSON();
 
+        const movieData = movie.toJSON();
         movieData.cast_crew = castCrewList;
 
-        // show recomandation movie 
+        // Calculate average rating
+        const ratings = movieData.ratings || [];
+        if (ratings.length > 0) {
+            const totalRating = ratings.reduce((sum, r) => sum + r.rating, 0);
+            const averageRating = totalRating / ratings.length;
+            movieData.average_rating = averageRating.toFixed(2);
+            movieData.total_ratings = ratings.length;
+        } else {
+            movieData.average_rating = null;
+            movieData.total_ratings = 0;
+        }
+
+        // Show recommended movies
         const recommendedMovies = await Movie.findAll({
             where: {
                 movie_category: movie.movie_category,
@@ -165,7 +177,6 @@ exports.getMovieById = async (req, res) => {
         });
 
         movieData.recommended_movies = recommendedMovies;
-
 
         res.json({
             status: true,
