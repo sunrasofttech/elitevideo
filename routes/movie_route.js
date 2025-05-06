@@ -16,6 +16,7 @@ router.post('/get-all', movieController.getAllMovies);
 router.post('/:id', movieController.getMovieById);
 router.delete('/:id', movieController.deleteMovie);
 router.get('/highlighted', movieController.getHighlightedMovies);
+router.get('/watchlist', movieController.getWatchlistMovies);
 
 
 module.exports = router;

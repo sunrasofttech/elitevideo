@@ -2,6 +2,7 @@ const Movie = require('../model/movie_model');
 const MovieLanguage = require('../model/movie_language_model');
 const Genre = require('../model/genre_model');
 const CastCrew = require('../model/cast_crew_model');
+const MovieCategory = require('../model/movie_category_model');
 
 
 exports.addMovie = async (req, res) => {
@@ -89,7 +90,8 @@ exports.getAllMovies = async (req, res) => {
         const { count, rows } = await Movie.findAndCountAll({
             include: [
                 { model: MovieLanguage, as: 'language' },
-                { model: Genre, as: 'genre' }
+                { model: Genre, as: 'genre' },
+                { model: MovieCategory, as:'category'}
             ],
             limit: parseInt(limit),
             offset: parseInt(offset),
@@ -121,7 +123,8 @@ exports.getMovieById = async (req, res) => {
         const movie = await Movie.findByPk(id, {
             include: [
                 { model: MovieLanguage, as: 'language' },
-                { model: Genre, as: 'genre' }
+                { model: Genre, as: 'genre' },
+                { model: MovieCategory, as:'category'}
             ]
         });
 
@@ -196,6 +199,31 @@ exports.getHighlightedMovies = async (req, res) => {
         res.status(500).json({
             status: false,
             message: 'Failed to fetch highlighted movies',
+            data: err.message
+        });
+    }
+};
+
+exports.getWatchlistMovies = async (req, res) => {
+    try {
+        const watchlistMovies = await Movie.findAll({
+            where: { is_watchlist: true },
+            include: [
+                { model: MovieLanguage, as: 'language' },
+                { model: Genre, as: 'genre' }
+            ],
+            order: [['createdAt', 'DESC']],
+        });
+
+        res.json({
+            status: true,
+            message: 'Watchlist movies fetched successfully',
+            data: watchlistMovies
+        });
+    } catch (err) {
+        res.status(500).json({
+            status: false,
+            message: 'Failed to fetch watchlist movies',
             data: err.message
         });
     }

@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 const MovieLanguage = require('./movie_language_model');
 const Genre = require('./genre_model');
+const MovieCategory = require('./movie_category_model');
 
 const MovieModel = sequelize.define('MovieModel', {
     id: {
@@ -40,6 +41,14 @@ const MovieModel = sequelize.define('MovieModel', {
         allowNull: true,
         references: {
             model: Genre,
+            key: 'id',
+        }
+    },
+    movie_category:{
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+            model: MovieCategory,
             key: 'id',
         }
     },
@@ -91,11 +100,11 @@ const MovieModel = sequelize.define('MovieModel', {
         allowNull:false,
         defaultValue:false,
     },
-    // is_watchlist:{
-    //     type:DataTypes.BOOLEAN,
-    //     allowNull:false,
-    //     defaultValue:false,
-    // },
+    is_watchlist:{
+        type:DataTypes.BOOLEAN,
+        allowNull:false,
+        defaultValue:false,
+    },
     released_by:{
         type: DataTypes.STRING,
         allowNull: true,
@@ -121,6 +130,12 @@ MovieModel.belongsTo(MovieLanguage, {
 MovieModel.belongsTo(Genre, {
     foreignKey: 'genre_id',
     as: 'genre',
+});
+
+
+MovieModel.belongsTo(MovieCategory, {
+    foreignKey: 'movie_category',
+    as: 'category',
 });
 
 module.exports = MovieModel;
