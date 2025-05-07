@@ -34,7 +34,8 @@ const MovieModel = sequelize.define('MovieModel', {
         references: {
             model: MovieLanguage,
             key: 'id',
-        }
+        },
+        onDelete: 'CASCADE',
     },
     genre_id: {
         type: DataTypes.UUID,
@@ -42,7 +43,8 @@ const MovieModel = sequelize.define('MovieModel', {
         references: {
             model: Genre,
             key: 'id',
-        }
+        },
+        onDelete: 'CASCADE',
     },
     movie_category: {
         type: DataTypes.UUID,
@@ -50,7 +52,8 @@ const MovieModel = sequelize.define('MovieModel', {
         references: {
             model: MovieCategory,
             key: 'id',
-        }
+        },
+        onDelete: 'CASCADE',
     },
     video_link: {
         type: DataTypes.STRING,
