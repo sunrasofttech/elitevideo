@@ -54,6 +54,7 @@ exports.getAllSeries = async (req, res) => {
         { model: Genre, as: 'genre' },
         { model: MovieCategory, as: 'category' },
       ],
+      order: [['createdAt', 'DESC']],
     });
 
     return res.status(200).json({

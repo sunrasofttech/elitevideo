@@ -16,6 +16,7 @@ const MovieRoute = require('./routes/movie_route');
 const CastCrewRoute = require('./routes/cast_crew_route');
 const MovieRatingRoute = require('./routes/movie_rating_route');
 const SeriesRoute = require('./routes/series_route');
+const SeasonRoute = require('./routes/season_route');
 
 const baseUrl = '/api/ott';
 app.use(cors());
@@ -34,6 +35,7 @@ app.use(`${baseUrl}/movie`,MovieRoute);
 app.use(`${baseUrl}/movie/cast-crew`,CastCrewRoute);
 app.use(`${baseUrl}/movie-rating`,MovieRatingRoute);
 app.use(`${baseUrl}/series`,SeriesRoute);
+app.use(`${baseUrl}/season`,SeasonRoute);
 
 const PORT = process.env.PORT || 3000;
 
