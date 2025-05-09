@@ -2,6 +2,7 @@ const SeriesModel = require('../model/series_model');
 const MovieLanguage = require('../model/movie_language_model');
 const Genre = require('../model/genre_model');
 const MovieCategory = require('../model/movie_category_model');
+const SeasonModel = require('../model/season_model');
 
 exports.createSeries = async (req, res) => {
   try {

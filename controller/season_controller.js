@@ -1,5 +1,6 @@
 const Season = require('../model/season_model');
 const Series = require('../model/series_model');
+const SeasonEpisodeModel = require('../model/season_episode_model');
 
 exports.createSeason = async (req, res) => {
   try {
@@ -78,7 +79,22 @@ exports.getAllSeasons = async (req, res) => {
       },
       order: [['createdAt', 'DESC']],
     });
-    res.status(200).json({ status: true, message: "All seasons fetched", data: seasons });
+
+    const result = await Promise.all(
+      seasons.map(async (season) => {
+        const episodes = await SeasonEpisodeModel.findAll({
+          where: { season_id: season.id },
+          order: [['createdAt', 'DESC']],
+        });
+
+        return {
+          ...season.toJSON(),
+          episodes,
+        };
+      })
+    );
+
+    res.status(200).json({ status: true, message: "All seasons fetched", data: result });
   } catch (err) {
     res.status(500).json({ status: false, message: "Error fetching seasons", data: err.message });
   }
@@ -92,13 +108,27 @@ exports.getSeasonById = async (req, res) => {
         as: 'series',
       },
     });
-    if (!season) return res.status(404).json({ status: false, message: "Season not found", data: null });
 
-    res.status(200).json({ status: true, message: "Season fetched", data: season });
+    if (!season) {
+      return res.status(404).json({ status: false, message: "Season not found", data: null });
+    }
+
+    const episodes = await SeasonEpisodeModel.findAll({
+      where: { season_id: season.id },
+      order: [['createdAt', 'DESC']],
+    });
+
+    const result = {
+      ...season.toJSON(),
+      episodes,
+    };
+
+    res.status(200).json({ status: true, message: "Season fetched", data: result });
   } catch (err) {
     res.status(500).json({ status: false, message: "Error fetching season", data: err.message });
   }
 };
+
 
 exports.updateSeason = async (req, res) => {
   try {
