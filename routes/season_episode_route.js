@@ -15,7 +15,7 @@ router.post(
 
 router.post('/get-all', controller.getAllSeasonEpisodes);
 
-router.get('/:id', controller.getSeasonEpisodeById);
+router.post('/:id', controller.getSeasonEpisodeById);
 
 router.put(
   '/:id',

@@ -11,8 +11,8 @@ exports.createSeasonEpisode = async (req, res) => {
       released_date,
     } = req.body;
 
-    const cover_img = req.files ? req.file.path: null;
-    const video = req.files ? req.file.path: null;
+    const cover_img = req.files?.cover_img?.[0]?.path || null;
+    const video = req.files?.video?.[0]?.path || null;
 
     const newEpisode = await SeasonEpisodeModel.create({
       series_id,
@@ -116,8 +116,8 @@ exports.updateSeasonEpisode = async (req, res) => {
       status,
     } = req.body;
 
-    const cover_img =req.files ? req.file.path: null;
-    const video = req.files ? req.file.path: null;
+    const cover_img = req.files?.cover_img?.[0]?.path || episode.cover_img;
+    const video = req.files?.video?.[0]?.path || episode.video;
 
     await episode.update({
       series_id,
@@ -151,8 +151,7 @@ exports.deleteSeasonEpisode = async (req, res) => {
     if (!episode) {
       return res.status(404).json({
         status: false,
-        message: 'Episode not found',
-        data: null,
+        message: 'Episode not found'
       });
     }
 
@@ -160,8 +159,7 @@ exports.deleteSeasonEpisode = async (req, res) => {
 
     res.status(200).json({
       status: true,
-      message: 'Episode deleted successfully',
-      data: null,
+      message: 'Episode deleted successfully'
     });
   } catch (error) {
     res.status(500).json({
