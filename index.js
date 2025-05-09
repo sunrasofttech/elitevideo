@@ -18,7 +18,8 @@ const MovieRatingRoute = require('./routes/movie_rating_route');
 const SeriesRoute = require('./routes/series_route');
 const SeasonRoute = require('./routes/season_route');
 const SeasonEpisodeRoute = require('./routes/season_episode_route');
- 
+const ShortFilmRoute = require('./routes/short_film_route'); 
+
 const baseUrl = '/api/ott';
 app.use(cors());
 app.use(bodyParser.json());
@@ -38,6 +39,7 @@ app.use(`${baseUrl}/movie-rating`,MovieRatingRoute);
 app.use(`${baseUrl}/series`,SeriesRoute);
 app.use(`${baseUrl}/season`,SeasonRoute);
 app.use(`${baseUrl}/season-episode`,SeasonEpisodeRoute);
+app.use(`${baseUrl}/short-film`,ShortFilmRoute);
 
 const PORT = process.env.PORT || 3000;
 
