@@ -50,7 +50,7 @@ const SeasonEpisodeModel = sequelize.define('SeasonEpisodeModel', {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    series_video:{
+    video:{
         type: DataTypes.STRING,
         allowNull: true,
     },
@@ -63,13 +63,18 @@ const SeasonEpisodeModel = sequelize.define('SeasonEpisodeModel', {
         defaultValue: DataTypes.NOW,
     },
 }, {
-    tableName: 'season',
+    tableName: 'season_episode',
     timestamps: true,
 });
 
 SeasonEpisodeModel.belongsTo(SeriesModel, {
     foreignKey: 'series_id',
     as: 'series',
+});
+
+SeasonEpisodeModel.belongsTo(SeasonModel, {
+    foreignKey: 'season_id',
+    as: 'season',
 });
 
 module.exports = SeasonEpisodeModel;
