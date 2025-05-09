@@ -58,10 +58,24 @@ exports.getAllSeries = async (req, res) => {
       order: [['createdAt', 'DESC']],
     });
 
+    const result = await Promise.all(
+      seriesList.map(async (series) => {
+        const seasons = await SeasonModel.findAll({
+          where: { series_id: series.id },
+          order: [['createdAt', 'DESC']],
+        });
+
+        return {
+          ...series.toJSON(),
+          seasons,
+        };
+      })
+    );
+
     return res.status(200).json({
       status: true,
       message: 'Series fetched successfully',
-      data: seriesList,
+      data: result,
     });
   } catch (err) {
     return res.status(500).json({
@@ -91,10 +105,21 @@ exports.getSeriesById = async (req, res) => {
       });
     }
 
+
+    const season = await SeasonModel.findAll({
+      where: { series_id: series.id },
+      order: [['createdAt', 'DESC']],
+    });
+
+    const result = {
+      ...series.toJSON(),
+      season,
+    };
+
     return res.status(200).json({
       status: true,
       message: 'Series fetched successfully',
-      data: series,
+      data: result,
     });
   } catch (err) {
     return res.status(500).json({
