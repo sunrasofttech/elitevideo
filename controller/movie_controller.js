@@ -93,12 +93,55 @@ exports.getAllMovies = async (req, res) => {
             include: [
                 { model: MovieLanguage, as: 'language' },
                 { model: Genre, as: 'genre' },
-                { model: MovieCategory, as: 'category' }
+                { model: MovieCategory, as: 'category' },
+                {
+                    model: MovieRating,
+                    as: 'ratings',
+                    attributes: ['rating', 'user_id']
+                }
             ],
             limit: parseInt(limit),
             offset: parseInt(offset),
             order: [['createdAt', 'DESC']],
         });
+
+        const enhancedMovies = await Promise.all(rows.map(async (movie) => {
+            const movieJson = movie.toJSON();
+
+            // Add cast_crew
+            const castCrewList = await CastCrew.findAll({
+                where: { movie_id: movie.id }
+            });
+            movieJson.cast_crew = castCrewList;
+
+            // Calculate average rating
+            const ratings = movieJson.ratings || [];
+            if (ratings.length > 0) {
+                const totalRating = ratings.reduce((sum, r) => sum + r.rating, 0);
+                movieJson.average_rating = (totalRating / ratings.length).toFixed(2);
+                movieJson.total_ratings = ratings.length;
+            } else {
+                movieJson.average_rating = null;
+                movieJson.total_ratings = 0;
+            }
+
+            // Add recommended_movies
+            const recommendedMovies = await Movie.findAll({
+                where: {
+                    movie_category: movie.movie_category,
+                    id: { [Op.ne]: movie.id }
+                },
+                include: [
+                    { model: MovieLanguage, as: 'language' },
+                    { model: Genre, as: 'genre' },
+                    { model: MovieCategory, as: 'category' }
+                ],
+                limit: 5
+            });
+            movieJson.recommended_movies = recommendedMovies;
+
+            return movieJson;
+        }));
 
         res.json({
             status: true,
@@ -107,7 +150,7 @@ exports.getAllMovies = async (req, res) => {
                 total: count,
                 page: parseInt(page),
                 totalPages: Math.ceil(count / limit),
-                movies: rows
+                movies: enhancedMovies
             }
         });
     } catch (err) {
@@ -118,6 +161,7 @@ exports.getAllMovies = async (req, res) => {
         });
     }
 };
+
 
 exports.getMovieById = async (req, res) => {
     try {
