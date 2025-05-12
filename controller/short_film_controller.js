@@ -2,7 +2,7 @@ const ShortFilmModel = require('../model/short_film_model');
 const MovieLanguage = require('../model/movie_language_model');
 const Genre = require('../model/genre_model');
 const MovieCategory = require('../model/movie_category_model');
-
+const ShortFilmRatingModel = require('../model/short_film_rating_model');
 const extractFilePath = (file) => (file ? file.path.replace(/\\/g, '/') : null);
 
 exports.createShortFilm = async (req, res) => {
@@ -81,17 +81,38 @@ exports.getAllShortFilms = async (req, res) => {
             include: [
                 { model: MovieLanguage, as: 'language' },
                 { model: Genre, as: 'genre' },
-                { model: MovieCategory, as: 'category' }
+                { model: MovieCategory, as: 'category' },
+                {
+                    model: ShortFilmRatingModel,
+                    as: 'ratings',
+                    attributes: ['rating', 'user_id']
+                }
             ],
             limit,
             offset,
             order: [['createdAt', 'DESC']],
         });
 
+        const enhancedFilms = rows.map(film => {
+            const filmJson = film.toJSON();
+            const ratings = filmJson.ratings || [];
+
+            if (ratings.length > 0) {
+                const total = ratings.reduce((sum, r) => sum + r.rating, 0);
+                filmJson.average_rating = (total / ratings.length).toFixed(2);
+                filmJson.total_ratings = ratings.length;
+            } else {
+                filmJson.average_rating = null;
+                filmJson.total_ratings = 0;
+            }
+
+            return filmJson;
+        });
+
         return res.status(200).json({
             status: true,
             message: "Short films fetched successfully",
-            data: rows,
+            data: enhancedFilms,
             pagination: {
                 totalItems: count,
                 currentPage: page,
@@ -113,7 +134,12 @@ exports.getShortFilmById = async (req, res) => {
             include: [
                 { model: MovieLanguage, as: 'language' },
                 { model: Genre, as: 'genre' },
-                { model: MovieCategory, as: 'category' }
+                { model: MovieCategory, as: 'category' },
+                {
+                    model: ShortFilmRatingModel,
+                    as: 'ratings',
+                    attributes: ['rating', 'user_id']
+                }
             ],
         });
 
@@ -125,10 +151,22 @@ exports.getShortFilmById = async (req, res) => {
             });
         }
 
+        const filmJson = film.toJSON();
+        const ratings = filmJson.ratings || [];
+
+        if (ratings.length > 0) {
+            const total = ratings.reduce((sum, r) => sum + r.rating, 0);
+            filmJson.average_rating = (total / ratings.length).toFixed(2);
+            filmJson.total_ratings = ratings.length;
+        } else {
+            filmJson.average_rating = null;
+            filmJson.total_ratings = 0;
+        }
+
         return res.status(200).json({
             status: true,
             message: "Short film fetched successfully",
-            data: film,
+            data: filmJson,
         });
     } catch (error) {
         return res.status(500).json({
@@ -138,6 +176,7 @@ exports.getShortFilmById = async (req, res) => {
         });
     }
 };
+
 
 exports.updateShortFilm = async (req, res) => {
     try {
