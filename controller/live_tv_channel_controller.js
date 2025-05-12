@@ -1,0 +1,163 @@
+const LiveTvChannel = require('../model/live_tv_channel_model');
+
+// ✅ Create Channel
+exports.createChannel = async (req, res) => {
+  try {
+    const { name, live_category_id, android_channel_url, ios_channel_url, description, status } = req.body;
+
+    const cover_img = req.files?.cover_img?.[0]?.path || null;
+    const poster_img = req.files?.poster_img?.[0]?.path || null;
+
+    const newChannel = await LiveTvChannel.create({
+      name,
+      live_category_id,
+      android_channel_url,
+      ios_channel_url,
+      description,
+      status,
+      cover_img,
+      poster_img
+    });
+
+    res.json({
+      status: true,
+      message: 'Channel created successfully',
+      data: newChannel
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: 'Failed to create channel',
+      data: err.message
+    });
+  }
+};
+
+exports.getAllChannels = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await LiveTvChannel.findAndCountAll({
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']]
+    });
+
+    res.json({
+      status: true,
+      message: 'Fetched channels successfully',
+      data: {
+        total: count,
+        page,
+        totalPages: Math.ceil(count / limit),
+        channels: rows
+      }
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: 'Failed to fetch channels',
+      data: err.message
+    });
+  }
+};
+
+// ✅ Get Single Channel
+exports.getChannelById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const channel = await LiveTvChannel.findByPk(id);
+
+    if (!channel) {
+      return res.status(404).json({
+        status: false,
+        message: 'Channel not found',
+        data: null
+      });
+    }
+
+    res.json({
+      status: true,
+      message: 'Fetched channel successfully',
+      data: channel
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: 'Failed to fetch channel',
+      data: err.message
+    });
+  }
+};
+
+// ✅ Update Channel
+exports.updateChannel = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const cover_img = req.files?.cover_img?.[0]?.path;
+    const poster_img = req.files?.poster_img?.[0]?.path;
+
+    const updateData = {
+      ...req.body,
+      ...(cover_img && { cover_img }),
+      ...(poster_img && { poster_img })
+    };
+
+    const [updated] = await LiveTvChannel.update(updateData, {
+      where: { id }
+    });
+
+    if (!updated) {
+      return res.status(404).json({
+        status: false,
+        message: 'Channel not found',
+        data: null
+      });
+    }
+
+    const updatedChannel = await LiveTvChannel.findByPk(id);
+
+    res.json({
+      status: true,
+      message: 'Channel updated successfully',
+      data: updatedChannel
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: 'Failed to update channel',
+      data: err.message
+    });
+  }
+};
+
+// ✅ Delete Channel
+exports.deleteChannel = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await LiveTvChannel.destroy({ where: { id } });
+
+    if (!deleted) {
+      return res.status(404).json({
+        status: false,
+        message: 'Channel not found',
+        data: null
+      });
+    }
+
+    res.json({
+      status: true,
+      message: 'Channel deleted successfully',
+      data: null
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: 'Failed to delete channel',
+      data: err.message
+    });
+  }
+};

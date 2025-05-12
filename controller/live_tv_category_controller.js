@@ -25,11 +25,25 @@ exports.createCategory = async (req, res) => {
 
 exports.getAllCategories = async (req, res) => {
   try {
-    const categories = await LiveTvCategory.findAll();
+    const page = parseInt(req.query.page) || 1; // default page = 1
+    const limit = parseInt(req.query.limit) || 10; // default limit = 10
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await LiveTvCategory.findAndCountAll({
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
+    });
+
     res.json({
       status: true,
-      message: 'Fetched all categories successfully',
-      data: categories
+      message: 'Fetched categories successfully',
+      data: {
+        total: count,
+        page,
+        totalPages: Math.ceil(count / limit),
+        categories: rows
+      }
     });
   } catch (err) {
     res.status(500).json({
