@@ -24,6 +24,7 @@ const LiveTvCategoryRoute = require('./routes/live_tv_category_route');
 const LiveTvChannelRoute = require('./routes/livetv_channel_route');
 const rentalRoutes = require('./routes/rental_route');
 const ReportRoutes = require('./routes/report_route');
+const MusicRoute = require('./routes/music_route');
 
 const baseUrl = '/api/ott';
 app.use(cors());
@@ -37,6 +38,7 @@ app.use(`${baseUrl}/admin`,adminRoute);
 app.use(`${baseUrl}/genre`,genreRoute);
 app.use(`${baseUrl}/admin-setting`,AdminSettingRoute);
 app.use(`${baseUrl}/music-category`,MusicCategoryRoute);
+app.use(`${baseUrl}/music`,MusicRoute);
 app.use(`${baseUrl}/movie-category`,MovieCategoryRoute);
 app.use(`${baseUrl}/movie`,MovieRoute);
 app.use(`${baseUrl}/movie/cast-crew`,CastCrewRoute);
