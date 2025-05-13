@@ -12,6 +12,10 @@ const MusicCategoryModel = sequelize.define('MusicCategoryModel', {
     type:DataTypes.STRING,
     allowNull:true
   },
+  cover_img:{
+    type:DataTypes.STRING,
+    allowNull:true
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
