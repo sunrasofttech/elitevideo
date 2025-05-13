@@ -23,6 +23,7 @@ const ShortFilmRatingRoute = require('./routes/short_film_rating_route');
 const LiveTvCategoryRoute = require('./routes/live_tv_category_route');
 const LiveTvChannelRoute = require('./routes/livetv_channel_route');
 const rentalRoutes = require('./routes/rental_route');
+const ReportRoutes = require('./routes/report_route');
 
 const baseUrl = '/api/ott';
 app.use(cors());
@@ -48,7 +49,7 @@ app.use(`${baseUrl}/short-film/rating`,ShortFilmRatingRoute);
 app.use(`${baseUrl}/live-tv/category`,LiveTvCategoryRoute);
 app.use(`${baseUrl}/live-tv/channel`,LiveTvChannelRoute);
 app.use(`${baseUrl}/rental`, rentalRoutes);
-
+app.use(`${baseUrl}/report`, ReportRoutes);
 
 const PORT = process.env.PORT || 3000;
 

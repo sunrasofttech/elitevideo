@@ -55,6 +55,10 @@ const MovieModel = sequelize.define('MovieModel', {
         },
         onDelete: 'CASCADE',
     },
+    report_count: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+    },
     video_link: {
         type: DataTypes.STRING,
         allowNull: true,

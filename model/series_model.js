@@ -69,6 +69,10 @@ const SeriesModel = sequelize.define('SeriesModel', {
         type: DataTypes.DATE,
         allowNull: true,
     },
+    report_count: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,

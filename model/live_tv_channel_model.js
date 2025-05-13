@@ -13,7 +13,7 @@ const LiveTvChannel = sequelize.define('LiveTvChannel', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  poster_img:{
+  poster_img: {
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -21,8 +21,8 @@ const LiveTvChannel = sequelize.define('LiveTvChannel', {
     type: DataTypes.UUID,
     allowNull: true,
     references: {
-        model: LiveTvCategoryModel,
-        key: 'id',
+      model: LiveTvCategoryModel,
+      key: 'id',
     },
     onDelete: 'CASCADE',
   },
@@ -30,22 +30,26 @@ const LiveTvChannel = sequelize.define('LiveTvChannel', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  android_channel_url:{
+  android_channel_url: {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  ios_channel_url:{
+  ios_channel_url: {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  status:{
-    type:DataTypes.BOOLEAN,
-    allowNull:false,
-    defaultValue:false,
+  status: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
   },
-  description:{
+  description: {
     type: DataTypes.TEXT,
     allowNull: true,
+  },
+  report_count: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
   createdAt: {
     type: DataTypes.DATE,
