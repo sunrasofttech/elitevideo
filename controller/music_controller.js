@@ -1,4 +1,5 @@
 const MusicModel = require('../model/music_model');
+const { Op } = require('sequelize');
 
 exports.createMusic = async (req, res) => {
   try {
@@ -33,21 +34,45 @@ exports.createMusic = async (req, res) => {
 };
 
 exports.getAllMusic = async (req, res) => {
-  try {
-    const music = await MusicModel.findAll();
-    return res.status(200).json({
-      status: true,
-      message: 'All music fetched successfully',
-      data: music,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: false,
-      message: error.message,
-      data: null,
-    });
-  }
-};
+    try {
+      const { page = 1, limit = 10, search = '' } = req.query;
+  
+      const offset = (parseInt(page) - 1) * parseInt(limit);
+  
+      const whereCondition = search
+        ? {
+            song_title: {
+              [Op.like]: `%${search}%`,
+            },
+          }
+        : {};
+  
+      const { count, rows } = await MusicModel.findAndCountAll({
+        where: whereCondition,
+        offset: offset,
+        limit: parseInt(limit),
+        order: [['createdAt', 'DESC']],
+      });
+  
+      return res.status(200).json({
+        status: true,
+        message: 'Music fetched successfully',
+        data: {
+          totalItems: count,
+          totalPages: Math.ceil(count / limit),
+          currentPage: parseInt(page),
+          items: rows,
+        },
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: false,
+        message: error.message,
+        data: null,
+      });
+    }
+  };
+  
 
 exports.getMusicById = async (req, res) => {
   try {
