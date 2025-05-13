@@ -1,6 +1,7 @@
 const MusicCategoryModel = require('../model/music_categories_model');
 const fs = require('fs');
 const path = require('path');
+const { Op } = require('sequelize');
 
 exports.createCategory = async (req, res) => {
   try {
@@ -27,8 +28,18 @@ exports.getAllCategories = async (req, res) => {
     const page = parseInt(req.query.page) || 1; 
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
+    const search = req.query.search || ''; // ?search=xyz
+
+    const whereClause = search
+      ? {
+          name: {
+            [Op.like]: `%${search}%`
+          }
+        }
+      : {};
 
     const { count, rows } = await MusicCategoryModel.findAndCountAll({
+      where: whereClause,
       limit,
       offset,
     });
