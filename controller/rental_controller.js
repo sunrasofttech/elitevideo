@@ -21,20 +21,31 @@ exports.createRental = async (req, res) => {
     }
 };
 
-// Get all rentals
 exports.getAllRentals = async (req, res) => {
     try {
-        const rentals = await RentalModel.findAll({
+        const { page = 1, limit = 10 } = req.body;
+        const offset = (page - 1) * limit;
+
+        const rentals = await RentalModel.findAndCountAll({
+            limit,
+            offset,
             include: [
                 { model: MovieModel, as: 'movie' },
                 { model: SeriesModel, as: 'series' },
                 { model: UserModel, as: 'user' },
             ],
+            order: [['createdAt', 'DESC']],
         });
+
         return res.status(200).json({
             status: true,
             message: "Rentals fetched successfully",
-            data: rentals,
+            data: {
+                totalItems: rentals.count,
+                totalPages: Math.ceil(rentals.count / limit),
+                currentPage: parseInt(page),
+                rentals: rentals.rows,
+            },
         });
     } catch (error) {
         return res.status(500).json({
