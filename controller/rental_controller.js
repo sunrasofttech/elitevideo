@@ -1,0 +1,137 @@
+const RentalModel = require('../model/rental_model');
+const MovieModel = require('../model/movie_model');
+const SeriesModel = require('../model/series_model');
+const UserModel = require('../model/user_model');
+
+// Create rental
+exports.createRental = async (req, res) => {
+    try {
+        const rental = await RentalModel.create(req.body);
+        return res.status(201).json({
+            status: true,
+            message: "Rental created successfully",
+            data: rental,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: "Failed to create rental",
+            data: error.message,
+        });
+    }
+};
+
+// Get all rentals
+exports.getAllRentals = async (req, res) => {
+    try {
+        const rentals = await RentalModel.findAll({
+            include: [
+                { model: MovieModel, as: 'movie' },
+                { model: SeriesModel, as: 'series' },
+                { model: UserModel, as: 'user' },
+            ],
+        });
+        return res.status(200).json({
+            status: true,
+            message: "Rentals fetched successfully",
+            data: rentals,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: "Failed to fetch rentals",
+            data: error.message,
+        });
+    }
+};
+
+exports.getRentalById = async (req, res) => {
+    try {
+        const rental = await RentalModel.findByPk(req.params.id, {
+            include: [
+                { model: MovieModel, as: 'movie' },
+                { model: SeriesModel, as: 'series' },
+                { model: UserModel, as: 'user' },
+            ],
+        });
+
+        if (!rental) {
+            return res.status(404).json({
+                status: false,
+                message: "Rental not found",
+                data: null,
+            });
+        }
+
+        return res.status(200).json({
+            status: true,
+            message: "Rental fetched successfully",
+            data: rental,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: "Failed to fetch rental",
+            data: error.message,
+        });
+    }
+};
+
+// Update rental
+exports.updateRental = async (req, res) => {
+    try {
+        const [updated] = await RentalModel.update(req.body, {
+            where: { id: req.params.id },
+        });
+
+        if (!updated) {
+            return res.status(404).json({
+                status: false,
+                message: "Rental not found",
+                data: null,
+            });
+        }
+
+        const updatedRental = await RentalModel.findByPk(req.params.id);
+        return res.status(200).json({
+            status: true,
+            message: "Rental updated successfully",
+            data: updatedRental,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: "Failed to update rental",
+            data: error.message,
+        });
+    }
+};
+
+// Delete rental
+exports.deleteRental = async (req, res) => {
+    try {
+        const deleted = await RentalModel.destroy({
+            where: { id: req.params.id },
+        });
+
+        if (!deleted) {
+            return res.status(404).json({
+                status: false,
+                message: "Rental not found",
+                data: null,
+            });
+        }
+
+        return res.status(200).json({
+            status: true,
+            message: "Rental deleted successfully",
+            data: null,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: "Failed to delete rental",
+            data: error.message,
+        });
+    }
+};
