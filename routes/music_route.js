@@ -15,6 +15,8 @@ router.post(
 router.post('/get-all', musicController.getAllMusic);
 
 router.post('/:id', musicController.getMusicById);
+router.post('/category/:categoryId',musicController.getMusicByCategoryId);
+router.get('/popular', musicController.getPopularMusic);
 
 router.put(
     '/:id',

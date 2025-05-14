@@ -17,6 +17,7 @@ router.post('/:id', movieController.getMovieById);
 router.delete('/:id', movieController.deleteMovie);
 router.get('/highlighted', movieController.getHighlightedMovies);
 router.get('/watchlist', movieController.getWatchlistMovies);
+
 router.get('/most-viewed', movieController.getMostViewedMovies);
 
 module.exports = router;

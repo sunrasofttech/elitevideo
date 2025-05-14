@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
-
+const MusicCategoryModel = require('./music_categories_model');
 const MusicModel = sequelize.define('MusicModel', {
   id: {
     type: DataTypes.UUID,
@@ -12,6 +12,15 @@ const MusicModel = sequelize.define('MusicModel', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  category_id: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: MusicCategoryModel,
+      key: 'id',
+    },
+    onDelete: 'CASCADE',
+  },
   song_title: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -20,19 +29,19 @@ const MusicModel = sequelize.define('MusicModel', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  song_file:{
+  song_file: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  description:{
+  description: {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  watched_count:{
+  watched_count: {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  artist_name:{
+  artist_name: {
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -45,5 +54,12 @@ const MusicModel = sequelize.define('MusicModel', {
     tableName: 'music',
     timestamps: true,
   });
+
+
+  MusicModel.belongsTo(MusicCategoryModel, {
+  foreignKey: 'category_id',
+  as: 'category',
+});
+
 
 module.exports = MusicModel;
