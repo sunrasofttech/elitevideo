@@ -41,6 +41,11 @@ const MusicModel = sequelize.define('MusicModel', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  status:{
+    type:DataTypes.BOOLEAN,
+    allowNull:false,
+    defaultValue:false
+  },
   artist_name: {
     type: DataTypes.STRING,
     allowNull: true,

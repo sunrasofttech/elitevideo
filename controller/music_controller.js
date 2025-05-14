@@ -4,7 +4,7 @@ const MusicCategoryModel = require('../model/music_categories_model');
 
 exports.createMusic = async (req, res) => {
     try {
-        const { song_title, song_url, description, watched_count, artist_name, category_id } = req.body;
+        const { song_title, song_url, description, watched_count, artist_name, category_id,status } = req.body;
 
         const coverImg = req.files?.cover_img?.[0]?.path;
         const songFile = req.files?.song_file?.[0]?.path;
@@ -17,6 +17,7 @@ exports.createMusic = async (req, res) => {
             watched_count,
             artist_name,
             category_id,
+            status,
             song_file: songFile
         });
 
@@ -176,6 +177,7 @@ exports.updateMusic = async (req, res) => {
             watched_count,
             artist_name,
             category_id,
+            status,
         } = req.body;
 
         const coverImg = req.files?.cover_img?.[0]?.path || music.cover_img;
@@ -188,6 +190,7 @@ exports.updateMusic = async (req, res) => {
             watched_count,
             artist_name,
             category_id,
+            status,
             cover_img: coverImg,
             song_file: songFile,
         });
