@@ -156,6 +156,37 @@ exports.getPopularMusic = async (req, res) => {
     }
 };
 
+exports.getMusicByArtistName = async (req, res) => {
+    try {
+        const { artistName } = req.params;
+
+        const musicList = await MusicModel.findAll({
+            where: {
+                artist_name: {
+                    [Op.like]: `%${artistName}%`
+                }
+            },
+            order: [['createdAt', 'DESC']],
+            include: [{
+                model: MusicCategoryModel,
+                as: 'category'
+            }]
+        });
+
+        return res.status(200).json({
+            status: true,
+            message: `Music fetched successfully for artist: ${artistName}`,
+            data: musicList,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: error.message,
+            data: null,
+        });
+    }
+};
 
 exports.updateMusic = async (req, res) => {
     try {
