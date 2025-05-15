@@ -25,6 +25,7 @@ const LiveTvChannelRoute = require('./routes/livetv_channel_route');
 const rentalRoutes = require('./routes/rental_route');
 const ReportRoutes = require('./routes/report_route');
 const MusicRoute = require('./routes/music_route');
+const DashboardRoutes = require('./routes/dashboard_route');
 
 const baseUrl = '/api/ott';
 app.use(cors());
@@ -52,6 +53,7 @@ app.use(`${baseUrl}/live-tv/category`,LiveTvCategoryRoute);
 app.use(`${baseUrl}/live-tv/channel`,LiveTvChannelRoute);
 app.use(`${baseUrl}/rental`, rentalRoutes);
 app.use(`${baseUrl}/report`, ReportRoutes);
+app.use(`${baseUrl}`, DashboardRoutes);
 
 const PORT = process.env.PORT || 3000;
 

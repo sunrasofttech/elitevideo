@@ -77,6 +77,11 @@ const User = sequelize.define('User', {
     type: DataTypes.TEXT,
     allowNull: true,
    },
+   is_subscription:{
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+   },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
