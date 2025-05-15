@@ -17,8 +17,8 @@ exports.createSeries = async (req, res) => {
       released_date,
     } = req.body;
 
-    const cover_img = req.files?.cover_img?.[0]?.filename || null;
-    const poster_img = req.files?.poster_img?.[0]?.filename || null;
+    const cover_img = req.files?.cover_img?.[0]?.path;
+    const poster_img = req.files?.poster_img?.[0]?.path;
 
     const newSeries = await SeriesModel.create({
       series_name,
@@ -154,8 +154,8 @@ exports.updateSeries = async (req, res) => {
       released_date,
     } = req.body;
 
-    const cover_img = req.files?.cover_img?.[0]?.filename || series.cover_img;
-    const poster_img = req.files?.poster_img?.[0]?.filename || series.poster_img;
+    const cover_img = req.files?.cover_img?.[0]?.path || series.cover_img;
+    const poster_img = req.files?.poster_img?.[0]?.path || series.poster_img;
 
     await series.update({
       series_name,
