@@ -47,11 +47,11 @@ exports.getDashboardStats = async (req, res) => {
   }
 };
 
-
 exports.getUserAnalyticsByYear = async (req, res) => {
   try {
     const year = req.query.year || 2025;
 
+    // Get actual data from DB
     const [results] = await sequelize.query(`
       SELECT 
         MONTHNAME(createdAt) AS month,
@@ -65,11 +65,38 @@ exports.getUserAnalyticsByYear = async (req, res) => {
       replacements: { year },
     });
 
+    // Default 12 months
+    const allMonths = [
+      { month_number: 1, month: "January" },
+      { month_number: 2, month: "February" },
+      { month_number: 3, month: "March" },
+      { month_number: 4, month: "April" },
+      { month_number: 5, month: "May" },
+      { month_number: 6, month: "June" },
+      { month_number: 7, month: "July" },
+      { month_number: 8, month: "August" },
+      { month_number: 9, month: "September" },
+      { month_number: 10, month: "October" },
+      { month_number: 11, month: "November" },
+      { month_number: 12, month: "December" },
+    ];
+
+    // Merge logic: fill missing months with 0
+    const finalData = allMonths.map((monthObj) => {
+      const existing = results.find((r) => r.month_number === monthObj.month_number);
+      return {
+        month_number: monthObj.month_number,
+        month: monthObj.month,
+        user_count: existing ? Number(existing.user_count) : 0,
+      };
+    });
+
     res.status(200).json({
       status: true,
       year,
-      data: results,
+      data: finalData,
     });
+
   } catch (error) {
     console.error("Error fetching user analytics:", error);
     res.status(500).json({
