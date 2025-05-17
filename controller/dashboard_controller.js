@@ -45,7 +45,7 @@ exports.getDashboardStats = async (req, res) => {
     });
   } catch (error) {
     console.error('Dashboard Error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({status:false, message: 'Internal server error' });
   }
 };
 
