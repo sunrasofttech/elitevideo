@@ -3,6 +3,7 @@ const MovieLanguage = require('../model/movie_language_model');
 const Genre = require('../model/genre_model');
 const MovieCategory = require('../model/movie_category_model');
 const ShortFilmRatingModel = require('../model/short_film_rating_model');
+const VideoAdsModel = require('../model/video_ads_model');
 const extractFilePath = (file) => (file ? file.path.replace(/\\/g, '/') : null);
 
 exports.createShortFilm = async (req, res) => {

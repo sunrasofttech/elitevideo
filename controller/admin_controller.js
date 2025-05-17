@@ -7,7 +7,7 @@ const API_SECRET = process.env.API_SECRET;
 
 exports.signUp = async (req, reply) => {
   try {
-    const { name, password, role = 'subadmin', selectedPermissions = [], email, profile_img } = req.body;
+    const { name, password, role = 'subadmin', selectedPermissions = {}, email, profile_img } = req.body;
 
     if (!name || !password) {
       return reply.status(400).send({ status: false, message: 'Name and password are required' });
@@ -20,13 +20,13 @@ exports.signUp = async (req, reply) => {
       'Sub Admin', 'Subscription', 'Reports', 'Notification', 'Settings'
     ];
 
-    // Create permissions object with all keys
+    // Create permissions object
     let permissions = {};
     allPermissions.forEach((key) => {
       if (role === 'admin') {
         permissions[key] = true;
       } else {
-        permissions[key] = selectedPermissions.includes(key);
+        permissions[key] = !!selectedPermissions[key];
       }
     });
 
@@ -41,9 +41,17 @@ exports.signUp = async (req, reply) => {
       permissions,
     });
 
-    reply.status(201).send({ status: true, message: `${role} registered successfully`, admin });
+    reply.status(201).send({
+      status: true,
+      message: `${role} registered successfully`,
+      data: admin
+    });
   } catch (error) {
-    reply.status(500).send({ status: false, message: 'Server error', error: error.message });
+    reply.status(500).send({
+      status: false,
+      message: 'Server error',
+      error: error.message
+    });
   }
 };
 

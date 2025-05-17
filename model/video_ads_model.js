@@ -65,7 +65,7 @@ const VideoAdsModel = sequelize.define('VideoAdsModel', {
         onDelete: 'CASCADE'
     },
     type: {
-        type: DataTypes.ENUM('movie', 'shortfilm', 'season_episode'),
+        type: DataTypes.ENUM('movie', 'shortfilm', 'season_episode','channel'),
         allowNull: false,
     },
     createdAt: {
@@ -94,7 +94,7 @@ VideoAdsModel.belongsTo(SeasonEpisodeModel, {
 });
 
 
-VideoAdsModel.belongsTo(SeasonEpisodeModel, {
+VideoAdsModel.belongsTo(LiveTvChannelModel, {
     foreignKey: 'channel_id',
     as: 'channel'
 });

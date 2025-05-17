@@ -5,6 +5,7 @@ const CastCrew = require('../model/cast_crew_model');
 const MovieCategory = require('../model/movie_category_model');
 const MovieRating = require('../model/movie_rating_model');
 const { Op } = require('sequelize');
+const VideoAdsModel = require('../model/video_ads_model');
 
 
 exports.addMovie = async (req, res) => {
@@ -114,6 +115,14 @@ exports.getAllMovies = async (req, res) => {
             });
             movieJson.cast_crew = castCrewList;
 
+
+            // video ads 
+
+            const videoAds = await VideoAdsModel.findAll({
+                where: { movie_id: movie.id }
+            });
+            movieJson.video_ads = videoAds;
+
             // Calculate average rating
             const ratings = movieJson.ratings || [];
             if (ratings.length > 0) {
@@ -193,6 +202,11 @@ exports.getMovieById = async (req, res) => {
 
         const movieData = movie.toJSON();
         movieData.cast_crew = castCrewList;
+
+        const videoAds = await VideoAdsModel.findAll({
+            where: { movie_id: movie.id }
+        });
+        movieData.video_ads = videoAds;
 
         // Calculate average rating
         const ratings = movieData.ratings || [];
