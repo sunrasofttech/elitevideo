@@ -5,23 +5,48 @@ const { Op } = require('sequelize');
 
 const API_SECRET = process.env.API_SECRET;
 
-// Admin Signup
 exports.signUp = async (req, reply) => {
   try {
-    const { name, password } = req.body;
+    const { name, password, role = 'subadmin', selectedPermissions = [], email, profile_img } = req.body;
 
     if (!name || !password) {
-      return reply.status(400).send({status:false, message: 'Name and password are required' });
+      return reply.status(400).send({ status: false, message: 'Name and password are required' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const admin = await Admin.create({ name, password: hashedPassword });
+    // Define all possible permissions
+    const allPermissions = [
+      'Dashboard', 'Movie', 'Music', 'Web Series', 'Tv Show', 'Live TV',
+      'Short Film', 'Ads', 'Rentals', 'Language', 'Genre', 'Users',
+      'Sub Admin', 'Subscription', 'Reports', 'Notification', 'Settings'
+    ];
 
-    reply.status(201).send({status:true, message: 'Admin registered successfully', admin });
+    // Create permissions object with all keys
+    let permissions = {};
+    allPermissions.forEach((key) => {
+      if (role === 'admin') {
+        permissions[key] = true;
+      } else {
+        permissions[key] = selectedPermissions.includes(key);
+      }
+    });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const admin = await Admin.create({
+      name,
+      password: hashedPassword,
+      role,
+      email,
+      profile_img,
+      permissions,
+    });
+
+    reply.status(201).send({ status: true, message: `${role} registered successfully`, admin });
   } catch (error) {
-    reply.status(500).send({status:false, message: 'Server error', message: error.message });
+    reply.status(500).send({ status: false, message: 'Server error', error: error.message });
   }
 };
+
 
 // Admin Login
 exports.login = async (req, reply) => {
@@ -46,31 +71,52 @@ exports.login = async (req, reply) => {
   }
 };
 
-// Edit Admin
 exports.editAdmin = async (req, reply) => {
   try {
     const { id } = req.params;
-    const { name, password,email } = req.body;
-    const profile_img = req.file ? req.file.path :path;
+    const { name, password, email, role, selectedPermissions = [] } = req.body;
+    const profile_img = req.file ? req.file.path : undefined;
 
     const admin = await Admin.findByPk(id);
     if (!admin) {
-      return reply.status(404).send({status:false, message: 'Admin not found' });
+      return reply.status(404).send({ status: false, message: 'Admin not found' });
     }
 
     if (name) admin.name = name;
     if (email) admin.email = email;
-    if (password) {
-      admin.password = await bcrypt.hash(password, 10);
-    }
-    if (profile_img) {
-      admin.profile_img = profile_img;
+    if (role) admin.role = role;
+    if (password) admin.password = await bcrypt.hash(password, 10);
+    if (profile_img) admin.profile_img = profile_img;
+
+    const allPermissions = [
+      'Dashboard', 'Movie', 'Music', 'Web Series', 'Tv Show', 'Live TV',
+      'Short Film', 'Ads', 'Rentals', 'Language', 'Genre', 'Users',
+      'Sub Admin', 'Subscription', 'Reports', 'Notification', 'Settings'
+    ];
+
+    // If admin, enable all
+    if (role === 'admin') {
+      let permissions = {};
+      allPermissions.forEach((key) => {
+        permissions[key] = true;
+      });
+      admin.permissions = permissions;
+    } else {
+      // Preserve existing permissions
+      let currentPermissions = admin.permissions || {};
+      allPermissions.forEach((key) => {
+        if (selectedPermissions.includes(key)) {
+          currentPermissions[key] = true;
+        }
+        // Leave others unchanged
+      });
+      admin.permissions = currentPermissions;
     }
 
     await admin.save();
-    reply.send({status:true, message: 'Admin updated successfully', admin });
+    reply.send({ status: true, message: 'Admin updated successfully', admin });
   } catch (error) {
-    reply.status(500).send({ status:false, message: 'Server error', message: error.message });
+    reply.status(500).send({ status: false, message: 'Server error', error: error.message });
   }
 };
 

@@ -24,6 +24,16 @@ const Admin = sequelize.define('Admin', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  role:{
+    type:DataTypes.ENUM('admin','subadmin'),
+    defaultValue:'subadmin',
+    allowNull:false,
+  },
+   permissions: {
+    type: DataTypes.JSON,
+    allowNull: false,
+    defaultValue: {},
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
