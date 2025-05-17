@@ -34,12 +34,14 @@ exports.getDashboardStats = async (req, res) => {
     });
 
     return res.status(200).json({
-      totalUsers,
+      status:true,
+      message:"get all data successfully.",
+      data:{totalUsers,
       activeUsers,
       subscriberActiveUsers,
       totalMovies,
       totalSongs,
-      recentActivity,
+      recentActivity,}
     });
   } catch (error) {
     console.error('Dashboard Error:', error);
