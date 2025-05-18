@@ -2,7 +2,7 @@ const VideoAdsModel = require('../model/video_ads_model');
 
 exports.createVideoAd = async (req, res) => {
   try {
-    const { movie_id, shortfilm_id, season_episode_id, channel_id, type, ad_url, video_time, skip_time } = req.body;
+    const { ad_url, video_time, skip_time } = req.body;
     const ad_video = req.file ? `/uploads/${req.file.filename}` : null;
 
     const newAd = await VideoAdsModel.create({
@@ -10,11 +10,6 @@ exports.createVideoAd = async (req, res) => {
       ad_url,
       video_time,
       skip_time,
-      movie_id,
-      shortfilm_id,
-      season_episode_id,
-      channel_id,
-      type,
     });
 
     res.status(201).json({ status: true, message: 'Video Ad created successfully', data: newAd });
@@ -52,7 +47,7 @@ exports.updateVideoAd = async (req, res) => {
     const ad = await VideoAdsModel.findByPk(req.params.id);
     if (!ad) return res.status(404).json({ status: false, message: 'Ad not found' });
 
-    const { movie_id, shortfilm_id, season_episode_id, channel_id, type, ad_url, video_time, skip_time } = req.body;
+    const {ad_url, video_time, skip_time } = req.body;
     const ad_video = req.file ? `/uploads/${req.file.filename}` : ad.ad_video;
 
     await ad.update({
@@ -60,11 +55,6 @@ exports.updateVideoAd = async (req, res) => {
       ad_url,
       video_time,
       skip_time,
-      movie_id,
-      shortfilm_id,
-      season_episode_id,
-      channel_id,
-      type,
     });
 
     res.json({ status: true, message: 'Ad updated successfully', data: ad });
