@@ -10,8 +10,7 @@ const { Op } = require('sequelize');
 
 exports.addMovie = async (req, res) => {
     try {
-        const { movie_name,video_ads_ids } = req.body;
-        const parsedVideoAds = video_ads_ids ? JSON.parse(video_ads_ids) : [];
+        const { movie_name } = req.body;
 
 
         // Check if movie name already exists
@@ -27,7 +26,6 @@ exports.addMovie = async (req, res) => {
 
         const movieData = {
             ...req.body,
-             video_ads_ids: parsedVideoAds,
             cover_img: files.cover_img ? files.cover_img[0].path : null,
             poster_img: files.poster_img ? files.poster_img[0].path : null,
             movie_video: files.movie_video ? files.movie_video[0].path : null,
