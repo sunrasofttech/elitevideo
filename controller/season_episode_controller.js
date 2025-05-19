@@ -1,4 +1,6 @@
 const SeasonEpisodeModel = require('../model/season_episode_model');
+const EpisodeAdsModel = require('../model/season_episode_ads_model');
+const VideoAdsModel = require('../model/video_ads_model');
 // const path = require('path');
 exports.createSeasonEpisode = async (req, res) => {
   try {
@@ -38,7 +40,6 @@ exports.createSeasonEpisode = async (req, res) => {
     });
   }
 };
-
 exports.getAllSeasonEpisodes = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -50,10 +51,27 @@ exports.getAllSeasonEpisodes = async (req, res) => {
       offset,
     });
 
+    const enhancedEpisodes = await Promise.all(rows.map(async (episode) => {
+      const episodeJson = episode.toJSON();
+
+      // Get Ads for this episode
+      const EpisodeAdsList = await EpisodeAdsModel.findAll({
+        where: { season_episode_id: episode.id },
+        include: [
+          { model: SeasonEpisodeModel, as: 'season_episode' },
+          { model: VideoAdsModel, as: 'video_ad' },
+        ],
+      });
+
+      episodeJson.episode_ad = EpisodeAdsList;
+
+      return episodeJson;
+    }));
+
     res.status(200).json({
       status: true,
       message: 'Season episodes fetched successfully',
-      data: rows,
+      data: enhancedEpisodes,
       pagination: {
         total: count,
         page,
@@ -68,6 +86,7 @@ exports.getAllSeasonEpisodes = async (req, res) => {
     });
   }
 };
+
 
 exports.getSeasonEpisodeById = async (req, res) => {
   try {
