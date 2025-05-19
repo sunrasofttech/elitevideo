@@ -4,12 +4,15 @@ const Genre = require('../model/genre_model');
 const CastCrew = require('../model/cast_crew_model');
 const MovieCategory = require('../model/movie_category_model');
 const MovieRating = require('../model/movie_rating_model');
+const VideoAdsModel = require('../model/video_ads_model');
 const { Op } = require('sequelize');
 
 
 exports.addMovie = async (req, res) => {
     try {
-        const { movie_name } = req.body;
+        const { movie_name,video_ads_ids } = req.body;
+        const parsedVideoAds = video_ads_ids ? JSON.parse(video_ads_ids) : [];
+
 
         // Check if movie name already exists
         const existingMovie = await Movie.findOne({ where: { movie_name } });
@@ -24,6 +27,7 @@ exports.addMovie = async (req, res) => {
 
         const movieData = {
             ...req.body,
+             video_ads_ids: parsedVideoAds,
             cover_img: files.cover_img ? files.cover_img[0].path : null,
             poster_img: files.poster_img ? files.poster_img[0].path : null,
             movie_video: files.movie_video ? files.movie_video[0].path : null,
@@ -98,7 +102,8 @@ exports.getAllMovies = async (req, res) => {
                     model: MovieRating,
                     as: 'ratings',
                     attributes: ['rating', 'user_id']
-                }
+                },
+                { model: VideoAdsModel, as: 'video_ads' },
             ],
             limit: parseInt(limit),
             offset: parseInt(offset),
@@ -135,7 +140,8 @@ exports.getAllMovies = async (req, res) => {
                 include: [
                     { model: MovieLanguage, as: 'language' },
                     { model: Genre, as: 'genre' },
-                    { model: MovieCategory, as: 'category' }
+                    { model: MovieCategory, as: 'category' },
+                    { model: VideoAdsModel, as: 'video_ads' },
                 ],
                 limit: 5
             });

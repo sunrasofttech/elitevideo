@@ -3,6 +3,7 @@ const { sequelize } = require('../config/db');
 const MovieLanguage = require('./movie_language_model');
 const Genre = require('./genre_model');
 const MovieCategory = require('./movie_category_model');
+const VideoAdsModel = require('./video_ads_model');
 
 const MovieModel = sequelize.define('MovieModel', {
     id: {
@@ -114,8 +115,8 @@ const MovieModel = sequelize.define('MovieModel', {
     },
     view_count: {
         type: DataTypes.INTEGER,
-        allowNull:false,
-        defaultValue:0,
+        allowNull: false,
+        defaultValue: 0,
     },
     released_by: {
         type: DataTypes.STRING,
@@ -125,11 +126,25 @@ const MovieModel = sequelize.define('MovieModel', {
         type: DataTypes.DATE,
         allowNull: true,
     },
-    createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+    video_ads_id: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+            model: VideoAdsModel,
+            key: 'id',
+        },
+        onDelete: 'CASCADE',
     },
-}, {
+    video_ads_ids: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        defaultValue: [],
+    },
+        createdAt: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW,
+        },
+    }, {
     tableName: 'movies',
     timestamps: true,
 });
@@ -144,10 +159,13 @@ MovieModel.belongsTo(Genre, {
     as: 'genre',
 });
 
-
 MovieModel.belongsTo(MovieCategory, {
     foreignKey: 'movie_category',
     as: 'category',
 });
 
+MovieModel.belongsTo(VideoAdsModel, {
+    foreignKey: 'video_ads_id',
+    as: 'video_ads',
+});
 module.exports = MovieModel;
