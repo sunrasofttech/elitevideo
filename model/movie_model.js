@@ -126,25 +126,11 @@ const MovieModel = sequelize.define('MovieModel', {
         type: DataTypes.DATE,
         allowNull: true,
     },
-    video_ads_id: {
-        type: DataTypes.UUID,
-        allowNull: true,
-        references: {
-            model: VideoAdsModel,
-            key: 'id',
-        },
-        onDelete: 'CASCADE',
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
     },
-    video_ads_ids: {
-        type: DataTypes.JSON,
-        allowNull: true,
-        defaultValue: [],
-    },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-        },
-    }, {
+}, {
     tableName: 'movies',
     timestamps: true,
 });
