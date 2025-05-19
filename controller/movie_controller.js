@@ -6,13 +6,12 @@ const MovieCategory = require('../model/movie_category_model');
 const MovieRating = require('../model/movie_rating_model');
 const VideoAdsModel = require('../model/video_ads_model');
 const { Op } = require('sequelize');
+const MovieAdsModel = require('../model/movie_ads_model');
 
 
 exports.addMovie = async (req, res) => {
     try {
         const { movie_name } = req.body;
-
-
         // Check if movie name already exists
         const existingMovie = await Movie.findOne({ where: { movie_name } });
         if (existingMovie) {
@@ -101,7 +100,6 @@ exports.getAllMovies = async (req, res) => {
                     as: 'ratings',
                     attributes: ['rating', 'user_id']
                 },
-                { model: VideoAdsModel, as: 'video_ads' },
             ],
             limit: parseInt(limit),
             offset: parseInt(offset),
@@ -117,6 +115,16 @@ exports.getAllMovies = async (req, res) => {
             });
             movieJson.cast_crew = castCrewList;
 
+
+            // Add movie ads 
+            const MovieAdsList = await MovieAdsModel.findAll({
+                where: { movie_id: movie.id },
+                include:[
+                      { model: Movie, as: 'movie' },
+                      { model: VideoAdsModel, as: 'video_ad' },
+                ]
+            });
+            movieJson.movie_ad = MovieAdsList;
 
             // Calculate average rating
             const ratings = movieJson.ratings || [];
@@ -139,7 +147,7 @@ exports.getAllMovies = async (req, res) => {
                     { model: MovieLanguage, as: 'language' },
                     { model: Genre, as: 'genre' },
                     { model: MovieCategory, as: 'category' },
-                    { model: VideoAdsModel, as: 'video_ads' },
+                    // { model: VideoAdsModel, as: 'video_ads' },
                 ],
                 limit: 5
             });

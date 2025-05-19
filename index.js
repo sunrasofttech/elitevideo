@@ -28,6 +28,7 @@ const MusicRoute = require('./routes/music_route');
 const DashboardRoutes = require('./routes/dashboard_route');
 const WatchlistRoutes = require('./routes/watchlist_route');
 const VideoAdsRoutes = require('./routes/video_ad_route');
+const MovieAdsRoutes = require('./routes/movie_ad_route');
 
 const baseUrl = '/api/ott';
 app.use(cors());
@@ -58,6 +59,7 @@ app.use(`${baseUrl}/report`, ReportRoutes);
 app.use(`${baseUrl}`, DashboardRoutes);
 app.use(`${baseUrl}`, WatchlistRoutes);
 app.use(`${baseUrl}/ads`, VideoAdsRoutes);
+app.use(`${baseUrl}/movie-ads`, MovieAdsRoutes);
 
 const PORT = process.env.PORT || 3000;
 

@@ -150,8 +150,4 @@ MovieModel.belongsTo(MovieCategory, {
     as: 'category',
 });
 
-MovieModel.belongsTo(VideoAdsModel, {
-    foreignKey: 'video_ads_id',
-    as: 'video_ads',
-});
 module.exports = MovieModel;
