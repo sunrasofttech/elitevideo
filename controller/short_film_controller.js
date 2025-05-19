@@ -3,6 +3,8 @@ const MovieLanguage = require('../model/movie_language_model');
 const Genre = require('../model/genre_model');
 const MovieCategory = require('../model/movie_category_model');
 const ShortFilmRatingModel = require('../model/short_film_rating_model');
+const ShortfilmAdsModel = require('../model/shortfilm_ads_model');
+const VideoAdsModel = require('../model/video_ads_model');
 const extractFilePath = (file) => (file ? file.path.replace(/\\/g, '/') : null);
 
 exports.createShortFilm = async (req, res) => {
@@ -72,60 +74,71 @@ exports.createShortFilm = async (req, res) => {
 };
 
 exports.getAllShortFilms = async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const offset = (page - 1) * limit;
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
 
-        const { count, rows } = await ShortFilmModel.findAndCountAll({
-            include: [
-                { model: MovieLanguage, as: 'language' },
-                { model: Genre, as: 'genre' },
-                { model: MovieCategory, as: 'category' },
-                {
-                    model: ShortFilmRatingModel,
-                    as: 'ratings',
-                    attributes: ['rating', 'user_id']
-                }
-            ],
-            limit,
-            offset,
-            order: [['createdAt', 'DESC']],
-        });
+    const { count, rows } = await ShortFilmModel.findAndCountAll({
+      include: [
+        { model: MovieLanguage, as: 'language' },
+        { model: Genre, as: 'genre' },
+        { model: MovieCategory, as: 'category' },
+        {
+          model: ShortFilmRatingModel,
+          as: 'ratings',
+          attributes: ['rating', 'user_id']
+        }
+      ],
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
+    });
 
-        const enhancedFilms = rows.map(film => {
-            const filmJson = film.toJSON();
-            const ratings = filmJson.ratings || [];
+    const enhancedFilms = await Promise.all(rows.map(async (film) => {
+      const filmJson = film.toJSON();
+      const ratings = filmJson.ratings || [];
 
-            if (ratings.length > 0) {
-                const total = ratings.reduce((sum, r) => sum + r.rating, 0);
-                filmJson.average_rating = (total / ratings.length).toFixed(2);
-                filmJson.total_ratings = ratings.length;
-            } else {
-                filmJson.average_rating = null;
-                filmJson.total_ratings = 0;
-            }
+      // Add average and total ratings
+      if (ratings.length > 0) {
+        const total = ratings.reduce((sum, r) => sum + r.rating, 0);
+        filmJson.average_rating = (total / ratings.length).toFixed(2);
+        filmJson.total_ratings = ratings.length;
+      } else {
+        filmJson.average_rating = null;
+        filmJson.total_ratings = 0;
+      }
 
-            return filmJson;
-        });
+      // Add shortfilm ads
+      const shortfilmAds = await ShortfilmAdsModel.findAll({
+        where: { shortfilm_id: film.id },
+        include: [
+          { model: ShortFilmModel, as: 'shortfilm' },
+          { model: VideoAdsModel, as: 'video_ad' },
+        ]
+      });
+      filmJson.shortfilm_ads = shortfilmAds;
 
-        return res.status(200).json({
-            status: true,
-            message: "Short films fetched successfully",
-            data: enhancedFilms,
-            pagination: {
-                totalItems: count,
-                currentPage: page,
-                totalPages: Math.ceil(count / limit),
-            },
-        });
-    } catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: "Failed to fetch short films",
-            data: error.message,
-        });
-    }
+      return filmJson;
+    }));
+
+    return res.status(200).json({
+      status: true,
+      message: "Short films fetched successfully",
+      data: enhancedFilms,
+      pagination: {
+        totalItems: count,
+        currentPage: page,
+        totalPages: Math.ceil(count / limit),
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Failed to fetch short films",
+      data: error.message,
+    });
+  }
 };
 
 exports.getShortFilmById = async (req, res) => {
