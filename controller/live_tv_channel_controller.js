@@ -1,4 +1,7 @@
 const LiveTvChannel = require('../model/live_tv_channel_model');
+const LiveTvChannelAdsModel = require('../model/livetv_channel_ads_model');
+const LiveTvChannelModel = require('../model/live_tv_channel_model');
+const VideoAdsModel = require('../model/video_ads_model');
 
 // ✅ Create Channel
 exports.createChannel = async (req, res) => {
@@ -42,8 +45,25 @@ exports.getAllChannels = async (req, res) => {
     const { count, rows } = await LiveTvChannel.findAndCountAll({
       limit,
       offset,
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'DESC']],
     });
+
+    const enrichedChannels = await Promise.all(
+      rows.map(async (channel) => {
+        const channelJson = channel.toJSON();
+
+        const channelAds = await LiveTvChannelAdsModel.findAll({
+          where: { livetv_channel_id: channel.id },
+          include: [
+            { model: LiveTvChannelModel, as: 'livetv_channel' },
+            { model: VideoAdsModel, as: 'video_ad' },
+          ],
+        });
+
+        channelJson.channel_ads = channelAds;
+        return channelJson;
+      })
+    );
 
     res.json({
       status: true,
@@ -52,17 +72,18 @@ exports.getAllChannels = async (req, res) => {
         total: count,
         page,
         totalPages: Math.ceil(count / limit),
-        channels: rows
-      }
+        channels: enrichedChannels,
+      },
     });
   } catch (err) {
     res.status(500).json({
       status: false,
       message: 'Failed to fetch channels',
-      data: err.message
+      data: err.message,
     });
   }
 };
+
 
 // ✅ Get Single Channel
 exports.getChannelById = async (req, res) => {
