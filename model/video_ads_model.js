@@ -23,6 +23,10 @@ const VideoAdsModel = sequelize.define('VideoAdsModel', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    title: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
