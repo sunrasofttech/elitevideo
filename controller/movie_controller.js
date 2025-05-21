@@ -7,6 +7,7 @@ const MovieRating = require('../model/movie_rating_model');
 const VideoAdsModel = require('../model/video_ads_model');
 const { Op } = require('sequelize');
 const MovieAdsModel = require('../model/movie_ads_model');
+const Message = require('../config/message');
 
 
 exports.addMovie = async (req, res) => {
@@ -30,14 +31,8 @@ exports.addMovie = async (req, res) => {
             movie_video: files.movie_video ? files.movie_video[0].path : null,
             trailor_video: files.trailor_video ? files.trailor_video[0].path : null
         };
-
         const movie = await Movie.create(movieData);
-
-        res.status(201).json({
-            status: true,
-            message: 'Movie created successfully',
-            data: movie
-        });
+        await Message.sendNotification();
     } catch (err) {
         res.status(500).json({
             status: false,
@@ -119,9 +114,9 @@ exports.getAllMovies = async (req, res) => {
             // Add movie ads 
             const MovieAdsList = await MovieAdsModel.findAll({
                 where: { movie_id: movie.id },
-                include:[
-                      { model: Movie, as: 'movie' },
-                      { model: VideoAdsModel, as: 'video_ad' },
+                include: [
+                    { model: Movie, as: 'movie' },
+                    { model: VideoAdsModel, as: 'video_ad' },
                 ]
             });
             movieJson.movie_ad = MovieAdsList;
@@ -155,17 +150,31 @@ exports.getAllMovies = async (req, res) => {
 
             return movieJson;
         }));
+        // try {
+            // await Message.sendNotificationToUserDevice('message', 'cIMLCdyIRuWhJDhSfHEVcB:APA91bFfkKzvPMqCvNPzUJq7rb788NpqeQXCC3O8QxPXtHyF7I8CPI0-uvdwSjdMKj4wWwmYMuKA6cKPX-EHNvBaPZ8TVBhX22iEmKZjENhdyM7BnbI7bbM','hello');
+            res.json({
+                status: true,
+                message: 'Movies fetched successfully',
+                data: {
+                    total: count,
+                    page: parseInt(page),
+                    totalPages: Math.ceil(count / limit),
+                    movies: enhancedMovies
+                }
+            });
+        // } catch (error) {
+        //     res.json({
+        //         status: true,
+        //         message: 'Movies fetched successfully',
+        //         data: {
+        //             total: count,
+        //             page: parseInt(page),
+        //             totalPages: Math.ceil(count / limit),
+        //             movies: enhancedMovies
+        //         }
+        //     });
+        // }
 
-        res.json({
-            status: true,
-            message: 'Movies fetched successfully',
-            data: {
-                total: count,
-                page: parseInt(page),
-                totalPages: Math.ceil(count / limit),
-                movies: enhancedMovies
-            }
-        });
     } catch (err) {
         res.status(500).json({
             status: false,
