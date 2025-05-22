@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
+const SubscriptionModel = require('../model/subscription_plan_model');
 
 const User = sequelize.define('User', {
   id: {
@@ -20,7 +21,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  is_first_time_user :{
+  is_first_time_user: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true,
@@ -42,7 +43,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  app_version:{
+  app_version: {
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -56,14 +57,23 @@ const User = sequelize.define('User', {
     allowNull: true,
     defaultValue: true,
   },
-//   subscription_id: {
-//     type: DataTypes.UUID,
-//     allowNull: true,
-//     references: {
-//       model: SubscriptionModel,
-//       key: 'id',
-//     },
-//   },
+  subscription_id: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: SubscriptionModel,
+      key: 'id',
+    },
+  },
+  is_subscription: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  subscription_end_date:{
+    type:DataTypes.DATE,
+    allowNull:true
+  },
   is_block: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
@@ -73,15 +83,10 @@ const User = sequelize.define('User', {
     type: DataTypes.DATEONLY,
     allowNull: true,
   },
-   jwt_api_token:{
+  jwt_api_token: {
     type: DataTypes.TEXT,
     allowNull: true,
-   },
-   is_subscription:{
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-   },
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
@@ -92,5 +97,6 @@ const User = sequelize.define('User', {
     timestamps: true,
   });
 
+User.belongsTo(SubscriptionModel, { foreignKey: 'subscription_id', as: 'subscription' })
 
 module.exports = User;

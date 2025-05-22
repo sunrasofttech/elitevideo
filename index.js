@@ -32,6 +32,7 @@ const MovieAdsRoutes = require('./routes/movie_ad_route');
 const ShortfilmAdsRoutes = require('./routes/shortfilm_ads_route');
 const SeasonEpisodeRoutes = require('./routes/season_episode_ads_route');
 const LiveTvChannelAdsRoutes = require('./routes/livetv_channel_ads_route');
+const SubscriptionPlanRoutes = require('./routes/subscription_plan_route');
 
 const baseUrl = '/api/ott';
 app.use(cors());
@@ -66,6 +67,7 @@ app.use(`${baseUrl}/movie-ads`, MovieAdsRoutes);
 app.use(`${baseUrl}/shortfilm-ads`, ShortfilmAdsRoutes);
 app.use(`${baseUrl}/season-episode-ads`, SeasonEpisodeRoutes);
 app.use(`${baseUrl}/livetv_channel-ads`, LiveTvChannelAdsRoutes);
+app.use(`${baseUrl}/subscription-plan`,SubscriptionPlanRoutes);
 
 
 const PORT = process.env.PORT || 3000;

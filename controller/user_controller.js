@@ -1,6 +1,7 @@
 const User = require('../model/user_model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const SubscriptionModel = require('../model/subscription_plan_model');
 require('dotenv').config();
 const SECRET_KEY = process.env.API_SECRET;
 
@@ -52,7 +53,12 @@ exports.signin = async (req, res) => {
 // Get All Users
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      include:[{
+        model:SubscriptionModel,
+        as:'subscription'
+      }]
+    });
     res.status(200).json({status:true, message:"Get all user successfully.",users});
   } catch (error) {
     res.status(500).json({status:false, message: error.message });
@@ -62,7 +68,12 @@ exports.getAllUsers = async (req, res) => {
 // Get User by ID
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id);
+    const user = await User.findByPk(req.params.id,{
+       include:[{
+        model:SubscriptionModel,
+        as:'subscription'
+      }]
+    });
     if (!user) return res.status(404).json({status:false,message: 'User not found' });
     res.status(200).json({status:true,message:"Get user successfully.",user});
   } catch (error) {
