@@ -4,6 +4,71 @@ const jwt = require('jsonwebtoken');
 const SubscriptionModel = require('../model/subscription_plan_model');
 require('dotenv').config();
 const SECRET_KEY = process.env.API_SECRET;
+const { Op } = require('sequelize');
+const moment = require('moment');
+
+require('dotenv').config();
+
+
+
+exports.clearExpiredSubscriptions = async () => {
+    try {
+        const today = new Date();
+
+        await UserModel.update(
+            {
+                subscription_id: null,
+                subscription: false,
+            },
+            {
+                where: {
+                    subscription_end_date: {
+                        [Op.lt]: today,
+                    },
+                },
+            }
+        );
+
+        console.log('Expired subscriptions cleared');
+    } catch (err) {
+        console.error('Error in cron:', err);
+    }
+};
+
+exports.deactivateInactiveUsers = async () => {
+    try {
+        const today = moment().format('YYYY-MM-DD');
+
+        const users = await UserModel.findAll({
+            where: {
+                is_active: true,
+                [Op.or]: [
+                    { active_date: { [Op.ne]: today } },
+                    { active_date: { [Op.is]: null } },
+                ],
+            },
+        });
+
+        const userIds = users.map(user => user.id);
+
+        if (userIds.length > 0) {
+            await UserModel.update(
+                { is_active: false },
+                {
+                    where: {
+                        id: { [Op.in]: userIds },
+                    },
+                }
+            );
+
+            console.log(` Deactivated ${userIds.length} inactive users.`);
+        } else {
+            console.log(' All users are already active for today.');
+        }
+    } catch (error) {
+        console.error(' Error in deactivating inactive users:', error.message);
+    }
+};
 
 exports.signup = async (req, res) => {
   try {

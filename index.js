@@ -33,6 +33,8 @@ const ShortfilmAdsRoutes = require('./routes/shortfilm_ads_route');
 const SeasonEpisodeRoutes = require('./routes/season_episode_ads_route');
 const LiveTvChannelAdsRoutes = require('./routes/livetv_channel_ads_route');
 const SubscriptionPlanRoutes = require('./routes/subscription_plan_route');
+require('./cron/subscription_cron');
+require('./cron/deactive_user_cron');
 
 const baseUrl = '/api/ott';
 app.use(cors());
