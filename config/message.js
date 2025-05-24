@@ -62,6 +62,9 @@ const getAccessToken = async function () {
     });
 };
 
+
+
+
 async function sendNotificationToUserDevice(message, deviceToken, title = null) {
     console.log('Sending notification', message);
     console.log('Sending notification', deviceToken);
