@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { sequelize } = require('./config/db');
+require('./model/index'); 
 const path = require('path');
 const app = express();
 
