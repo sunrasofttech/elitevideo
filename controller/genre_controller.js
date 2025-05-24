@@ -75,7 +75,7 @@ exports.getAllGenres = async (req, res) => {
 
     res.status(200).json({
       status: true,
-      message: 'Genres fetched successfully',
+      message: 'Genres fffetched successfully',
       data: genres,
     });
   } catch (err) {
