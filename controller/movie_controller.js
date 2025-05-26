@@ -82,10 +82,25 @@ exports.updateMovie = async (req, res) => {
 
 exports.getAllMovies = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;
+        const { page = 1, limit = 10, movie_name, language_id, category_id } = req.query;
         const offset = (page - 1) * limit;
 
+        const whereClause = {};
+
+        if (movie_name) {
+            whereClause.movie_name = { [Op.like]: `%${movie_name}%` };
+        }
+
+        if (language_id) {
+            whereClause.movie_language = language_id;
+        }
+
+        if (category_id) {
+            whereClause.movie_category = category_id;
+        }
+
         const { count, rows } = await Movie.findAndCountAll({
+            where: whereClause,
             include: [
                 { model: MovieLanguage, as: 'language' },
                 { model: Genre, as: 'genre' },
@@ -104,14 +119,12 @@ exports.getAllMovies = async (req, res) => {
         const enhancedMovies = await Promise.all(rows.map(async (movie) => {
             const movieJson = movie.toJSON();
 
-            // Add cast_crew
             const castCrewList = await CastCrew.findAll({
                 where: { movie_id: movie.id }
             });
             movieJson.cast_crew = castCrewList;
 
 
-            // Add movie ads 
             const MovieAdsList = await MovieAdsModel.findAll({
                 where: { movie_id: movie.id },
                 include: [
@@ -121,7 +134,6 @@ exports.getAllMovies = async (req, res) => {
             });
             movieJson.movie_ad = MovieAdsList;
 
-            // Calculate average rating
             const ratings = movieJson.ratings || [];
             if (ratings.length > 0) {
                 const totalRating = ratings.reduce((sum, r) => sum + r.rating, 0);
@@ -132,7 +144,6 @@ exports.getAllMovies = async (req, res) => {
                 movieJson.total_ratings = 0;
             }
 
-            // Add recommended_movies
             const recommendedMovies = await Movie.findAll({
                 where: {
                     movie_category: movie.movie_category,
@@ -142,7 +153,6 @@ exports.getAllMovies = async (req, res) => {
                     { model: MovieLanguage, as: 'language' },
                     { model: Genre, as: 'genre' },
                     { model: MovieCategory, as: 'category' },
-                    // { model: VideoAdsModel, as: 'video_ads' },
                 ],
                 limit: 5
             });
@@ -151,17 +161,17 @@ exports.getAllMovies = async (req, res) => {
             return movieJson;
         }));
         // try {
-            // await Message.sendNotificationToUserDevice('message', 'cIMLCdyIRuWhJDhSfHEVcB:APA91bFfkKzvPMqCvNPzUJq7rb788NpqeQXCC3O8QxPXtHyF7I8CPI0-uvdwSjdMKj4wWwmYMuKA6cKPX-EHNvBaPZ8TVBhX22iEmKZjENhdyM7BnbI7bbM','hello');
-            res.json({
-                status: true,
-                message: 'Movies fetched successfully',
-                data: {
-                    total: count,
-                    page: parseInt(page),
-                    totalPages: Math.ceil(count / limit),
-                    movies: enhancedMovies
-                }
-            });
+        // await Message.sendNotificationToUserDevice('message', 'cIMLCdyIRuWhJDhSfHEVcB:APA91bFfkKzvPMqCvNPzUJq7rb788NpqeQXCC3O8QxPXtHyF7I8CPI0-uvdwSjdMKj4wWwmYMuKA6cKPX-EHNvBaPZ8TVBhX22iEmKZjENhdyM7BnbI7bbM','hello');
+        res.json({
+            status: true,
+            message: 'Movies fetched successfully',
+            data: {
+                total: count,
+                page: parseInt(page),
+                totalPages: Math.ceil(count / limit),
+                movies: enhancedMovies
+            }
+        });
         // } catch (error) {
         //     res.json({
         //         status: true,
@@ -260,21 +270,37 @@ exports.getMovieById = async (req, res) => {
 
 exports.deleteMovie = async (req, res) => {
     try {
-        const deleted = await Movie.destroy({ where: { id: req.params.id } });
-        if (!deleted) {
-            return res.status(404).json({
+        const { ids } = req.body;
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({
                 status: false,
-                message: 'Movie not found',
+                message: 'Please provide an array of movie IDs to delete.',
             });
         }
+
+        const deleted = await Movie.destroy({
+            where: {
+                id: {
+                    [Op.in]: ids
+                }
+            }
+        });
+
+        if (deleted === 0) {
+            return res.status(404).json({
+                status: false,
+                message: 'No movies found to delete.',
+            });
+        }
+
         res.json({
             status: true,
-            message: 'Movie deleted successfully',
+            message: `${deleted} movie(s) deleted successfully.`,
         });
     } catch (err) {
         res.status(500).json({
             status: false,
-            message: 'Failed to delete movie',
+            message: 'Failed to delete movies',
             data: err.message
         });
     }

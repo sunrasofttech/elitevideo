@@ -13,6 +13,13 @@ exports.signUp = async (req, reply) => {
       return reply.status(400).send({ status: false, message: 'Name and password are required' });
     }
 
+    if (role === 'admin') {
+      const existingAdmin = await Admin.findOne({ where: { role: 'admin' } });
+      if (existingAdmin) {
+        return reply.status(400).send({ status: false, message: 'Admin already created' });
+      }
+    }
+
     // Define all possible permissions
     const allPermissions = [
       'Dashboard', 'Movie', 'Music', 'Web Series', 'Tv Show', 'Live TV',
@@ -127,6 +134,29 @@ exports.editAdmin = async (req, reply) => {
     reply.status(500).send({ status: false, message: 'Server error', error: error.message });
   }
 };
+
+
+exports.getAllSubAdmins = async (req, reply) => {
+  try {
+    const subadmins = await Admin.findAll({
+      where: { role: 'subadmin' },
+      order: [['createdAt', 'DESC']]
+    });
+
+    reply.send({
+      status: true,
+      message: 'All subadmins fetched successfully',
+      data: subadmins
+    });
+  } catch (error) {
+    reply.status(500).send({
+      status: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
 
 // Delete Admin
 exports.deleteAdmin = async (req, reply) => {
