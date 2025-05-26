@@ -5,6 +5,8 @@ const MovieCategory = require('../model/movie_category_model');
 const ShortFilmRatingModel = require('../model/short_film_rating_model');
 const ShortfilmAdsModel = require('../model/shortfilm_ads_model');
 const VideoAdsModel = require('../model/video_ads_model');
+const { Op } = require('sequelize');
+
 const extractFilePath = (file) => (file ? file.path.replace(/\\/g, '/') : null);
 
 exports.createShortFilm = async (req, res) => {
@@ -28,7 +30,7 @@ exports.createShortFilm = async (req, res) => {
             released_date
         } = req.body;
 
-        
+
         const existingFilm = await ShortFilmModel.findOne({ where: { short_film_title } });
         if (existingFilm) {
             return res.status(400).json({
@@ -74,71 +76,88 @@ exports.createShortFilm = async (req, res) => {
 };
 
 exports.getAllShortFilms = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
 
-    const { count, rows } = await ShortFilmModel.findAndCountAll({
-      include: [
-        { model: MovieLanguage, as: 'language' },
-        { model: Genre, as: 'genre' },
-        { model: MovieCategory, as: 'category' },
-        {
-          model: ShortFilmRatingModel,
-          as: 'ratings',
-          attributes: ['rating', 'user_id']
+        const { short_film_title, language, genre } = req.query;
+        const whereClause = {};
+
+        if (short_film_title) {
+            whereClause.short_film_title = {
+                [Op.iLike]: `%${short_film_title}%`
+            };
         }
-      ],
-      limit,
-      offset,
-      order: [['createdAt', 'DESC']],
-    });
 
-    const enhancedFilms = await Promise.all(rows.map(async (film) => {
-      const filmJson = film.toJSON();
-      const ratings = filmJson.ratings || [];
+        if (language) {
+            whereClause.movie_language = language;
+        }
 
-      // Add average and total ratings
-      if (ratings.length > 0) {
-        const total = ratings.reduce((sum, r) => sum + r.rating, 0);
-        filmJson.average_rating = (total / ratings.length).toFixed(2);
-        filmJson.total_ratings = ratings.length;
-      } else {
-        filmJson.average_rating = null;
-        filmJson.total_ratings = 0;
-      }
+        if (genre) {
+            whereClause.genre_id = genre;
+        }
+        const { count, rows } = await ShortFilmModel.findAndCountAll({
+            where: whereClause,
+            include: [
+                { model: MovieLanguage, as: 'language' },
+                { model: Genre, as: 'genre' },
+                { model: MovieCategory, as: 'category' },
+                {
+                    model: ShortFilmRatingModel,
+                    as: 'ratings',
+                    attributes: ['rating', 'user_id']
+                }
+            ],
+            limit,
+            offset,
+            order: [['createdAt', 'DESC']],
+        });
 
-      // Add shortfilm ads
-      const shortfilmAds = await ShortfilmAdsModel.findAll({
-        where: { shortfilm_id: film.id },
-        include: [
-          { model: ShortFilmModel, as: 'shortfilm' },
-          { model: VideoAdsModel, as: 'video_ad' },
-        ]
-      });
-      filmJson.shortfilm_ads = shortfilmAds;
+        const enhancedFilms = await Promise.all(rows.map(async (film) => {
+            const filmJson = film.toJSON();
+            const ratings = filmJson.ratings || [];
 
-      return filmJson;
-    }));
+            // Add average and total ratings
+            if (ratings.length > 0) {
+                const total = ratings.reduce((sum, r) => sum + r.rating, 0);
+                filmJson.average_rating = (total / ratings.length).toFixed(2);
+                filmJson.total_ratings = ratings.length;
+            } else {
+                filmJson.average_rating = null;
+                filmJson.total_ratings = 0;
+            }
 
-    return res.status(200).json({
-      status: true,
-      message: "Short films fetched successfully",
-      data: enhancedFilms,
-      pagination: {
-        totalItems: count,
-        currentPage: page,
-        totalPages: Math.ceil(count / limit),
-      },
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: false,
-      message: "Failed to fetch short films",
-      data: error.message,
-    });
-  }
+            // Add shortfilm ads
+            const shortfilmAds = await ShortfilmAdsModel.findAll({
+                where: { shortfilm_id: film.id },
+                include: [
+                    { model: ShortFilmModel, as: 'shortfilm' },
+                    { model: VideoAdsModel, as: 'video_ad' },
+                ]
+            });
+            filmJson.shortfilm_ads = shortfilmAds;
+
+            return filmJson;
+        }));
+
+        return res.status(200).json({
+            status: true,
+            message: "Short films fetched successfully",
+            data: enhancedFilms,
+            pagination: {
+                totalItems: count,
+                currentPage: page,
+                totalPages: Math.ceil(count / limit),
+            },
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: "Failed to fetch short films",
+            data: error.message,
+        });
+    }
 };
 
 exports.getShortFilmById = async (req, res) => {
@@ -226,28 +245,29 @@ exports.updateShortFilm = async (req, res) => {
 };
 
 exports.deleteShortFilm = async (req, res) => {
-    try {
-        const film = await ShortFilmModel.findByPk(req.params.id);
-        if (!film) {
-            return res.status(404).json({
-                status: false,
-                message: "Short film not found",
-                data: null,
-            });
-        }
+  try {
+    const { ids } = req.body;
 
-        await film.destroy();
-
-        return res.status(200).json({
-            status: true,
-            message: "Short film deleted successfully",
-            data: null,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: "Failed to delete short film",
-            data: error.message,
-        });
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        status: false,
+        message: "No film IDs provided",
+      });
     }
+
+    const deleted = await ShortFilmModel.destroy({
+      where: { id: ids }
+    });
+
+    return res.status(200).json({
+      status: true,
+      message: `${deleted} short film(s) deleted successfully`,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Failed to delete short films",
+      data: error.message,
+    });
+  }
 };
