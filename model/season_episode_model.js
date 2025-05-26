@@ -4,6 +4,7 @@ const { sequelize } = require('../config/db');
 const SeriesModel = require('./series_model');
 const SeasonModel = require('./season_model');
 
+
 const SeasonEpisodeModel = sequelize.define('SeasonEpisodeModel', {
     id: {
         type: DataTypes.UUID,

@@ -1,6 +1,8 @@
 const SeasonEpisodeModel = require('../model/season_episode_model');
 const EpisodeAdsModel = require('../model/season_episode_ads_model');
 const VideoAdsModel = require('../model/video_ads_model');
+const { Op } = require('sequelize');
+
 // const path = require('path');
 exports.createSeasonEpisode = async (req, res) => {
   try {
@@ -46,7 +48,22 @@ exports.getAllSeasonEpisodes = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
+     const { name, season_id, series_id } = req.query;
+
+    const whereClause = {};
+    if (name) {
+      whereClause.episode_name = { [Op.iLike]: `%${name}%` };
+    }
+    if (season_id) {
+      whereClause.season_id = season_id;
+    }
+    if (series_id) {
+      whereClause.series_id = series_id;
+    }
+
+
     const { count, rows } = await SeasonEpisodeModel.findAndCountAll({
+      where: whereClause,
       limit,
       offset,
     });
@@ -166,25 +183,36 @@ exports.updateSeasonEpisode = async (req, res) => {
 
 exports.deleteSeasonEpisode = async (req, res) => {
   try {
-    const episode = await SeasonEpisodeModel.findByPk(req.params.id);
-    if (!episode) {
-      return res.status(404).json({
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
         status: false,
-        message: 'Episode not found'
+        message: 'Please provide an array of episode IDs to delete',
       });
     }
 
-    await episode.destroy();
+    const deleted = await SeasonEpisodeModel.destroy({
+      where: { id: ids },
+    });
 
-    res.status(200).json({
+    if (deleted === 0) {
+      return res.status(404).json({
+        status: false,
+        message: 'No episodes found to delete',
+      });
+    }
+
+    return res.status(200).json({
       status: true,
-      message: 'Episode deleted successfully'
+      message: `${deleted} episode(s) deleted successfully`,
     });
   } catch (error) {
     res.status(500).json({
       status: false,
-      message: 'Error deleting episode',
-      data: error.message,
+      message: 'Error deleting episodes',
+      error: error.message,
     });
   }
 };
+

@@ -26,6 +26,6 @@ router.put(
   controller.updateSeasonEpisode
 );
 
-router.delete('/:id', controller.deleteSeasonEpisode);
+router.delete('/', controller.deleteSeasonEpisode);
 
 module.exports = router;
