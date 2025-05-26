@@ -1,6 +1,7 @@
 const LiveTvCategory = require('../model/live_tv_category_model');
 const fs = require('fs');
 const path = require('path');
+const { Op } = require('sequelize');
 
 exports.createCategory = async (req, res) => {
   try {
@@ -25,11 +26,18 @@ exports.createCategory = async (req, res) => {
 
 exports.getAllCategories = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1; // default page = 1
-    const limit = parseInt(req.query.limit) || 10; // default limit = 10
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
+    const name = req.query.name || '';
+
 
     const { count, rows } = await LiveTvCategory.findAndCountAll({
+      where: {
+        name: {
+          [Op.like]: `%${name}%` 
+        }
+      },
       limit,
       offset,
       order: [['createdAt', 'DESC']],

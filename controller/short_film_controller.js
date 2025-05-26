@@ -86,7 +86,7 @@ exports.getAllShortFilms = async (req, res) => {
 
         if (short_film_title) {
             whereClause.short_film_title = {
-                [Op.iLike]: `%${short_film_title}%`
+                [Op.like]: `%${short_film_title}%`
             };
         }
 

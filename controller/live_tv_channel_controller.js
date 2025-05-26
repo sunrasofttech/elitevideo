@@ -2,6 +2,7 @@ const LiveTvChannel = require('../model/live_tv_channel_model');
 const LiveTvChannelAdsModel = require('../model/livetv_channel_ads_model');
 const LiveTvChannelModel = require('../model/live_tv_channel_model');
 const VideoAdsModel = require('../model/video_ads_model');
+const { Op } = require('sequelize');
 
 // ✅ Create Channel
 exports.createChannel = async (req, res) => {
@@ -41,8 +42,22 @@ exports.getAllChannels = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
+      const { name, live_category_id } = req.query; 
+
+        const whereClause = {};
+
+        if (name) {
+            whereClause.name = {
+                [Op.like]: `%${name}%`
+            };
+        }
+
+        if (live_category_id) {
+            whereClause.live_category_id = live_category_id;
+        }
 
     const { count, rows } = await LiveTvChannel.findAndCountAll({
+      where:whereClause,
       limit,
       offset,
       order: [['createdAt', 'DESC']],
@@ -158,27 +173,37 @@ exports.updateChannel = async (req, res) => {
 // ✅ Delete Channel
 exports.deleteChannel = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deleted = await LiveTvChannel.destroy({ where: { id } });
+    const { ids } = req.body;
 
-    if (!deleted) {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        status: false,
+        message: 'No IDs provided for deletion',
+        data: null,
+      });
+    }
+
+    const deleted = await LiveTvChannel.destroy({
+      where: { id: ids },
+    });
+
+    if (deleted === 0) {
       return res.status(404).json({
         status: false,
-        message: 'Channel not found',
-        data: null
+        message: 'No matching channels found to delete',
+        data: null,
       });
     }
 
     res.json({
       status: true,
-      message: 'Channel deleted successfully',
-      data: null
+      message: `Deleted ${deleted} channel(s) successfully`
     });
   } catch (err) {
     res.status(500).json({
       status: false,
-      message: 'Failed to delete channel',
-      data: err.message
+      message: 'Failed to delete channels',
+      data: err.message,
     });
   }
 };

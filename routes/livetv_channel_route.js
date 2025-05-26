@@ -12,6 +12,6 @@ router.post('/', multiUpload, controller.createChannel);
 router.post('/get-all', controller.getAllChannels);
 router.post('/:id', controller.getChannelById);
 router.put('/:id', multiUpload, controller.updateChannel);
-router.delete('/:id', controller.deleteChannel);
+router.delete('/', controller.deleteChannel);
 
 module.exports = router;

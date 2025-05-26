@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 const LiveTvCategoryModel = require('../model/live_tv_category_model');
 
+
 const LiveTvChannel = sequelize.define('LiveTvChannel', {
   id: {
     type: DataTypes.UUID,
@@ -60,5 +61,7 @@ const LiveTvChannel = sequelize.define('LiveTvChannel', {
     tableName: 'livetv_channel',
     timestamps: true,
   });
+
+LiveTvChannel.belongsTo(LiveTvCategoryModel,{foreignKey:'live_category_id',as:'live_category'})
 
 module.exports = LiveTvChannel;
