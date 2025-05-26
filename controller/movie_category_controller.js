@@ -1,9 +1,11 @@
 const MovieCategory = require('../model/movie_category_model');
+const { Op } = require('sequelize');
 
 // Create
 exports.createMovieCategory = async (req, res) => {
   try {
     const { name, status } = req.body;
+    
     const existingCategory = await MovieCategory.findOne({ where: { name } });
     if (existingCategory) {
       return res.status(409).json({
@@ -24,8 +26,15 @@ exports.getAllMovieCategories = async (req, res) => {
       const page = parseInt(req.query.page) || 1;  
       const limit = parseInt(req.query.limit) || 10;
       const offset = (page - 1) * limit;
+      const name = req.query.name || '';
+
+    const whereClause = name
+      ? { name: { [Op.like]: `%${name}%` } }
+      : {};
+
   
       const { count, rows } = await MovieCategory.findAndCountAll({
+        where: whereClause,
         limit,
         offset,
         order: [['createdAt', 'DESC']],
