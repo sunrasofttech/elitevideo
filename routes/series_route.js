@@ -12,6 +12,6 @@ router.post('/', seriesUpload, seriesController.createSeries);
 router.post('/get-all', seriesController.getAllSeries);
 router.post('/:id', seriesController.getSeriesById);
 router.put('/:id', seriesUpload, seriesController.updateSeries);
-router.delete('/:id', seriesController.deleteSeries);
+router.delete('/', seriesController.deleteSeries);
 
 module.exports = router;

@@ -3,6 +3,7 @@ const MovieLanguage = require('../model/movie_language_model');
 const Genre = require('../model/genre_model');
 const MovieCategory = require('../model/movie_category_model');
 const SeasonModel = require('../model/season_model');
+const { Op } = require('sequelize');
 
 exports.createSeries = async (req, res) => {
   try {
@@ -49,7 +50,21 @@ exports.createSeries = async (req, res) => {
 
 exports.getAllSeries = async (req, res) => {
   try {
+    const { name, language, category } = req.query;
+
+    const whereClause = {};
+    if (name) {
+      whereClause.series_name = { [Op.like]: `%${name}%` };
+    }
+    if (language) {
+      whereClause.movie_language = language;
+    }
+    if (category) {
+      whereClause.movie_category = category;
+    }
+
     const seriesList = await SeriesModel.findAll({
+      where: whereClause,
       include: [
         { model: MovieLanguage, as: 'language' },
         { model: Genre, as: 'genre' },
@@ -187,19 +202,29 @@ exports.updateSeries = async (req, res) => {
 
 exports.deleteSeries = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deleted = await SeriesModel.destroy({ where: { id } });
+    const { ids } = req.body;
 
-    if (!deleted) {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        status: false,
+        message: 'No series IDs provided for deletion',
+      });
+    }
+
+    const deleted = await SeriesModel.destroy({
+      where: { id: ids },
+    });
+
+    if (deleted === 0) {
       return res.status(404).json({
         status: false,
-        message: 'Series not found',
+        message: 'No matching series found to delete',
       });
     }
 
     return res.status(200).json({
       status: true,
-      message: 'Series deleted successfully',
+      message: `${deleted} series deleted successfully`,
     });
   } catch (err) {
     return res.status(500).json({
