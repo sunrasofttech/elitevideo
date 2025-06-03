@@ -57,7 +57,7 @@ const AdminSetting = sequelize.define('AdminSetting', {
     allowNull: true,
   },
   payment_type: {
-    type: DataTypes.ENUM('UPI', 'RazorPay', 'Cashfree', 'PhonePe', 'SkillPay', 'NoGateway','Free'),
+    type: DataTypes.ENUM('UPI', 'RazorPay', 'Cashfree', 'PhonePe', 'SkillPay', 'NoGateway', 'Free'),
     allowNull: true,
     defaultValue: 'UPI',
   },
@@ -69,24 +69,36 @@ const AdminSetting = sequelize.define('AdminSetting', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  whatsapp_contact_number :{
+  whatsapp_contact_number: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  author_name:{
+  author_name: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  developed_by:{
+  developed_by: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  app_logo:{
+  app_logo: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  admin_email:{
+  admin_email: {
     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  firebase_project_id: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  firebase_client_email: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  firebase_private_key: {
+    type: DataTypes.TEXT,
     allowNull: true,
   },
   createdAt: {
