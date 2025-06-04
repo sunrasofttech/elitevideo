@@ -1,4 +1,6 @@
 const SubscriptionPlanModel = require('../model/subscription_plan_model');
+const { Op } = require('sequelize');
+
 
 exports.createSubscriptionPlan = async (req, res) => {
     try {
@@ -10,12 +12,49 @@ exports.createSubscriptionPlan = async (req, res) => {
 };
 
 exports.getAllSubscriptionPlans = async (req, res) => {
-    try {
-        const plans = await SubscriptionPlanModel.findAll();
-        res.status(200).json({ status: true, message: 'Fetched all subscription plans.', data: plans });
-    } catch (error) {
-        res.status(500).json({ status: false, message: 'Error fetching plans.', data: error.message });
+  try {
+    let { page = 1, limit = 10, status, plan_name } = req.query;
+
+    page = parseInt(page);
+    limit = parseInt(limit);
+    const offset = (page - 1) * limit;
+
+    const whereCondition = {};
+
+    if (status !== undefined) {
+      // Convert to boolean
+      whereCondition.status = status === 'true';
     }
+
+    if (plan_name) {
+      whereCondition.plan_name = { [Op.like]: `%${plan_name}%` }; 
+    }
+
+    const { count, rows } = await SubscriptionPlanModel.findAndCountAll({
+      where: whereCondition,
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
+    });
+
+    res.status(200).json({
+      status: true,
+      message: 'Fetched subscription plans successfully',
+      data: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: 'Error fetching plans.',
+      data: error.message,
+    });
+  }
 };
 
 exports.getSubscriptionPlanById = async (req, res) => {
