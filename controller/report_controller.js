@@ -56,3 +56,38 @@ exports.reportContent = async (req, res) => {
       });
     }
   };
+
+  exports.getAllReports = async (req, res) => {
+  try {
+    const reports = await ReportModel.findAll();
+
+    const detailedReports = await Promise.all(reports.map(async report => {
+      let content = null;
+
+      if (report.content_type === 'movie') {
+        content = await Movie.findByPk(report.content_id);
+      } else if (report.content_type === 'series') {
+        content = await Series.findByPk(report.content_id);
+      } else if (report.content_type === 'live') {
+        content = await LiveChannel.findByPk(report.content_id);
+      }
+
+      return {
+        ...report.toJSON(),
+        content_details: content,
+      };
+    }));
+
+    return res.status(200).json({
+      status: true,
+      message: 'All reports with content details fetched successfully',
+      data: detailedReports,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: 'Something went wrong',
+      data: error.message,
+    });
+  }
+};
