@@ -109,7 +109,7 @@ exports.editAdmin = async (req, reply) => {
       'Sub Admin', 'Subscription', 'Reports', 'Notification', 'Settings'
     ];
 
-    // If admin, enable all
+    // If admin, enable all permissions
     if (role === 'admin') {
       let permissions = {};
       allPermissions.forEach((key) => {
@@ -117,15 +117,12 @@ exports.editAdmin = async (req, reply) => {
       });
       admin.permissions = permissions;
     } else {
-      // Preserve existing permissions
-      let currentPermissions = admin.permissions || {};
+      // Set each permission based on selectedPermissions
+      let permissions = {};
       allPermissions.forEach((key) => {
-        if (selectedPermissions.includes(key)) {
-          currentPermissions[key] = true;
-        }
-        // Leave others unchanged
+        permissions[key] = selectedPermissions.includes(key);
       });
-      admin.permissions = currentPermissions;
+      admin.permissions = permissions;
     }
 
     await admin.save();
@@ -134,6 +131,7 @@ exports.editAdmin = async (req, reply) => {
     reply.status(500).send({ status: false, message: 'Server error', error: error.message });
   }
 };
+
 
 
 exports.getAllSubAdmins = async (req, reply) => {
