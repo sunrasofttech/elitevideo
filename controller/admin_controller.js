@@ -132,19 +132,39 @@ exports.editAdmin = async (req, reply) => {
   }
 };
 
-
-
 exports.getAllSubAdmins = async (req, reply) => {
   try {
-    const subadmins = await Admin.findAll({
-      where: { role: 'subadmin' },
-      order: [['createdAt', 'DESC']]
+    const { page = 1, limit = 10, search = '' } = req.query;
+
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+
+    const whereCondition = {
+      role: 'subadmin',
+      ...(search && {
+        [Op.or]: [
+          { name: { [Op.like]: `%${search}%` } },
+          { email: { [Op.like]: `%${search}%` } }
+        ]
+      })
+    };
+
+    const { count, rows } = await Admin.findAndCountAll({
+      where: whereCondition,
+      order: [['createdAt', 'DESC']],
+      limit: parseInt(limit),
+      offset: offset
     });
 
     reply.send({
       status: true,
-      message: 'All subadmins fetched successfully',
-      data: subadmins
+      message: 'Subadmins fetched successfully',
+      data: rows,
+      pagination: {
+        total: count,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(count / limit)
+      }
     });
   } catch (error) {
     reply.status(500).send({
@@ -154,7 +174,6 @@ exports.getAllSubAdmins = async (req, reply) => {
     });
   }
 };
-
 
 // Delete Admin
 exports.deleteAdmin = async (req, reply) => {
