@@ -8,7 +8,7 @@ const keys = {
     private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
 };
 
-async function sendNotification() {
+async function sendNotification(title,body) {
     try {
         const accessToken = await getAccessToken();
         console.log("*", accessToken);
@@ -19,8 +19,8 @@ async function sendNotification() {
                 message: {
                     topic: "all",
                     notification: {
-                        title: "Test Notification",
-                        body: "This is a test notification",
+                        title: title,
+                        body:body,
                     },
                     data: {
                         click_action: "FLUTTER_NOTIFICATION_CLICK",

@@ -34,6 +34,7 @@ const ShortfilmAdsRoutes = require('./routes/shortfilm_ads_route');
 const SeasonEpisodeRoutes = require('./routes/season_episode_ads_route');
 const LiveTvChannelAdsRoutes = require('./routes/livetv_channel_ads_route');
 const SubscriptionPlanRoutes = require('./routes/subscription_plan_route');
+const NotificationRoutes = require('./routes/notification_routes');
 require('./cron/subscription_cron');
 require('./cron/deactive_user_cron');
 
@@ -71,7 +72,7 @@ app.use(`${baseUrl}/shortfilm-ads`, ShortfilmAdsRoutes);
 app.use(`${baseUrl}/season-episode-ads`, SeasonEpisodeRoutes);
 app.use(`${baseUrl}/livetv_channel-ads`, LiveTvChannelAdsRoutes);
 app.use(`${baseUrl}/subscription-plan`,SubscriptionPlanRoutes);
-
+app.use(`${baseUrl}/notification`,NotificationRoutes);
 
 const PORT = process.env.PORT || 3000;
 
