@@ -1,6 +1,7 @@
 const Season = require('../model/season_model');
 const Series = require('../model/series_model');
 const SeasonEpisodeModel = require('../model/season_episode_model');
+const { Op } = require('sequelize');
 
 exports.createSeason = async (req, res) => {
   try {
@@ -72,12 +73,26 @@ exports.createMultipleSeasons = async (req, res) => {
 
 exports.getAllSeasons = async (req, res) => {
   try {
-    const seasons = await Season.findAll({
+    const { page = 1, limit = 10, search = '' } = req.query;
+    const offset = (page - 1) * limit;
+
+    const whereCondition = search
+      ? {
+          season_name: {
+            [require('sequelize').Op.like]: `%${search}%`,
+          }
+        }
+      : {};
+
+    const { count, rows: seasons } = await Season.findAndCountAll({
+      where: whereCondition,
       include: {
         model: Series,
         as: 'series',
       },
       order: [['createdAt', 'DESC']],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
     });
 
     const result = await Promise.all(
@@ -94,11 +109,22 @@ exports.getAllSeasons = async (req, res) => {
       })
     );
 
-    res.status(200).json({ status: true, message: "All seasons fetched", data: result });
+    res.status(200).json({
+      status: true,
+      message: "All seasons fetched",
+      data: result,
+      pagination: {
+        total: count,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(count / limit),
+      }
+    });
   } catch (err) {
     res.status(500).json({ status: false, message: "Error fetching seasons", data: err.message });
   }
 };
+
 
 exports.getSeasonById = async (req, res) => {
   try {
