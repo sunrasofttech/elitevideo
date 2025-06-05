@@ -11,15 +11,34 @@ exports.createShortfilmAd = async (req, res) => {
   }
 };
 
+
 exports.getAllShortfilmAds = async (req, res) => {
   try {
-    const shortfilmAds = await ShortfilmAdsModel.findAll({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await ShortfilmAdsModel.findAndCountAll({
       include: [
         { model: ShortfilmModel, as: 'shortfilm' },
         { model: VideoAdsModel, as: 'video_ad' }
-      ]
+      ],
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
     });
-    res.json({ status: true, message: 'Shortfilm Ads fetched successfully', data: shortfilmAds });
+
+    res.json({
+      status: true,
+      message: 'Shortfilm Ads fetched successfully',
+      data: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      }
+    });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message, data: null });
   }

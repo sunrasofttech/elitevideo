@@ -27,18 +27,30 @@ exports.createSeasonEpisodeAd = async (req, res) => {
 
 exports.getAllSeasonEpisodeAds = async (req, res) => {
   try {
-    const ads = await SeasonEpisodeAdsModel.findAll({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await SeasonEpisodeAdsModel.findAndCountAll({
       include: [
         { model: SeasonEpisodeModel, as: 'season_episode' },
         { model: VideoAdsModel, as: 'video_ad' },
       ],
       order: [['createdAt', 'DESC']],
+      limit,
+      offset,
     });
 
     return res.status(200).json({
       status: true,
       message: 'Season Episode Ads fetched successfully',
-      data: ads
+      data: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      }
     });
   } catch (error) {
     return res.status(500).json({
@@ -48,6 +60,7 @@ exports.getAllSeasonEpisodeAds = async (req, res) => {
     });
   }
 };
+
 
 exports.getSeasonEpisodeAdById = async (req, res) => {
   try {

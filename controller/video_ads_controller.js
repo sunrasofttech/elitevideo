@@ -21,12 +21,32 @@ exports.createVideoAd = async (req, res) => {
 
 exports.getAllVideoAds = async (req, reply) => {
   try {
-    const ads = await VideoAdsModel.findAll();
-    reply.send({ status: true, message: 'Video ads fetched successfully', data: ads });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await VideoAdsModel.findAndCountAll({
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
+    });
+
+    reply.send({
+      status: true,
+      message: 'Video ads fetched successfully',
+      data: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      }
+    });
   } catch (error) {
     reply.status(500).send({ status: false, message: 'Server error', error: error.message });
   }
 };
+
 
 exports.getVideoAdById = async (req, reply) => {
   try {

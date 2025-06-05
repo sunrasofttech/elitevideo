@@ -23,23 +23,36 @@ exports.createLiveTvChannelAd = async (req, res) => {
 
 exports.getAllLiveTvChannelAds = async (req, res) => {
   try {
-    const ads = await LiveTvChannelAdsModel.findAll({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await LiveTvChannelAdsModel.findAndCountAll({
       include: [
         { model: LiveTvChannelModel, as: 'livetv_channel' },
         { model: VideoAdsModel, as: 'video_ad' },
       ],
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
     });
 
     res.status(200).json({
       status: true,
       message: 'Live TV Channel Ads fetched successfully',
-      data: ads,
+      data: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      },
     });
   } catch (error) {
     res.status(500).json({
       status: false,
       message: 'Failed to fetch Live TV Channel Ads',
-      data: error,
+      data: error.message,
     });
   }
 };

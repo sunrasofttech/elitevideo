@@ -13,17 +13,36 @@ exports.createMovieAd = async (req, res) => {
 
 exports.getAllMovieAds = async (req, res) => {
   try {
-    const movieAds = await MovieAdsModel.findAll({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await MovieAdsModel.findAndCountAll({
       include: [
         { model: MovieModel, as: 'movie' },
         { model: VideoAdsModel, as: 'video_ad' },
-      ]
+      ],
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
     });
-    res.json({ status: true, message: 'Movie Ads fetched successfully', data: movieAds });
+
+    res.json({
+      status: true,
+      message: 'Movie Ads fetched successfully',
+      data: rows,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+      }
+    });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message, data: null });
   }
 };
+
 
 exports.getMovieAdById = async (req, res) => {
   try {
