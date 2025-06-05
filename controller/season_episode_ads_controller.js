@@ -79,6 +79,39 @@ exports.getSeasonEpisodeAdById = async (req, res) => {
   }
 };
 
+exports.updateSeasonEpisodeAd = async (req, res) => {
+  try {
+    const { season_episode_id, video_ad_id } = req.body;
+    const { id } = req.params;
+
+    const ad = await SeasonEpisodeAdsModel.findByPk(id);
+    if (!ad) {
+      return res.status(404).json({
+        status: false,
+        message: 'Season Episode Ad not found',
+      });
+    }
+
+    await ad.update({
+      season_episode_id,
+      video_ad_id,
+    });
+
+    return res.status(200).json({
+      status: true,
+      message: 'Season Episode Ad updated successfully',
+      data: ad,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: 'Failed to update season episode ad',
+      data: error.message,
+    });
+  }
+};
+
+
 exports.deleteSeasonEpisodeAd = async (req, res) => {
   try {
     const deleted = await SeasonEpisodeAdsModel.destroy({

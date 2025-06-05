@@ -5,6 +5,7 @@ const seasonEpisodeAdsController = require('../controller/season_episode_ads_con
 router.post('/', seasonEpisodeAdsController.createSeasonEpisodeAd);
 router.get('/', seasonEpisodeAdsController.getAllSeasonEpisodeAds);
 router.get('/:id', seasonEpisodeAdsController.getSeasonEpisodeAdById);
+router.put('/:id', seasonEpisodeAdsController.updateSeasonEpisodeAd);
 router.delete('/:id', seasonEpisodeAdsController.deleteSeasonEpisodeAd);
 
 module.exports = router;
