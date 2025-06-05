@@ -25,13 +25,26 @@ exports.addCastCrew = async (req, res) => {
 
 exports.getAllCastCrew = async (req, res) => {
     try {
-        const all = await CastCrew.findAll({
-            include: [{ model: Movie, as: 'movie' }]
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const { count, rows } = await CastCrew.findAndCountAll({
+            include: [{ model: Movie, as: 'movie' }],
+            limit,
+            offset
         });
+
         res.json({
             status: true,
             message: 'Cast/Crew fetched successfully',
-            data: all
+            data: rows,
+            pagination: {
+                totalItems: count,
+                currentPage: page,
+                totalPages: Math.ceil(count / limit),
+                perPage: limit
+            }
         });
     } catch (err) {
         res.status(500).json({
