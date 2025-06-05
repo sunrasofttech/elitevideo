@@ -1,5 +1,6 @@
 const CastCrew = require('../model/cast_crew_model');
 const Movie = require('../model/movie_model');
+const { Op } = require('sequelize'); // Import Op for like queries
 
 exports.addCastCrew = async (req, res) => {
     try {
@@ -29,7 +30,22 @@ exports.getAllCastCrew = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
 
+        const filters = {};
+
+        // Filter by name (LIKE query)
+        if (req.query.name) {
+            filters.name = {
+                [Op.like]: `%${req.query.name}%`
+            };
+        }
+
+        // Filter by movie_id (Exact match)
+        if (req.query.movie_id) {
+            filters.movie_id = req.query.movie_id;
+        }
+
         const { count, rows } = await CastCrew.findAndCountAll({
+            where: filters,
             include: [{ model: Movie, as: 'movie' }],
             limit,
             offset
@@ -54,7 +70,6 @@ exports.getAllCastCrew = async (req, res) => {
         });
     }
 };
-
 exports.getCastCrewById = async (req, res) => {
     try {
         const { id } = req.params;

@@ -50,7 +50,7 @@ exports.createSeries = async (req, res) => {
 
 exports.getAllSeries = async (req, res) => {
   try {
-    const { name, language, category } = req.query;
+    const { name, language, category, page = 1, limit = 10 } = req.query;
 
     const whereClause = {};
     if (name) {
@@ -63,7 +63,9 @@ exports.getAllSeries = async (req, res) => {
       whereClause.movie_category = category;
     }
 
-    const seriesList = await SeriesModel.findAll({
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+
+    const { count, rows: seriesList } = await SeriesModel.findAndCountAll({
       where: whereClause,
       include: [
         { model: MovieLanguage, as: 'language' },
@@ -71,6 +73,8 @@ exports.getAllSeries = async (req, res) => {
         { model: MovieCategory, as: 'category' },
       ],
       order: [['createdAt', 'DESC']],
+      limit: parseInt(limit),
+      offset: offset
     });
 
     const result = await Promise.all(
@@ -91,6 +95,12 @@ exports.getAllSeries = async (req, res) => {
       status: true,
       message: 'Series fetched successfully',
       data: result,
+      pagination: {
+        totalItems: count,
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(count / limit),
+        perPage: parseInt(limit),
+      }
     });
   } catch (err) {
     return res.status(500).json({
