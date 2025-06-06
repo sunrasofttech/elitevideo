@@ -115,18 +115,43 @@ exports.signin = async (req, res) => {
   }
 };
 
-// Get All Users
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll({
-      include:[{
-        model:SubscriptionModel,
-        as:'subscription'
-      }]
+    const { page = 1, limit = 10, name, mobile_no } = req.query;
+
+    const whereClause = {};
+    if (name) {
+      whereClause.name = { [Op.like]: `%${name}%` };
+    }
+    if (mobile_no) {
+      whereClause.mobile_no = { [Op.like]: `%${mobile_no}%` };
+    }
+
+    const offset = (page - 1) * limit;
+
+    const users = await User.findAndCountAll({
+      where: whereClause,
+      include: [
+        {
+          model: SubscriptionModel,
+          as: 'subscription',
+        },
+      ],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [['createdAt', 'DESC']],
     });
-    res.status(200).json({status:true, message:"Get all user successfully.",users});
+
+    res.status(200).json({
+      status: true,
+      message: 'Get all users successfully.',
+      total: users.count,
+      page: parseInt(page),
+      pages: Math.ceil(users.count / limit),
+      users: users.rows,
+    });
   } catch (error) {
-    res.status(500).json({status:false, message: error.message });
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
