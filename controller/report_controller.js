@@ -5,7 +5,7 @@ const ReportModel = require('../model/report_model');
 
 exports.reportContent = async (req, res) => {
     try {
-      const { user_id, content_type, content_id } = req.body;
+      const { user_id, content_type, content_id,reason } = req.body;
   
       let model;
       if (content_type === 'movie') model = Movie;
@@ -20,7 +20,7 @@ exports.reportContent = async (req, res) => {
       }
   
       const existingReport = await ReportModel.findOne({
-        where: { user_id, content_id, content_type }
+        where: { user_id, content_id, content_type,reason }
       });
   
       if (existingReport) {
@@ -41,7 +41,7 @@ exports.reportContent = async (req, res) => {
       content.report_count += 1;
       await content.save();
   
-      await ReportModel.create({ user_id, content_id, content_type });
+      await ReportModel.create({ user_id, content_id, content_type,reason });
   
       return res.status(200).json({
         status: true,

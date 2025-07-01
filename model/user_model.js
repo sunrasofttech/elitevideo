@@ -87,6 +87,51 @@ const User = sequelize.define('User', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  // android device info
+  model:{
+     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  brand:{
+     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  device:{
+     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  manufacturer:{
+     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  android_version:{
+     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  SDK:{
+     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  board:{
+     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  fingerprint:{
+     type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  hardware:{
+     type: DataTypes.STRING,
+    allowNull: true,
+  },
+   android_ID:{
+     type: DataTypes.STRING,
+    allowNull: true,
+  },
+   Product:{
+     type: DataTypes.STRING,
+    allowNull: true,
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

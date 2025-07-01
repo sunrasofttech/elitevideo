@@ -9,73 +9,72 @@ const moment = require('moment');
 
 require('dotenv').config();
 
-
-
 exports.clearExpiredSubscriptions = async () => {
-    try {
-        const today = new Date();
+  try {
+    const today = new Date();
 
-        await UserModel.update(
-            {
-                subscription_id: null,
-                subscription: false,
-            },
-            {
-                where: {
-                    subscription_end_date: {
-                        [Op.lt]: today,
-                    },
-                },
-            }
-        );
+    await UserModel.update(
+      {
+        subscription_id: null,
+        subscription: false,
+      },
+      {
+        where: {
+          subscription_end_date: {
+            [Op.lt]: today,
+          },
+        },
+      }
+    );
 
-        console.log('Expired subscriptions cleared');
-    } catch (err) {
-        console.error('Error in cron:', err);
-    }
+    console.log('Expired subscriptions cleared');
+  } catch (err) {
+    console.error('Error in cron:', err);
+  }
 };
 
 exports.deactivateInactiveUsers = async () => {
-    try {
-        const today = moment().format('YYYY-MM-DD');
+  try {
+    const today = moment().format('YYYY-MM-DD');
 
-        const users = await UserModel.findAll({
-            where: {
-                is_active: true,
-                [Op.or]: [
-                    { active_date: { [Op.ne]: today } },
-                    { active_date: { [Op.is]: null } },
-                ],
-            },
-        });
+    const users = await UserModel.findAll({
+      where: {
+        is_active: true,
+        [Op.or]: [
+          { active_date: { [Op.ne]: today } },
+          { active_date: { [Op.is]: null } },
+        ],
+      },
+    });
 
-        const userIds = users.map(user => user.id);
+    const userIds = users.map(user => user.id);
 
-        if (userIds.length > 0) {
-            await UserModel.update(
-                { is_active: false },
-                {
-                    where: {
-                        id: { [Op.in]: userIds },
-                    },
-                }
-            );
-
-            console.log(` Deactivated ${userIds.length} inactive users.`);
-        } else {
-            console.log(' All users are already active for today.');
+    if (userIds.length > 0) {
+      await UserModel.update(
+        { is_active: false },
+        {
+          where: {
+            id: { [Op.in]: userIds },
+          },
         }
-    } catch (error) {
-        console.error(' Error in deactivating inactive users:', error.message);
+      );
+
+      console.log(` Deactivated ${userIds.length} inactive users.`);
+    } else {
+      console.log(' All users are already active for today.');
     }
+  } catch (error) {
+    console.error(' Error in deactivating inactive users:', error.message);
+  }
 };
 
 exports.signup = async (req, res) => {
   try {
-    const { name, mobile_no, email, password } = req.body;
+    const { name, mobile_no, email, password, deviceToken, deviceId, app_version, model, brand, device, manufacturer, android_version, SDK, board, fingerprint, hardware, android_ID, Product
+    } = req.body;
 
     const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) return res.status(400).json({status:false, message: 'Email already registered' });
+    if (existingUser) return res.status(400).json({ status: false, message: 'Email already registered' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -84,34 +83,63 @@ exports.signup = async (req, res) => {
       mobile_no,
       email,
       password: hashedPassword,
+      deviceToken,
+      deviceId,
+      app_version,
+      model,
+      brand,
+      device,
+      manufacturer,
+      android_version,
+      SDK,
+      board,
+      fingerprint,
+      hardware,
+      android_ID,
+      Product
+
     });
 
-    res.status(201).json({status:true,message:"new user created successfully.",newUser});
+    res.status(201).json({ status: true, message: "new user created successfully.", newUser });
   } catch (error) {
-    res.status(500).json({status:false, message: error.message });
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
 // Signin
 exports.signin = async (req, res) => {
   try {
-    const { email, password, deviceToken } = req.body;
+    const { email, password, deviceId, deviceToken, model, brand, device, manufacturer, android_version, SDK, board, fingerprint, hardware, android_ID, Product
+    } = req.body;
 
     const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({status:false, message: 'User not found' });
+    if (!user) return res.status(404).json({ status: false, message: 'User not found' });
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return res.status(401).json({status:false,message: 'Invalid credentials' });
+    if (!isPasswordValid) return res.status(401).json({ status: false, message: 'Invalid credentials' });
 
     const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY);
 
     user.deviceToken = deviceToken;
     user.jwt_api_token = token;
+    user.deviceId = deviceId;
+    user.model = model;
+    user.brand = brand;
+    user.device = device;
+    user.manufacturer = manufacturer;
+    user.android_version = android_version;
+    user.SDK = SDK;
+    user.board = board;
+    user.fingerprint = fingerprint;
+    user.hardware = hardware;
+    user.android_ID = android_ID;
+    user.Product = Product;
+
     await user.save();
 
-    res.status(200).json({status:true,message:"User sign in successfully",token });
+    res.status(200).json({ status: true, message: "User sign in successfully", token });
   } catch (error) {
-    res.status(500).json({status:false, message: error.message });
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
@@ -158,16 +186,16 @@ exports.getAllUsers = async (req, res) => {
 // Get User by ID
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id,{
-       include:[{
-        model:SubscriptionModel,
-        as:'subscription'
+    const user = await User.findByPk(req.params.id, {
+      include: [{
+        model: SubscriptionModel,
+        as: 'subscription'
       }]
     });
-    if (!user) return res.status(404).json({status:false,message: 'User not found' });
-    res.status(200).json({status:true,message:"Get user successfully.",user});
+    if (!user) return res.status(404).json({ status: false, message: 'User not found' });
+    res.status(200).json({ status: true, message: "Get user successfully.", user });
   } catch (error) {
-    res.status(500).json({status:false, message: error.message });
+    res.status(500).json({ status: false, message: error.message });
   }
 };
 
@@ -198,11 +226,11 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
-    if (!user) return res.status(404).json({status:false, message: 'User not found' });
+    if (!user) return res.status(404).json({ status: false, message: 'User not found' });
 
     await user.destroy();
-    res.status(200).json({status:true, message: 'User deleted successfully' });
+    res.status(200).json({ status: true, message: 'User deleted successfully' });
   } catch (error) {
-    res.status(500).json({status:false,message: error.message });
+    res.status(500).json({ status: false, message: error.message });
   }
 };

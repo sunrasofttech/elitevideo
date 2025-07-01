@@ -15,6 +15,10 @@ const ReportModel = sequelize.define('Report', {
     type: DataTypes.UUID,
     allowNull: false,
   },
+  reason:{
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
   content_type: {
     type: DataTypes.STRING,
     allowNull: false,
