@@ -10,5 +10,7 @@ router.post('/', userController.getAllUsers);
 router.post('/:id', userController.getUserById);
 router.put('/:id',upload.single('profile_picture'), userController.updateUser);
 router.delete('/:id', userController.deleteUser);
+router.post('/change-password', userController.changePassword);
+router.post('/forgot-password', userController.forgotPassword);
 
 module.exports = router;

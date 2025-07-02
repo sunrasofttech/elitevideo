@@ -101,6 +101,10 @@ const AdminSetting = sequelize.define('AdminSetting', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  help_support: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
   createdAt: {
     type: DataTypes.DATEONLY,
     defaultValue: DataTypes.NOW,

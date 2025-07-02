@@ -234,3 +234,56 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
+// Change Password API using user ID
+exports.changePassword = async (req, res) => {
+   
+  try {
+    const { id, oldPassword, newPassword } = req.body;
+
+    if (!id || !oldPassword || !newPassword) {
+      return res.status(400).json({ status: false, message: 'All fields are required' });
+    }
+
+    const user = await User.findByPk(id);
+     console.log(`user :-   8888  ${user}`);
+    if (!user) return res.status(404).json({ status: false, message: 'User not found' });
+   
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) return res.status(401).json({ status: false, message: 'Old password is incorrect' });
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+    await user.save();
+
+    res.status(200).json({ status: true, message: 'Password changed successfully' });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+
+// Forget Password API
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { mobile_no, newPassword } = req.body;
+
+    if (!mobile_no || !newPassword) {
+      return res.status(400).json({ status: false, message: 'Mobile number and new password are required' });
+    }
+
+    const user = await User.findOne({ where: { mobile_no } });
+    console.log(`user is ${user}`);
+
+    if (!user) return res.status(404).json({ status: false, message: 'User not found with this mobile number' });
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+    await user.save();
+
+    res.status(200).json({ status: true, message: 'Password reset successfully' });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
