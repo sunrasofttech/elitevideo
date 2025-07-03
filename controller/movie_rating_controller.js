@@ -36,9 +36,9 @@ exports.getMovieRating = async (req, res) => {
     const { movie_id } = req.params;
 
     const ratings = await MovieRating.findAll({ where: { movie_id } });
-    if (ratings.length === 0) {
-      return res.status(404).json({ status: false, message: "No ratings found for this movie" });
-    }
+    // if (ratings.length === 0) {
+    //   return res.status(404).json({ status: false, message: "No ratings found for this movie" });
+    // }
 
     const total = ratings.reduce((sum, r) => sum + r.rating, 0);
     const avg = total / ratings.length;
