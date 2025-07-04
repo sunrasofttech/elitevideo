@@ -2,6 +2,7 @@ const User = require('../model/user_model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const SubscriptionModel = require('../model/subscription_plan_model');
+const UserDevice = require('../model/user_device_model');
 require('dotenv').config();
 const SECRET_KEY = process.env.API_SECRET;
 const { Op } = require('sequelize');
@@ -105,21 +106,92 @@ exports.signup = async (req, res) => {
     res.status(500).json({ status: false, message: error.message });
   }
 };
-
-// Signin
 exports.signin = async (req, res) => {
   try {
-    const { email, password, deviceId, deviceToken, model, brand, device, manufacturer, android_version, SDK, board, fingerprint, hardware, android_ID, Product
+    const {
+      email,
+      password,
+      deviceId,
+      deviceToken,
+      model,
+      brand,
+      device,
+      manufacturer,
+      android_version,
+      SDK,
+      board,
+      fingerprint,
+      hardware,
+      android_ID,
+      Product,
     } = req.body;
 
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ status: false, message: 'User not found' });
+    const user = await User.findOne({
+      where: { email },
+      include: [{ model: SubscriptionModel, as: 'subscription' }]
+    });
+
+    if (!user)
+      return res.status(404).json({ status: false, message: 'User not found' });
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return res.status(401).json({ status: false, message: 'Invalid credentials' });
+    if (!isPasswordValid)
+      return res.status(401).json({ status: false, message: 'Invalid credentials' });
 
     const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY);
 
+    // Get all devices for this user
+    const currentDevices = await UserDevice.findAll({
+      where: { user_id: user.id },
+      order: [['login_time', 'ASC']],
+      attributes: ['device_id', 'model', 'login_time'],
+    });
+
+    const currentDeviceCount = currentDevices.length;
+
+    let allowedDeviceCount = 1; // default
+    if (user.is_subscription && user.subscription) {
+      allowedDeviceCount = user.subscription.number_of_device_that_logged || 1;
+    }
+
+    // ✅ Check if current device is already logged in
+    const isDeviceAlreadyLoggedIn = currentDevices.some(
+      (d) => d.device_id === deviceId
+    );
+
+    if (currentDeviceCount >= allowedDeviceCount && !isDeviceAlreadyLoggedIn) {
+      // ❌ New device trying to log in — reject and show current devices
+      return res.status(200).json({
+        status: false,
+        message: `You have reached the maximum allowed devices (${allowedDeviceCount}). Please logout from one to continue.`,
+        active_devices: currentDevices,
+      });
+    }
+
+    // ✅ Either device is already logged in or under limit — proceed to login
+    const existingDevice = await UserDevice.findOne({
+      where: {
+        user_id: user.id,
+        device_id: deviceId,
+      },
+    });
+
+    if (!existingDevice) {
+      await UserDevice.create({
+        user_id: user.id,
+        device_id: deviceId,
+        jwt_token: token,
+        model: model,
+        login_time: new Date(),
+      });
+    } else {
+      // Update token and login time
+      existingDevice.jwt_token = token;
+      existingDevice.login_time = new Date();
+      await existingDevice.save();
+    }
+
+    // Update user device info
     user.deviceToken = deviceToken;
     user.jwt_api_token = token;
     user.deviceId = deviceId;
@@ -137,7 +209,11 @@ exports.signin = async (req, res) => {
 
     await user.save();
 
-    res.status(200).json({ status: true, message: "User sign in successfully", token });
+    res.status(200).json({
+      status: true,
+      message: 'User signed in successfully',
+      token,
+    });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
@@ -237,7 +313,7 @@ exports.deleteUser = async (req, res) => {
 
 // Change Password API using user ID
 exports.changePassword = async (req, res) => {
-   
+
   try {
     const { id, oldPassword, newPassword } = req.body;
 
@@ -246,9 +322,9 @@ exports.changePassword = async (req, res) => {
     }
 
     const user = await User.findByPk(id);
-     console.log(`user :-   8888  ${user}`);
+    console.log(`user :-   8888  ${user}`);
     if (!user) return res.status(404).json({ status: false, message: 'User not found' });
-   
+
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) return res.status(401).json({ status: false, message: 'Old password is incorrect' });
@@ -262,7 +338,6 @@ exports.changePassword = async (req, res) => {
     res.status(500).json({ status: false, message: error.message });
   }
 };
-
 
 // Forget Password API
 exports.forgotPassword = async (req, res) => {
@@ -283,6 +358,23 @@ exports.forgotPassword = async (req, res) => {
     await user.save();
 
     res.status(200).json({ status: true, message: 'Password reset successfully' });
+  } catch (error) {
+    res.status(500).json({ status: false, message: error.message });
+  }
+};
+
+exports.logoutDevice = async (req, res) => {
+  try {
+    const { user_id, device_id } = req.body;
+
+    await UserDevice.destroy({
+      where: {
+        user_id,
+        device_id
+      }
+    });
+
+    res.status(200).json({ status: true, message: "Device logged out" });
   } catch (error) {
     res.status(500).json({ status: false, message: error.message });
   }
