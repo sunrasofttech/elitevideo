@@ -109,6 +109,10 @@ const ShortFilmModel = sequelize.define('ShortFilmModel', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+      report_count: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+    },
     released_date: {
         type: DataTypes.DATE,
         allowNull: true,

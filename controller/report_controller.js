@@ -2,7 +2,7 @@ const Movie = require('../model/movie_model');
 const Series = require('../model/series_model');
 const LiveChannel = require('../model/live_tv_channel_model');
 const ReportModel = require('../model/report_model');
-
+const ShortFilm = require('../model/short_film_model');
 exports.reportContent = async (req, res) => {
     try {
       const { user_id, content_type, content_id,reason } = req.body;
@@ -11,6 +11,7 @@ exports.reportContent = async (req, res) => {
       if (content_type === 'movie') model = Movie;
       else if (content_type === 'series') model = Series;
       else if (content_type === 'live') model = LiveChannel;
+      else if (content_type === 'shortfilm') model = ShortFilm;
       else {
         return res.status(400).json({
           status: false,
@@ -70,6 +71,8 @@ exports.reportContent = async (req, res) => {
         content = await Series.findByPk(report.content_id);
       } else if (report.content_type === 'live') {
         content = await LiveChannel.findByPk(report.content_id);
+      } else if (report.content_type === 'shortfilm') {
+        content = await ShortFilm.findByPk(report.content_id);
       }
 
       return {
