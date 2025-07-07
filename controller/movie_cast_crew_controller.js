@@ -1,4 +1,4 @@
-const CastCrew = require('../model/cast_crew_model');
+const CastCrew = require('../model/movie_cast_crew_model');
 const Movie = require('../model/movie_model');
 const { Op } = require('sequelize'); // Import Op for like queries
 
