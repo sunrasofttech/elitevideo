@@ -36,7 +36,8 @@ const LiveTvChannelAdsRoutes = require('./routes/livetv_channel_ads_route');
 const SubscriptionPlanRoutes = require('./routes/subscription_plan_route');
 const NotificationRoutes = require('./routes/notification_routes');
 const LikeRoutes = require('./routes/like_routes');
-const ShortFilmCastCrewRoutes = require('./routes/short_film_cast_crew_route')
+const ShortFilmCastCrewRoutes = require('./routes/short_film_cast_crew_route');
+const SeriesCastCrewRoute = require('./routes/series_cast_crew_route');
 require('./cron/subscription_cron');
 require('./cron/deactive_user_cron');
 
@@ -58,6 +59,7 @@ app.use(`${baseUrl}/movie`,MovieRoute);
 app.use(`${baseUrl}/movie/cast-crew`,CastCrewRoute);
 app.use(`${baseUrl}/movie-rating`,MovieRatingRoute);
 app.use(`${baseUrl}/series`,SeriesRoute);
+app.use(`${baseUrl}/series/cast-crew`,SeriesCastCrewRoute);
 app.use(`${baseUrl}/season`,SeasonRoute);
 app.use(`${baseUrl}/season-episode`,SeasonEpisodeRoute);
 app.use(`${baseUrl}/short-film`,ShortFilmRoute);

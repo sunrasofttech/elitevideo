@@ -1,5 +1,5 @@
-const ShortFilmCastCrew = require('../model/short_flim_cast_crew_model');
-const ShortFilmModel = require('../model/short_film_model');
+const SeriesCastCrewModel = require('../model/series_cast_crew_model');
+const Series = require('../model/series_model');
 const { Op } = require('sequelize');
 
 exports.addCastCrew = async (req, res) => {
@@ -9,7 +9,7 @@ exports.addCastCrew = async (req, res) => {
             profile_img: req.file ? req.file.path : null
         };
 
-        const castCrew = await ShortFilmCastCrew.create(data);
+        const castCrew = await SeriesCastCrewModel.create(data);
         res.status(201).json({
             status: true,
             message: 'Cast/Crew added successfully',
@@ -40,13 +40,13 @@ exports.getAllCastCrew = async (req, res) => {
         }
 
         // Filter by movie_id (Exact match)
-        if (req.query.shortfilm_id) {
-            filters.shortfilm_id = req.query.shortfilm_id;
+        if (req.query.series_id) {
+            filters.series_id = req.query.series_id;
         }
 
-        const { count, rows } = await ShortFilmCastCrew.findAndCountAll({
+        const { count, rows } = await SeriesCastCrewModel.findAndCountAll({
             where: filters,
-            include: [{ model: ShortFilmModel, as: 'shortfilm' }],
+            include: [{ model: Series, as: 'series' }],
             limit,
             offset
         });
@@ -73,8 +73,8 @@ exports.getAllCastCrew = async (req, res) => {
 exports.getCastCrewById = async (req, res) => {
     try {
         const { id } = req.params;
-        const item = await ShortFilmCastCrew.findByPk(id, {
-            include: [{ model: ShortFilmModel, as: 'shortfilm' }]
+        const item = await SeriesCastCrewModel.findByPk(id, {
+            include: [{ model: Series, as: 'series' }]
         });
         if (!item) {
             return res.status(404).json({
@@ -98,11 +98,11 @@ exports.getCastCrewById = async (req, res) => {
 
 exports.getCastCrewByMovieId = async (req, res) => {
     try {
-        const { shortfilmId } = req.params;
+        const { seriesId } = req.params;
 
-        const castCrewList = await ShortFilmCastCrew.findAll({
-            where: { shortfilm_id: shortfilmId },
-            include: [{ model: ShortFilmModel, as: 'shortfilm' }]
+        const castCrewList = await SeriesCastCrewModel.findAll({
+            where: { series_id: seriesId },
+            include: [{ model: Series, as: 'series' }]
         });
 
         res.json({
@@ -129,7 +129,7 @@ exports.updateCastCrew = async (req, res) => {
             ...(req.file && { profile_img: req.file.path })
         };
 
-        const [updated] = await ShortFilmCastCrew.update(updateData, { where: { id } });
+        const [updated] = await SeriesCastCrewModel.update(updateData, { where: { id } });
 
         if (!updated) {
             return res.status(404).json({
@@ -138,7 +138,7 @@ exports.updateCastCrew = async (req, res) => {
             });
         }
 
-        const updatedItem = await ShortFilmCastCrew.findByPk(id);
+        const updatedItem = await SeriesCastCrewModel.findByPk(id);
         res.json({
             status: true,
             message: 'Cast/Crew updated successfully',
@@ -156,7 +156,7 @@ exports.updateCastCrew = async (req, res) => {
 exports.deleteCastCrew = async (req, res) => {
     try {
         const { id } = req.params;
-        const deleted = await ShortFilmCastCrew.destroy({ where: { id } });
+        const deleted = await SeriesCastCrewModel.destroy({ where: { id } });
 
         if (!deleted) {
             return res.status(404).json({

@@ -2,6 +2,7 @@ const SeriesModel = require('../model/series_model');
 const MovieLanguage = require('../model/movie_language_model');
 const Genre = require('../model/genre_model');
 const MovieCategory = require('../model/movie_category_model');
+const CastCrew = require('../model/series_cast_crew_model');
 const SeasonModel = require('../model/season_model');
 const { Op } = require('sequelize');
 
@@ -47,6 +48,53 @@ exports.createSeries = async (req, res) => {
     });
   }
 };
+exports.getSeriesById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const series = await SeriesModel.findByPk(id, {
+      include: [
+        { model: MovieLanguage, as: 'language' },
+        { model: Genre, as: 'genre' },
+        { model: MovieCategory, as: 'category' },
+      ],
+    });
+
+    if (!series) {
+      return res.status(404).json({
+        status: false,
+        message: 'Series not found',
+      });
+    }
+
+    const season = await SeasonModel.findAll({
+      where: { series_id: series.id },
+      order: [['createdAt', 'DESC']],
+    });
+
+    const castCrewList = await CastCrew.findAll({
+      where: { series_id: series.id },
+    });
+
+    const result = {
+      ...series.toJSON(),
+      season,
+      cast_crew: castCrewList,
+    };
+
+    return res.status(200).json({
+      status: true,
+      message: 'Series fetched successfully',
+      data: result,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: false,
+      message: 'Failed to fetch series',
+      error: err.message,
+    });
+  }
+};
 
 exports.getAllSeries = async (req, res) => {
   try {
@@ -74,19 +122,26 @@ exports.getAllSeries = async (req, res) => {
       ],
       order: [['createdAt', 'DESC']],
       limit: parseInt(limit),
-      offset: offset
+      offset: offset,
     });
 
     const result = await Promise.all(
       seriesList.map(async (series) => {
+        const seriesJson = series.toJSON();
+
         const seasons = await SeasonModel.findAll({
           where: { series_id: series.id },
           order: [['createdAt', 'DESC']],
         });
 
+        const castCrewList = await CastCrew.findAll({
+          where: { series_id: series.id },
+        });
+
         return {
-          ...series.toJSON(),
+          ...seriesJson,
           seasons,
+          cast_crew: castCrewList,
         };
       })
     );
@@ -100,7 +155,7 @@ exports.getAllSeries = async (req, res) => {
         currentPage: parseInt(page),
         totalPages: Math.ceil(count / limit),
         perPage: parseInt(limit),
-      }
+      },
     });
   } catch (err) {
     return res.status(500).json({
@@ -111,49 +166,6 @@ exports.getAllSeries = async (req, res) => {
   }
 };
 
-exports.getSeriesById = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const series = await SeriesModel.findByPk(id, {
-      include: [
-        { model: MovieLanguage, as: 'language' },
-        { model: Genre, as: 'genre' },
-        { model: MovieCategory, as: 'category' },
-      ],
-    });
-
-    if (!series) {
-      return res.status(404).json({
-        status: false,
-        message: 'Series not found',
-      });
-    }
-
-
-    const season = await SeasonModel.findAll({
-      where: { series_id: series.id },
-      order: [['createdAt', 'DESC']],
-    });
-
-    const result = {
-      ...series.toJSON(),
-      season,
-    };
-
-    return res.status(200).json({
-      status: true,
-      message: 'Series fetched successfully',
-      data: result,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      status: false,
-      message: 'Failed to fetch series',
-      error: err.message,
-    });
-  }
-};
 
 exports.updateSeries = async (req, res) => {
   try {
