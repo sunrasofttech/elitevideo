@@ -36,6 +36,7 @@ const LiveTvChannelAdsRoutes = require('./routes/livetv_channel_ads_route');
 const SubscriptionPlanRoutes = require('./routes/subscription_plan_route');
 const NotificationRoutes = require('./routes/notification_routes');
 const LikeRoutes = require('./routes/like_routes');
+const ShortFilmCastCrewRoutes = require('./routes/short_film_cast_crew_route')
 require('./cron/subscription_cron');
 require('./cron/deactive_user_cron');
 
@@ -61,6 +62,7 @@ app.use(`${baseUrl}/season`,SeasonRoute);
 app.use(`${baseUrl}/season-episode`,SeasonEpisodeRoute);
 app.use(`${baseUrl}/short-film`,ShortFilmRoute);
 app.use(`${baseUrl}/short-film/rating`,ShortFilmRatingRoute);
+app.use(`${baseUrl}/short-film/cast-crew`,ShortFilmCastCrewRoutes);
 app.use(`${baseUrl}/live-tv/category`,LiveTvCategoryRoute);
 app.use(`${baseUrl}/live-tv/channel`,LiveTvChannelRoute);
 app.use(`${baseUrl}/rental`, rentalRoutes);
@@ -75,6 +77,7 @@ app.use(`${baseUrl}/livetv_channel-ads`, LiveTvChannelAdsRoutes);
 app.use(`${baseUrl}/subscription-plan`,SubscriptionPlanRoutes);
 app.use(`${baseUrl}/notification`,NotificationRoutes);
 app.use(`${baseUrl}/like`,LikeRoutes);
+
 
 const PORT = process.env.PORT || 3000;
 

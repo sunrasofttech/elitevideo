@@ -4,6 +4,7 @@ const Genre = require('../model/genre_model');
 const MovieCategory = require('../model/movie_category_model');
 const ShortFilmRatingModel = require('../model/short_film_rating_model');
 const ShortfilmAdsModel = require('../model/shortfilm_ads_model');
+const ShortFilmCastCrewModel = require('../model/short_flim_cast_crew_model');
 const VideoAdsModel = require('../model/video_ads_model');
 const { Op } = require('sequelize');
 
@@ -73,9 +74,7 @@ exports.createShortFilm = async (req, res) => {
             data: error.message,
         });
     }
-};
-
-exports.getAllShortFilms = async (req, res) => {
+};exports.getAllShortFilms = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -97,6 +96,7 @@ exports.getAllShortFilms = async (req, res) => {
         if (genre) {
             whereClause.genre_id = genre;
         }
+
         const { count, rows } = await ShortFilmModel.findAndCountAll({
             where: whereClause,
             include: [
@@ -118,7 +118,7 @@ exports.getAllShortFilms = async (req, res) => {
             const filmJson = film.toJSON();
             const ratings = filmJson.ratings || [];
 
-            // Add average and total ratings
+            // Ratings
             if (ratings.length > 0) {
                 const total = ratings.reduce((sum, r) => sum + r.rating, 0);
                 filmJson.average_rating = (total / ratings.length).toFixed(2);
@@ -128,7 +128,7 @@ exports.getAllShortFilms = async (req, res) => {
                 filmJson.total_ratings = 0;
             }
 
-            // Add shortfilm ads
+            // Ads
             const shortfilmAds = await ShortfilmAdsModel.findAll({
                 where: { shortfilm_id: film.id },
                 include: [
@@ -137,6 +137,12 @@ exports.getAllShortFilms = async (req, res) => {
                 ]
             });
             filmJson.shortfilm_ads = shortfilmAds;
+
+            // Cast/Crew
+            const castCrewList = await ShortFilmCastCrewModel.findAll({
+                where: { shortfilm_id: film.id }
+            });
+            filmJson.cast_crew = castCrewList;
 
             return filmJson;
         }));
@@ -194,6 +200,12 @@ exports.getShortFilmById = async (req, res) => {
             filmJson.average_rating = null;
             filmJson.total_ratings = 0;
         }
+
+        // Cast/Crew
+        const castCrewList = await ShortFilmCastCrewModel.findAll({
+            where: { shortfilm_id: req.params.id }
+        });
+        filmJson.cast_crew = castCrewList;
 
         return res.status(200).json({
             status: true,
