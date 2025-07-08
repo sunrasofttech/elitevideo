@@ -28,21 +28,42 @@ exports.addToWatchlist = async (req, res) => {
 exports.getUserWatchlist = async (req, res) => {
     try {
         const { userId } = req.params;
+        const { type } = req.query;
+
+        const includeOptions = [];
+
+        if (!type || type === 'movie') {
+            includeOptions.push({ model: MovieModel, as: 'movie', required: type === 'movie' });
+        }
+        if (!type || type === 'shortfilm') {
+            includeOptions.push({ model: ShortfilmModel, as: 'shortfilm', required: type === 'shortfilm' });
+        }
+        if (!type || type === 'season_episode') {
+            includeOptions.push({ model: SeasonEpisodeModel, as: 'season_episode', required: type === 'season_episode' });
+        }
 
         const watchlist = await WatchlistModel.findAll({
             where: { user_id: userId },
-            include: [
-                { model: MovieModel, as: 'movie' },
-                { model: ShortfilmModel, as: 'shortfilm' },
-                { model: SeasonEpisodeModel, as: 'season_episode'}
-            ]
+            include: includeOptions
         });
 
-        res.status(200).json({status:true,message:"watchlist get successfully.", watchlist});
+        const filtered = watchlist.filter(item =>
+            (type === 'movie' && item.movie) ||
+            (type === 'shortfilm' && item.shortfilm) ||
+            (type === 'season_episode' && item.season_episode) ||
+            !type
+        );
+
+        res.status(200).json({
+            status: true,
+            message: "Watchlist fetched successfully.",
+            watchlist: filtered,
+        });
     } catch (error) {
-        res.status(500).json({status:false, message: error.message });
+        res.status(500).json({ status: false, message: error.message });
     }
 };
+
 
 exports.removeFromWatchlist = async (req, res) => {
     try {
