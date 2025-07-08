@@ -223,7 +223,7 @@ exports.getShortFilmById = async (req, res) => {
         return res.status(200).json({
             status: true,
             message: "Short film fetched successfully",
-            data: filmJson,
+            shortfilm: filmJson,
         });
     } catch (error) {
         return res.status(500).json({
