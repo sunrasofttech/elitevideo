@@ -4,6 +4,7 @@ const { sequelize } = require('../config/db');
 const MovieModel = require('./movie_model');
 const SeriesModel = require('./series_model');
 const UserModel = require('./user_model');
+const ShortFilm = require('./short_film_model');
 
 const RentalModel = sequelize.define('RentalModel', {
     id: {
@@ -17,6 +18,15 @@ const RentalModel = sequelize.define('RentalModel', {
         allowNull: true,
         references: {
             model: MovieModel,
+            key: 'id',
+        },
+        onDelete: 'CASCADE',
+    },
+    shortfilm_id:{
+          type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+            model: ShortFilm,
             key: 'id',
         },
         onDelete: 'CASCADE',
@@ -74,6 +84,11 @@ RentalModel.belongsTo(SeriesModel, {
 RentalModel.belongsTo(UserModel, {
     foreignKey: 'user_id',
     as: 'user',
+});
+
+RentalModel.belongsTo(ShortFilm, {
+    foreignKey: 'shortfilm_id',
+    as: 'shortfilm',
 });
 
 module.exports = RentalModel;

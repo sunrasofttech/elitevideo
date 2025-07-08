@@ -2,6 +2,8 @@ const RentalModel = require('../model/rental_model');
 const MovieModel = require('../model/movie_model');
 const SeriesModel = require('../model/series_model');
 const UserModel = require('../model/user_model');
+const ShortFilm = require('../model/short_film_model');
+const { Op } = require('sequelize');
 
 // Create rental
 exports.createRental = async (req, res) => {
@@ -23,16 +25,28 @@ exports.createRental = async (req, res) => {
 
 exports.getAllRentals = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.body;
+        const { page = 1, limit = 10, type } = req.query;
         const offset = (page - 1) * limit;
 
+        const whereCondition = {};
+
+        if (type === 'movie') {
+            whereCondition.movie_id = { [Op.ne]: null };
+        } else if (type === 'series') {
+            whereCondition.series_id = { [Op.ne]: null };
+        } else if (type === 'shortfilm') {
+            whereCondition.shortfilm_id = { [Op.ne]: null };
+        }
+
         const rentals = await RentalModel.findAndCountAll({
-            limit,
+            where: whereCondition,
+            limit: parseInt(limit),
             offset,
             include: [
                 { model: MovieModel, as: 'movie' },
                 { model: SeriesModel, as: 'series' },
                 { model: UserModel, as: 'user' },
+                { model: ShortFilm, as:'shortfilm'}
             ],
             order: [['createdAt', 'DESC']],
         });
@@ -55,6 +69,8 @@ exports.getAllRentals = async (req, res) => {
         });
     }
 };
+
+
 
 exports.getRentalById = async (req, res) => {
     try {
