@@ -4,9 +4,9 @@ const ShortfilmAdsController = require('../controller/shortfilm_ads_controller')
 
 router.post('/', ShortfilmAdsController.createShortfilmAd);
 
-router.get('/', ShortfilmAdsController.getAllShortfilmAds);
+router.post('/getall', ShortfilmAdsController.getAllShortfilmAds);
 
-router.get('/:id', ShortfilmAdsController.getShortfilmAdById);
+router.post('/:id', ShortfilmAdsController.getShortfilmAdById);
 
 router.put('/:id', ShortfilmAdsController.updateShortfilmAd);
 

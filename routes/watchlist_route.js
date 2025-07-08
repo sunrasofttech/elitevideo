@@ -4,7 +4,7 @@ const watchlistController = require('../controller/watchlist_controller');
 
 router.post('/watchlist', watchlistController.addToWatchlist);
 
-router.get('/watchlist/:userId', watchlistController.getUserWatchlist);
+router.post('/watchlist/:userId', watchlistController.getUserWatchlist);
 
 router.delete('/watchlist/remove/:userId/:type/:id', watchlistController.removeFromWatchlist);
 

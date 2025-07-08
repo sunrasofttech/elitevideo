@@ -4,7 +4,7 @@ const LikeController = require('../controller/like_controller');
 
 router.post('/', LikeController.addLike);
 
-router.get('/:userId', LikeController.getUserLikes);
+router.post('/:userId', LikeController.getUserLikes);
 
 
 module.exports = router;

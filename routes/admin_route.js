@@ -9,7 +9,7 @@ const router = express.Router();
   router.put('/:id',upload.single('profile_img'), AdminController.editAdmin);
   router.get('/subadmins', AdminController.getAllSubAdmins);
   router.delete('/:id', AdminController.deleteAdmin);
-  router.get('/:id', AdminController.getAdminById);
+  router.post('/:id', AdminController.getAdminById);
   router.put('/:id/change-password', AdminController.changePassword);
   
 module.exports = router;

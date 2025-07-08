@@ -4,6 +4,6 @@ const movieRatingController = require('../controller/movie_rating_controller');
 
 router.post('/rate', movieRatingController.addRating);
 
-router.get('/average/:movie_id', movieRatingController.getMovieRating);
+router.post('/average/:movie_id', movieRatingController.getMovieRating);
 
 module.exports = router;
