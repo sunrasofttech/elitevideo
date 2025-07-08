@@ -27,7 +27,7 @@ const SeriesRating = sequelize.define('SeriesRating', {
     allowNull: false,
   },
 }, {
-  tableName: 'movie_ratings',
+  tableName: 'series_ratings',
   timestamps: true,
 });
 
