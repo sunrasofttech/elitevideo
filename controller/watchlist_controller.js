@@ -3,6 +3,14 @@ const UserModel = require('../model/user_model');
 const MovieModel = require('../model/movie_model');
 const ShortfilmModel = require('../model/short_film_model');
 const SeasonEpisodeModel = require('../model/season_episode_model');
+const CastCrew = require('../model/movie_cast_crew_model');
+const MovieAdsModel = require('../model/movie_ads_model');
+const VideoAdsModel = require('../model/video_ads_model');
+const MovieLanguage = require('../model/movie_language_model');
+const Genre = require('../model/genre_model');
+const MovieCategory = require('../model/movie_category_model');
+const MovieRating = require('../model/movie_rating_model');
+const { Op } = require('sequelize');
 
 exports.addToWatchlist = async (req, res) => {
     try {
@@ -39,6 +47,50 @@ exports.addToWatchlist = async (req, res) => {
     }
 };
 
+
+const enrichMovie = async (movie) => {
+    const movieJson = movie.toJSON();
+
+    const castCrewList = await CastCrew.findAll({ where: { movie_id: movie.id } });
+    movieJson.cast_crew = castCrewList;
+
+    const MovieAdsList = await MovieAdsModel.findAll({
+        where: { movie_id: movie.id },
+        include: [
+            { model: MovieModel, as: 'movie' },
+            { model: VideoAdsModel, as: 'video_ad' },
+        ]
+    });
+    movieJson.movie_ad = MovieAdsList;
+
+    const ratings = await MovieRating.findAll({ where: { movie_id: movie.id } });
+    if (ratings.length > 0) {
+        const totalRating = ratings.reduce((sum, r) => sum + r.rating, 0);
+        movieJson.average_rating = (totalRating / ratings.length).toFixed(2);
+        movieJson.total_ratings = ratings.length;
+    } else {
+        movieJson.average_rating = null;
+        movieJson.total_ratings = 0;
+    }
+
+    const recommendedMovies = await MovieModel.findAll({
+        where: {
+            movie_category: movie.movie_category,
+            id: { [Op.ne]: movie.id }
+        },
+        include: [
+            { model: MovieLanguage, as: 'language' },
+            { model: Genre, as: 'genre' },
+            { model: MovieCategory, as: 'category' },
+        ],
+        limit: 5
+    });
+    movieJson.recommended_movies = recommendedMovies;
+
+    return movieJson;
+};
+
+
 exports.getUserWatchlist = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -67,6 +119,19 @@ exports.getUserWatchlist = async (req, res) => {
             (type === 'season_episode' && item.season_episode) ||
             !type
         );
+
+        if (type === 'movie') {
+            finalWatchlist = await Promise.all(
+                filtered.map(async (item) => {
+                    if (item.movie) return await enrichMovie(item.movie);
+                })
+            );
+            finalWatchlist = finalWatchlist.filter(Boolean);
+        } else {
+            finalWatchlist = filtered;
+        }
+
+
 
         res.status(200).json({
             status: true,
