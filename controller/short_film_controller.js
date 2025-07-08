@@ -74,7 +74,9 @@ exports.createShortFilm = async (req, res) => {
             data: error.message,
         });
     }
-};exports.getAllShortFilms = async (req, res) => {
+};
+
+exports.getAllShortFilms = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -192,6 +194,7 @@ exports.getShortFilmById = async (req, res) => {
         const filmJson = film.toJSON();
         const ratings = filmJson.ratings || [];
 
+        // Ratings
         if (ratings.length > 0) {
             const total = ratings.reduce((sum, r) => sum + r.rating, 0);
             filmJson.average_rating = (total / ratings.length).toFixed(2);
@@ -201,9 +204,19 @@ exports.getShortFilmById = async (req, res) => {
             filmJson.total_ratings = 0;
         }
 
+        // Ads
+        const shortfilmAds = await ShortfilmAdsModel.findAll({
+            where: { shortfilm_id: film.id },
+            include: [
+                { model: ShortFilmModel, as: 'shortfilm' },
+                { model: VideoAdsModel, as: 'video_ad' },
+            ]
+        });
+        filmJson.shortfilm_ads = shortfilmAds;
+
         // Cast/Crew
         const castCrewList = await ShortFilmCastCrewModel.findAll({
-            where: { shortfilm_id: req.params.id }
+            where: { shortfilm_id: film.id }
         });
         filmJson.cast_crew = castCrewList;
 
