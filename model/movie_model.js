@@ -103,6 +103,10 @@ const MovieModel = sequelize.define('MovieModel', {
         allowNull: false,
         defaultValue: false,
     },
+    rented_time_days:{
+         type: DataTypes.INTEGER,
+        allowNull: true,
+    },
     is_highlighted: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

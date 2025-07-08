@@ -17,6 +17,7 @@ exports.createSeries = async (req, res) => {
       description,
       released_by,
       released_date,
+      rented_time_days
     } = req.body;
 
     const cover_img = req.files?.cover_img?.[0]?.path;
@@ -31,6 +32,7 @@ exports.createSeries = async (req, res) => {
       description,
       released_by,
       released_date,
+      rented_time_days,
       cover_img,
       poster_img,
     });
@@ -189,6 +191,7 @@ exports.updateSeries = async (req, res) => {
       description,
       released_by,
       released_date,
+      rented_time_days
     } = req.body;
 
     const cover_img = req.files?.cover_img?.[0]?.path || series.cover_img;
@@ -203,6 +206,7 @@ exports.updateSeries = async (req, res) => {
       description,
       released_by,
       released_date,
+      rented_time_days,
       cover_img,
       poster_img,
     });

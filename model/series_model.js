@@ -60,7 +60,10 @@ const SeriesModel = sequelize.define('SeriesModel', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
-    // is highlighted
+    rented_time_days: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
     released_by: {
         type: DataTypes.STRING,
         allowNull: true,

@@ -85,6 +85,10 @@ const ShortFilmModel = sequelize.define('ShortFilmModel', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    rented_time_days:{
+         type: DataTypes.INTEGER,
+        allowNull: true,
+    },
     is_movie_on_rent: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
