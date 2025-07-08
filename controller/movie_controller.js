@@ -257,7 +257,7 @@ exports.getMovieById = async (req, res) => {
         res.json({
             status: true,
             message: 'Movie fetched successfully',
-            data: movieData
+            movie: movieData
         });
     } catch (err) {
         res.status(500).json({
