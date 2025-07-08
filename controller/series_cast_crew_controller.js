@@ -96,7 +96,7 @@ exports.getCastCrewById = async (req, res) => {
     }
 };
 
-exports.getCastCrewByMovieId = async (req, res) => {
+exports.getCastCrewBySeriesId = async (req, res) => {
     try {
         const { seriesId } = req.params;
 
