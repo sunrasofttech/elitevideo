@@ -12,6 +12,20 @@ exports.addToWatchlist = async (req, res) => {
             return res.status(400).json({ status: false, message: 'Invalid payload' });
         }
 
+        const existing = await WatchlistModel.findOne({
+            where: {
+                user_id,
+                type,
+                movie_id: type === 'movie' ? movie_id : null,
+                shortfilm_id: type === 'shortfilm' ? shortfilm_id : null,
+                season_episode_id: type === 'season_episode' ? season_episode_id : null,
+            },
+        });
+
+        if (existing) {
+            return res.status(200).json({ status: false, message: "Already added to watchlist." });
+        }
+
         const entry = await WatchlistModel.create({
             user_id,
             type,
@@ -70,7 +84,7 @@ exports.removeFromWatchlist = async (req, res) => {
         const { userId, type, id } = req.params;
 
         if (!userId || !type || !id) {
-            return res.status(400).json({status:false, message: 'Missing required parameters' });
+            return res.status(400).json({ status: false, message: 'Missing required parameters' });
         }
 
         const whereClause = { user_id: userId, type };
@@ -84,11 +98,11 @@ exports.removeFromWatchlist = async (req, res) => {
         const deleted = await WatchlistModel.destroy({ where: whereClause });
 
         if (deleted) {
-            res.status(200).json({status:true, message: `${type} removed from watchlist` });
+            res.status(200).json({ status: true, message: `${type} removed from watchlist` });
         } else {
-            res.status(404).json({status:false, message: 'Watchlist entry not found' });
+            res.status(404).json({ status: false, message: 'Watchlist entry not found' });
         }
     } catch (error) {
-        res.status(500).json({status:false, message: error.message });
+        res.status(500).json({ status: false, message: error.message });
     }
 };
