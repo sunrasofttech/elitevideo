@@ -6,4 +6,3 @@ router.post('/add', ReportController.reportContent);
 router.post('/get',ReportController.getAllReports);
 
 module.exports = router;
-x
