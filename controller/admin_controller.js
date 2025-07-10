@@ -88,44 +88,51 @@ exports.login = async (req, reply) => {
 exports.editAdmin = async (req, reply) => {
   try {
     const { id } = req.params;
-    const { name, password, email, role, selectedPermissions = [] } = req.body;
+    let { name, password, email, role, selectedPermissions = [] } = req.body;
     const profile_img = req.file ? req.file.path : undefined;
+
+    // Parse selectedPermissions if sent as string (from form-data)
+    if (typeof selectedPermissions === 'string') {
+      try {
+        selectedPermissions = JSON.parse(selectedPermissions);
+      } catch (error) {
+        selectedPermissions = [];
+      }
+    }
 
     const admin = await Admin.findByPk(id);
     if (!admin) {
       return reply.status(404).send({ status: false, message: 'Admin not found' });
     }
 
+    // Update basic fields if provided
     if (name) admin.name = name;
     if (email) admin.email = email;
     if (role) admin.role = role;
     if (password) admin.password = await bcrypt.hash(password, 10);
     if (profile_img) admin.profile_img = profile_img;
 
+    // All available permission keys
     const allPermissions = [
       'Dashboard', 'Movie', 'Music', 'Web Series', 'Tv Show', 'Live TV',
       'Short Film', 'Ads', 'Rentals', 'Language', 'Genre', 'Users',
       'Sub Admin', 'Subscription', 'Reports', 'Notification', 'Settings'
     ];
 
-    // Permissions logic
     if (role === 'admin') {
-      // Grant all permissions for admin
+      // Full access for admin
       const permissions = {};
       allPermissions.forEach((key) => {
         permissions[key] = true;
       });
       admin.permissions = permissions;
-    } else if (role === 'subadmin') {
-      // Only update permissions if selectedPermissions is explicitly provided
-      if (Array.isArray(selectedPermissions) && selectedPermissions.length > 0) {
-        const permissions = {};
-        allPermissions.forEach((key) => {
-          permissions[key] = selectedPermissions.includes(key);
-        });
-        admin.permissions = permissions;
-      }
-      // else: keep existing permissions as is
+    } else {
+      // Preserve existing permissions and update only selected ones
+      const updatedPermissions = { ...admin.permissions };
+      allPermissions.forEach((key) => {
+        updatedPermissions[key] = selectedPermissions.includes(key);
+      });
+      admin.permissions = updatedPermissions;
     }
 
     await admin.save();
@@ -134,6 +141,7 @@ exports.editAdmin = async (req, reply) => {
     return reply.status(500).send({ status: false, message: 'Server error', error: error.message });
   }
 };
+
 
 exports.getAllSubAdmins = async (req, reply) => {
   try {
