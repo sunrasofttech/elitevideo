@@ -62,7 +62,6 @@ exports.signUp = async (req, reply) => {
   }
 };
 
-
 // Admin Login
 exports.login = async (req, reply) => {
   try {
@@ -109,26 +108,30 @@ exports.editAdmin = async (req, reply) => {
       'Sub Admin', 'Subscription', 'Reports', 'Notification', 'Settings'
     ];
 
-    // If admin, enable all permissions
+    // Permissions logic
     if (role === 'admin') {
-      let permissions = {};
+      // Grant all permissions for admin
+      const permissions = {};
       allPermissions.forEach((key) => {
         permissions[key] = true;
       });
       admin.permissions = permissions;
-    } else {
-      // Set each permission based on selectedPermissions
-      let permissions = {};
-      allPermissions.forEach((key) => {
-        permissions[key] = selectedPermissions.includes(key);
-      });
-      admin.permissions = permissions;
+    } else if (role === 'subadmin') {
+      // Only update permissions if selectedPermissions is explicitly provided
+      if (Array.isArray(selectedPermissions) && selectedPermissions.length > 0) {
+        const permissions = {};
+        allPermissions.forEach((key) => {
+          permissions[key] = selectedPermissions.includes(key);
+        });
+        admin.permissions = permissions;
+      }
+      // else: keep existing permissions as is
     }
 
     await admin.save();
-    reply.send({ status: true, message: 'Admin updated successfully', admin });
+    return reply.send({ status: true, message: 'Admin updated successfully', admin });
   } catch (error) {
-    reply.status(500).send({ status: false, message: 'Server error', error: error.message });
+    return reply.status(500).send({ status: false, message: 'Server error', error: error.message });
   }
 };
 
