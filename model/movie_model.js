@@ -103,9 +103,14 @@ const MovieModel = sequelize.define('MovieModel', {
         allowNull: false,
         defaultValue: false,
     },
-    rented_time_days:{
-         type: DataTypes.INTEGER,
+    rented_time_days: {
+        type: DataTypes.INTEGER,
         allowNull: true,
+    },
+    show_subscription: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
     },
     is_highlighted: {
         type: DataTypes.BOOLEAN,

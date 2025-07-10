@@ -60,6 +60,11 @@ const SeriesModel = sequelize.define('SeriesModel', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
+    show_subscription: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
     series_rent_price: {
         type: DataTypes.STRING,
         allowNull: true,

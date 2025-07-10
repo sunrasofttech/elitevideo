@@ -29,6 +29,7 @@ exports.createShortFilm = async (req, res) => {
             is_watchlist,
             released_by,
             released_date,
+            show_subscription,
             rented_time_days
         } = req.body;
 
@@ -57,6 +58,7 @@ exports.createShortFilm = async (req, res) => {
             is_highlighted,
             is_watchlist,
             released_by,
+            show_subscription,
             released_date,
             rented_time_days,
             cover_img: extractFilePath(req.files?.cover_img?.[0]),

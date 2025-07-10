@@ -89,6 +89,11 @@ const ShortFilmModel = sequelize.define('ShortFilmModel', {
          type: DataTypes.INTEGER,
         allowNull: true,
     },
+    show_subscription: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
     is_movie_on_rent: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

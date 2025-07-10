@@ -19,6 +19,7 @@ exports.createSeries = async (req, res) => {
       released_date,
       series_rent_price,
       is_series_on_rent,
+      show_subscription,
       rented_time_days
     } = req.body;
 
@@ -37,6 +38,7 @@ exports.createSeries = async (req, res) => {
       rented_time_days,
       series_rent_price,
       is_series_on_rent,
+      show_subscription,
       cover_img,
       poster_img,
     });
@@ -197,6 +199,7 @@ exports.updateSeries = async (req, res) => {
       released_date,
       series_rent_price,
       is_series_on_rent,
+      show_subscription,
       rented_time_days
     } = req.body;
 
@@ -215,6 +218,7 @@ exports.updateSeries = async (req, res) => {
       rented_time_days,
       series_rent_price,
       is_series_on_rent,
+      show_subscription,
       cover_img,
       poster_img,
     });
