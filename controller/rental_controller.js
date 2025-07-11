@@ -25,7 +25,7 @@ exports.createRental = async (req, res) => {
 
 exports.getAllRentals = async (req, res) => {
     try {
-        const { page = 1, limit = 10, type } = req.query;
+        const { page = 1, limit = 10, type, user_id } = req.query;
         const offset = (page - 1) * limit;
 
         const whereCondition = {};
@@ -36,6 +36,10 @@ exports.getAllRentals = async (req, res) => {
             whereCondition.series_id = { [Op.ne]: null };
         } else if (type === 'shortfilm') {
             whereCondition.shortfilm_id = { [Op.ne]: null };
+        }
+
+        if (user_id) {
+            whereCondition.user_id = user_id;
         }
 
         const rentals = await RentalModel.findAndCountAll({
