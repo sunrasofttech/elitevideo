@@ -42,12 +42,6 @@ const ContinueWatching = sequelize.define('ContinueWatching', {
 }, {
     tableName: 'continue_watching',
     timestamps: true,
-      indexes: [
-        {
-            unique: true,
-            fields: ['user_id', 'type', 'type_id']
-        }
-    ]
 });
 
 ContinueWatching.belongsTo(UserModel, { foreignKey: 'user_id', as: 'user' });
