@@ -79,7 +79,7 @@ app.use(`${baseUrl}/movie-ads`, MovieAdsRoutes);
 app.use(`${baseUrl}/shortfilm-ads`, ShortfilmAdsRoutes);
 app.use(`${baseUrl}/season-episode-ads`, SeasonEpisodeRoutes);
 app.use(`${baseUrl}/livetv_channel-ads`, LiveTvChannelAdsRoutes);
-app.use(`${baseUrl}/x-plan`,SubscriptionPlanRoutes);
+app.use(`${baseUrl}/subscription-plan`,SubscriptionPlanRoutes);
 app.use(`${baseUrl}/notification`,NotificationRoutes);
 app.use(`${baseUrl}/like`,LikeRoutes);
 app.use(`${baseUrl}/continue-watching`,ContinueWatchingRoutes);
