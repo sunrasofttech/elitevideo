@@ -13,7 +13,7 @@ exports.getContinueWatching = async (req, res) => {
                 message: "User not found",
             });
         }
-        const whereCondition = { user_id };
+        const whereCondition = { user_id,is_watched: false,};
          if (type) {
             whereCondition.type = type; // 'movie' | 'shortfilm' | 'series'
         }
