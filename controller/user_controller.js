@@ -165,6 +165,7 @@ exports.signin = async (req, res) => {
         status: false,
         message: `You have reached the maximum allowed devices (${allowedDeviceCount}). Please logout from one to continue.`,
         active_devices: currentDevices,
+         user_id: user.id,
       });
     }
 
