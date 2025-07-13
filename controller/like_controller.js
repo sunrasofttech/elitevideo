@@ -41,20 +41,43 @@ exports.addLike = async (req, res) => {
 // Get user likes
 exports.getUserLikes = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { user_id, type, type_id } = req.query;
 
-    const likes = await LikeModel.findAll({
-      where: { user_id: userId },
-      include: [
-        { model: MovieModel, as: 'movie' },
-        { model: ShortfilmModel, as: 'shortfilm' },
-        { model: SeasonEpisodeModel, as: 'season_episode' },
-      ],
-      order: [['createdAt', 'DESC']],
-    });
+    if (!user_id || !type || !type_id) {
+      return res.status(400).json({
+        status: false,
+        message: "Missing required query parameters",
+      });
+    }
 
-    return res.status(200).json({ status: true, message: "User likes fetched successfully", data: likes });
+    const whereClause = {
+      user_id,
+      type,
+      movie_id: type === 'movie' ? type_id : null,
+      shortfilm_id: type === 'shortfilm' ? type_id : null,
+      season_episode_id: type === 'season_episode' ? type_id : null,
+    };
+
+    const existingLike = await LikeModel.findOne({ where: whereClause });
+
+    if (existingLike) {
+      return res.status(200).json({
+        status: true,
+        message: "User has liked this item",
+        liked: true,
+        data: existingLike,
+      });
+    } else {
+      return res.status(200).json({
+        status: true,
+        message: "User has not liked this item",
+        liked: false,
+      });
+    }
   } catch (error) {
-    return res.status(500).json({ status: false, message: error.message, data: null });
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
   }
 };

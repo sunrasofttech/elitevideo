@@ -59,21 +59,33 @@ exports.saveProgress = async (req, res) => {
     try {
         const { user_id, type, type_id, current_time, is_watched } = req.body;
 
-        const [entry, created] = await ContinueWatching.upsert({
+        const existing = await ContinueWatching.findOne({
+            where: { user_id, type, type_id }
+        });
+
+        if (existing) {
+            await existing.update({ current_time, is_watched });
+            return res.status(200).json({
+                status: true,
+                message: 'Progress updated',
+                data: existing,
+            });
+        }
+
+        const entry = await ContinueWatching.create({
             user_id,
             type,
             type_id,
             current_time,
             is_watched,
-        }, {
-            returning: true,
         });
 
         return res.status(200).json({
             status: true,
-            message: created ? 'Progress saved' : 'Progress updated',
+            message: 'Progress saved',
             data: entry,
         });
+
     } catch (err) {
         return res.status(500).json({
             status: false,

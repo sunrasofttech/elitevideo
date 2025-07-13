@@ -166,3 +166,55 @@ exports.deleteRental = async (req, res) => {
         });
     }
 };
+
+exports.checkRentalExists = async (req, res) => {
+    try {
+        const { user_id, type_id, type } = req.query;
+
+        if (!user_id || !type_id || !type) {
+            return res.status(400).json({
+                status: false,
+                message: "user_id, type, and type_id are required",
+            });
+        }
+
+        const whereCondition = { user_id };
+
+        if (type === 'movie') {
+            whereCondition.movie_id = type_id;
+        } else if (type === 'series') {
+            whereCondition.series_id = type_id;
+        } else if (type === 'shortfilm') {
+            whereCondition.shortfilm_id = type_id;
+        } else {
+            return res.status(400).json({
+                status: false,
+                message: "Invalid type. Allowed values are: movie, series, shortfilm",
+            });
+        }
+
+        const rental = await RentalModel.findOne({
+            where: whereCondition,
+        });
+
+        if (rental) {
+            return res.status(200).json({
+                status: true,
+                message: "Rental exists",
+                data: rental,
+            });
+        } else {
+            return res.status(404).json({
+                status: false,
+                message: "Rental not found",
+                data: null,
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: "Failed to check rental",
+            data: error.message,
+        });
+    }
+};
