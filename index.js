@@ -40,6 +40,7 @@ const ShortFilmCastCrewRoutes = require('./routes/short_film_cast_crew_route');
 const SeriesCastCrewRoute = require('./routes/series_cast_crew_route');
 const SeriesRatingRoute = require('./routes/series_rating_route');
 const ContinueWatchingRoutes = require('./routes/continue_watching_route');
+const searchAllContentRoutes = require('./routes/search_routes');
 require('./cron/subscription_cron');
 require('./cron/deactive_user_cron');
 
@@ -83,6 +84,7 @@ app.use(`${baseUrl}/subscription-plan`,SubscriptionPlanRoutes);
 app.use(`${baseUrl}/notification`,NotificationRoutes);
 app.use(`${baseUrl}/like`,LikeRoutes);
 app.use(`${baseUrl}/continue-watching`,ContinueWatchingRoutes);
+app.use(`${baseUrl}/search`,searchAllContentRoutes);
 
 const PORT = process.env.PORT || 3000;
 
