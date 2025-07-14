@@ -105,6 +105,18 @@ const AdminSetting = sequelize.define('AdminSetting', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  spash_screen_banner_1:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  spash_screen_banner_2:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  spash_screen_banner_3:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   createdAt: {
     type: DataTypes.DATEONLY,
     defaultValue: DataTypes.NOW,
