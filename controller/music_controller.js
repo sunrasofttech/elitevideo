@@ -38,17 +38,23 @@ exports.createMusic = async (req, res) => {
 
 exports.getAllMusic = async (req, res) => {
     try {
-        const { page = 1, limit = 10, search = '' } = req.query;
+        const { page = 1, limit = 10, search = '', category_id } = req.query;
 
         const offset = (parseInt(page) - 1) * parseInt(limit);
 
-        const whereCondition = search
-            ? {
-                song_title: {
-                    [Op.like]: `%${search}%`,
-                },
-            }
-            : {};
+        const whereCondition = {};
+
+        // If search by song title
+        if (search) {
+            whereCondition.song_title = {
+                [Op.like]: `%${search}%`,
+            };
+        }
+
+        // If filter by category ID
+        if (category_id) {
+            whereCondition.category_id = category_id;
+        }
 
         const { count, rows } = await MusicModel.findAndCountAll({
             where: whereCondition,
@@ -79,6 +85,7 @@ exports.getAllMusic = async (req, res) => {
         });
     }
 };
+
 
 
 exports.getMusicById = async (req, res) => {
