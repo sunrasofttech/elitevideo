@@ -15,7 +15,7 @@ exports.getContinueWatching = async (req, res) => {
         }
         const whereCondition = { user_id,is_watched: false,};
          if (type) {
-            whereCondition.type = type; // 'movie' | 'shortfilm' | 'series'
+            whereCondition.type = type;
         }
         const continueWatchList = await ContinueWatching.findAll({
             where: whereCondition,
@@ -30,7 +30,7 @@ exports.getContinueWatching = async (req, res) => {
                 content = await MovieModel.findByPk(item.type_id);
             } else if (item.type === 'shortfilm') {
                 content = await ShortFilmModel.findByPk(item.type_id);
-            } else if (item.type === 'series') {
+            } else if (item.type === 'season_episode') {
                 content = await SeasonEpisodeModel.findByPk(item.type_id);
             }
 
