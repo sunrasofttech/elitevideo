@@ -5,23 +5,48 @@ const UserModel = require('../model/user_model');
 const ShortFilm = require('../model/short_film_model');
 const { Op } = require('sequelize');
 
-// Create rental
 exports.createRental = async (req, res) => {
-    try {
-        const rental = await RentalModel.create(req.body);
-        return res.status(201).json({
-            status: true,
-            message: "Rental created successfully",
-            data: rental,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: "Failed to create rental",
-            data: error.message,
-        });
+  try {
+    const { user_id, movie_id, shortfilm_id, series_id } = req.body;
+
+    if (!user_id || (!movie_id && !shortfilm_id && !series_id)) {
+      return res.status(400).json({
+        status: false,
+        message: "Missing required fields",
+      });
     }
+
+    const whereClause = { user_id };
+
+    if (movie_id) whereClause.movie_id = movie_id;
+    if (shortfilm_id) whereClause.shortfilm_id = shortfilm_id;
+    if (series_id) whereClause.series_id = series_id;
+
+    const existingRental = await RentalModel.findOne({ where: whereClause });
+
+    if (existingRental) {
+      return res.status(409).json({
+        status: false,
+        message: "User has already rented this item",
+      });
+    }
+
+    const rental = await RentalModel.create(req.body);
+    return res.status(201).json({
+      status: true,
+      message: "Rental created successfully",
+      data: rental,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Failed to create rental",
+      data: error.message,
+    });
+  }
 };
+
 
 exports.getAllRentals = async (req, res) => {
     try {
