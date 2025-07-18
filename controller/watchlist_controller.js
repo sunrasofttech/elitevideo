@@ -5,52 +5,25 @@ const ShortfilmModel = require('../model/short_film_model');
 const SeasonEpisodeModel = require('../model/season_episode_model');
 
 exports.addToWatchlist = async (req, res) => {
-  try {
-    const { user_id, type, movie_id, shortfilm_id, season_episode_id } = req.body;
+    try {
+        const { user_id, type, movie_id, shortfilm_id, season_episode_id } = req.body;
 
-    if (
-      !user_id ||
-      !type ||
-      (type === 'movie' && !movie_id) ||
-      (type === 'shortfilm' && !shortfilm_id) ||
-      (type === 'season_episode' && !season_episode_id)
-    ) {
-      return res.status(400).json({ status: false, message: 'Invalid payload' });
+        if (!user_id || !type || (type === 'movie' && !movie_id) || (type === 'shortfilm' && !shortfilm_id) || (type === 'season_episode' && !season_episode_id)) {
+            return res.status(400).json({ status: false, message: 'Invalid payload' });
+        }
+
+        const entry = await WatchlistModel.create({
+            user_id,
+            type,
+            movie_id: type === 'movie' ? movie_id : null,
+            shortfilm_id: type === 'shortfilm' ? shortfilm_id : null,
+            season_episode_id: type === 'season_episode' ? season_episode_id : null,
+        });
+        res.status(201).json({ status: true, message: "Watchlist created successfully.", entry });
+    } catch (error) {
+        res.status(500).json({ status: false, message: error.message });
     }
-
-    const whereClause = { user_id, type };
-
-    if (type === 'movie') whereClause.movie_id = movie_id;
-    if (type === 'shortfilm') whereClause.shortfilm_id = shortfilm_id;
-    if (type === 'season_episode') whereClause.season_episode_id = season_episode_id;
-
-    const existing = await WatchlistModel.findOne({ where: whereClause });
-
-    if (existing) {
-      return res.status(409).json({
-        status: false,
-        message: 'Item already exists in watchlist',
-      });
-    }
-
-    const entry = await WatchlistModel.create({
-      user_id,
-      type,
-      movie_id: type === 'movie' ? movie_id : null,
-      shortfilm_id: type === 'shortfilm' ? shortfilm_id : null,
-      season_episode_id: type === 'season_episode' ? season_episode_id : null,
-    });
-
-    res.status(201).json({
-      status: true,
-      message: 'Watchlist created successfully.',
-      entry,
-    });
-  } catch (error) {
-    res.status(500).json({ status: false, message: error.message });
-  }
 };
-
 
 exports.getUserWatchlist = async (req, res) => {
     try {
