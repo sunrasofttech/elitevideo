@@ -13,6 +13,9 @@ exports.createSeasonEpisode = async (req, res) => {
       episode_no,
       video_link,
       released_date,
+      movie_time,
+      movie_rent_price,
+      is_movie_on_rent,
     } = req.body;
 
     const cover_img = req.files?.cover_img?.[0]?.path || null;
@@ -27,6 +30,9 @@ exports.createSeasonEpisode = async (req, res) => {
       released_date,
       cover_img,
       video,
+      movie_time,
+      movie_rent_price,
+      is_movie_on_rent,
     });
 
     res.status(201).json({
@@ -48,7 +54,7 @@ exports.getAllSeasonEpisodes = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-     const { name, season_id, series_id } = req.query;
+    const { name, season_id, series_id } = req.query;
 
     const whereClause = {};
     if (name) {
@@ -150,6 +156,9 @@ exports.updateSeasonEpisode = async (req, res) => {
       video_link,
       released_date,
       status,
+       movie_time,
+      movie_rent_price,
+      is_movie_on_rent,
     } = req.body;
 
     const cover_img = req.files?.cover_img?.[0]?.path || episode.cover_img;
@@ -165,6 +174,9 @@ exports.updateSeasonEpisode = async (req, res) => {
       status,
       cover_img,
       video,
+       movie_time,
+      movie_rent_price,
+      is_movie_on_rent,
     });
 
     res.status(200).json({

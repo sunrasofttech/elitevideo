@@ -59,6 +59,19 @@ const SeasonEpisodeModel = sequelize.define('SeasonEpisodeModel', {
         type: DataTypes.DATE,
         allowNull: true,
     },
+    movie_time: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    movie_rent_price: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    is_movie_on_rent: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
