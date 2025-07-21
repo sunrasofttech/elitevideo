@@ -52,6 +52,16 @@ const LikeModel = sequelize.define('LikeModel', {
         type: DataTypes.ENUM('movie', 'shortfilm','season_episode'),
         allowNull: false,
     },
+    liked:{
+        type:DataTypes.BOOLEAN,
+        allowNull:false,
+        defaultValue:false
+    },
+    disliked:{
+        type:DataTypes.BOOLEAN,
+        allowNull:false,
+        defaultValue:false
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,

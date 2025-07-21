@@ -5,7 +5,7 @@ const SeasonEpisodeModel = require('../model/season_episode_model');
 
 exports.addLike = async (req, res) => {
   try {
-    const { user_id, type, movie_id, shortfilm_id, season_episode_id } = req.body;
+    const { user_id, type, movie_id, shortfilm_id, season_episode_id, liked, disliked } = req.body;
 
     if (!user_id || !type) {
       return res.status(400).json({ status: false, message: "Missing required fields", data: null });
@@ -19,24 +19,46 @@ exports.addLike = async (req, res) => {
       season_episode_id: type === 'season_episode' ? season_episode_id : null
     };
 
-    // Check if already liked
     const existing = await LikeModel.findOne({ where: whereClause });
 
     if (existing) {
-      // Already liked => Dislike (remove like)
-      await existing.destroy();
-      return res.status(200).json({ status: true, message: "Like removed (disliked)", data: null });
+      // Toggle logic like YouTube
+      if (liked) {
+        existing.liked = !existing.liked;
+        existing.disliked = false;
+      } else if (disliked) {
+        existing.disliked = !existing.disliked;
+        existing.liked = false;
+      }
+      await existing.save();
+      return res.status(200).json({
+        status: true,
+        message: "Like/dislike updated",
+        data: existing
+      });
     }
 
-    // Not liked yet => Add like
-    const entry = await LikeModel.create(whereClause);
-    return res.status(201).json({ status: true, message: "Like added successfully", data: entry });
+    // New like/dislike
+    const newEntry = await LikeModel.create({
+      ...whereClause,
+      liked: liked ? true : false,
+      disliked: disliked ? true : false,
+    });
+
+    return res.status(201).json({
+      status: true,
+      message: "Like/dislike added",
+      data: newEntry
+    });
 
   } catch (error) {
-    return res.status(500).json({ status: false, message: error.message, data: null });
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+      data: null
+    });
   }
 };
-
 
 // Get user likes
 exports.getUserLikes = async (req, res) => {
