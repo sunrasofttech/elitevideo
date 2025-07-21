@@ -24,10 +24,10 @@ exports.addLike = async (req, res) => {
     if (existing) {
       // Toggle logic like YouTube
       if (liked) {
-        existing.liked = !existing.liked;
+        // existing.liked = !existing.liked;
         existing.disliked = false;
       } else if (disliked) {
-        existing.disliked = !existing.disliked;
+        // existing.disliked = !existing.disliked;
         existing.liked = false;
       }
       await existing.save();
