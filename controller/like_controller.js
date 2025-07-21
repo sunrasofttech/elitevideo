@@ -85,14 +85,14 @@ exports.getUserLikes = async (req, res) => {
       return res.status(200).json({
         status: true,
         message: "User has liked this item",
-        liked: true,
+        // liked: true,
         data: existingLike,
       });
     } else {
       return res.status(200).json({
         status: true,
         message: "User has not liked this item",
-        liked: false,
+        // liked: false,
       });
     }
   } catch (error) {
