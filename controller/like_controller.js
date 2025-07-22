@@ -19,17 +19,25 @@ exports.addLike = async (req, res) => {
       season_episode_id: type === 'season_episode' ? season_episode_id : null
     };
 
-    const existing = await LikeModel.findOne({ where: whereClause });
+    let existing = await LikeModel.findOne({ where: whereClause });
 
     if (existing) {
-      if (liked) {
-        existing.liked = true;
-        existing.disliked = false;
-      } else if (disliked) {
-        existing.disliked = true;
+      if (liked === true) {
+        // Toggle like
+        existing.liked = !existing.liked;
+        if (existing.liked) existing.disliked = false;
+      } else if (disliked === true) {
+        // Toggle dislike
+        existing.disliked = !existing.disliked;
+        if (existing.disliked) existing.liked = false;
+      } else if (liked === false) {
         existing.liked = false;
+      } else if (disliked === false) {
+        existing.disliked = false;
       }
+
       await existing.save();
+
       return res.status(200).json({
         status: true,
         message: "Like/dislike updated",
@@ -37,7 +45,7 @@ exports.addLike = async (req, res) => {
       });
     }
 
-    // New like/dislike
+    // If no existing entry and user clicked like/dislike
     const newEntry = await LikeModel.create({
       ...whereClause,
       liked: liked ? true : false,
@@ -58,6 +66,7 @@ exports.addLike = async (req, res) => {
     });
   }
 };
+
 
 // Get user likes
 exports.getUserLikes = async (req, res) => {
