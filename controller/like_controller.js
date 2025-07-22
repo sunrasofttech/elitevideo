@@ -22,14 +22,12 @@ exports.addLike = async (req, res) => {
     let existing = await LikeModel.findOne({ where: whereClause });
 
     if (existing) {
-      if (liked === true) {
-        // Toggle like
-        existing.liked = !existing.liked;
-        if (existing.liked) existing.disliked = false;
+       if (liked === true) {
+        existing.liked = true;
+        existing.disliked = false;
       } else if (disliked === true) {
-        // Toggle dislike
-        existing.disliked = !existing.disliked;
-        if (existing.disliked) existing.liked = false;
+        existing.disliked = true;
+        existing.liked = false;
       } else if (liked === false) {
         existing.liked = false;
       } else if (disliked === false) {
