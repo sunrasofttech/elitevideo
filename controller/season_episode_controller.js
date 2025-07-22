@@ -1,6 +1,7 @@
 const SeasonEpisodeModel = require('../model/season_episode_model');
 const EpisodeAdsModel = require('../model/season_episode_ads_model');
 const VideoAdsModel = require('../model/video_ads_model');
+const ContinueWatching = require('../model/continue_watching_model');
 const { Op } = require('sequelize');
 
 // const path = require('path');
@@ -204,6 +205,14 @@ exports.deleteSeasonEpisode = async (req, res) => {
       });
     }
 
+       await ContinueWatching.destroy({
+            where: {
+                type: 'season_episode',
+                type_id: {
+                 [Op.in]: ids
+                }
+            }
+        });
     const deleted = await SeasonEpisodeModel.destroy({
       where: { id: ids },
     });

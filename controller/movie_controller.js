@@ -7,6 +7,7 @@ const MovieRating = require('../model/movie_rating_model');
 const VideoAdsModel = require('../model/video_ads_model');
 const { Op } = require('sequelize');
 const MovieAdsModel = require('../model/movie_ads_model');
+const ContinueWatching = require('../model/continue_watching_model');
 const Message = require('../config/message');
 
 
@@ -277,6 +278,15 @@ exports.deleteMovie = async (req, res) => {
                 message: 'Please provide an array of movie IDs to delete.',
             });
         }
+
+        await ContinueWatching.destroy({
+            where: {
+                type: 'movie',
+                type_id: {
+                    [Op.in]: ids
+                }
+            }
+        });
 
         const deleted = await Movie.destroy({
             where: {

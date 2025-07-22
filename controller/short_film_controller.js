@@ -6,6 +6,7 @@ const ShortFilmRatingModel = require('../model/short_film_rating_model');
 const ShortfilmAdsModel = require('../model/shortfilm_ads_model');
 const ShortFilmCastCrewModel = require('../model/short_flim_cast_crew_model');
 const VideoAdsModel = require('../model/video_ads_model');
+const ContinueWatching = require('../model/continue_watching_model');
 const { Op } = require('sequelize');
 
 const extractFilePath = (file) => (file ? file.path.replace(/\\/g, '/') : null);
@@ -284,6 +285,15 @@ exports.deleteShortFilm = async (req, res) => {
       });
     }
 
+    await ContinueWatching.destroy({
+            where: {
+                type: 'shortfilm',
+                type_id: {
+                 [Op.in]: ids
+                }
+            }
+        });
+        
     const deleted = await ShortFilmModel.destroy({
       where: { id: ids }
     });

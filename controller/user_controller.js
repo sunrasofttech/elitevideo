@@ -149,18 +149,16 @@ exports.signin = async (req, res) => {
 
     const currentDeviceCount = currentDevices.length;
 
-    let allowedDeviceCount = 1; // default
+    let allowedDeviceCount = 1; 
     if (user.is_subscription && user.subscription) {
       allowedDeviceCount = user.subscription.number_of_device_that_logged || 1;
     }
 
-    // ✅ Check if current device is already logged in
     const isDeviceAlreadyLoggedIn = currentDevices.some(
       (d) => d.device_id === deviceId
     );
 
     if (currentDeviceCount >= allowedDeviceCount && !isDeviceAlreadyLoggedIn) {
-      // ❌ New device trying to log in — reject and show current devices
       return res.status(200).json({
         status: false,
         message: `You have reached the maximum allowed devices (${allowedDeviceCount}). Please logout from one to continue.`,
