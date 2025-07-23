@@ -218,10 +218,10 @@ exports.checkRentalExists = async (req, res) => {
             });
         }
 
+
         const rental = await RentalModel.findOne({
             where: whereCondition,
         });
-
         if (rental) {
             return res.status(200).json({
                 status: true,

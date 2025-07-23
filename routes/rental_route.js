@@ -5,7 +5,7 @@ const RentalController = require('../controller/rental_controller');
 router.post('/', RentalController.createRental);
 router.post('/get-all', RentalController.getAllRentals);
 router.post('/:id', RentalController.getRentalById);
-router.post('/checkrental',RentalController.checkRentalExists);
+router.post('/checkrental/api',RentalController.checkRentalExists);
 router.put('/:id', RentalController.updateRental);
 router.delete('/:id', RentalController.deleteRental);
 
