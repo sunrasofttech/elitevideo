@@ -6,7 +6,7 @@ const Authenticate = require('../middleware/jwt_middleware');
 
 router.post('/', upload.single('cover_img'), genreController.createGenre);
 router.put('/:id', upload.single('cover_img'), genreController.updateGenre);
-router.post('/get-all',Authenticate.authenticate, genreController.getAllGenres);
+router.post('/get-all', genreController.getAllGenres);
 router.delete('/:id', genreController.deleteGenre);
 
 module.exports = router;
