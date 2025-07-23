@@ -38,28 +38,28 @@ exports.getContinueWatching = async (req, res) => {
           content = await MovieModel.findByPk(item.type_id);
           ads = await MovieAdsModel.findAll({
             where: { movie_id: item.type_id },
-            include: [
-              { model: MovieModel, as: "movie" },
-              { model: VideoAdsModel, as: "video_ad" },
-            ],
+            // include: [
+            //   { model: MovieModel, as: "movie" },
+            //   { model: VideoAdsModel, as: "video_ad" },
+            // ],
           });
         } else if (item.type === "shortfilm") {
           content = await ShortFilmModel.findByPk(item.type_id);
           ads = await ShortfilmAdsModel.findAll({
             where: { shortfilm_id: item.type_id },
-            include: [
-              { model: ShortFilmModel, as: "shortfilm" },
-              { model: VideoAdsModel, as: "video_ad" },
-            ],
+            // include: [
+            //   { model: ShortFilmModel, as: "shortfilm" },
+            //   { model: VideoAdsModel, as: "video_ad" },
+            // ],
           });
         } else if (item.type === "season_episode") {
           content = await SeasonEpisodeModel.findByPk(item.type_id);
           ads = await EpisodeAdsModel.findAll({
             where: { season_episode_id: item.type_id },
-            include: [
-              { model: SeasonEpisodeModel, as: "season_episode" },
-              { model: VideoAdsModel, as: "video_ad" },
-            ],
+            // include: [
+            //   { model: SeasonEpisodeModel, as: "season_episode" },
+            //   { model: VideoAdsModel, as: "video_ad" },
+            // ],
           });
         }
 
