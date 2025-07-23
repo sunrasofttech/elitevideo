@@ -194,7 +194,7 @@ exports.deleteRental = async (req, res) => {
 
 exports.checkRentalExists = async (req, res) => {
     try {
-        const { user_id, type_id, type } = req.query;
+        const { user_id, type_id, type } = req.body;
 
         if (!user_id || !type_id || !type) {
             return res.status(400).json({
