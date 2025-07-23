@@ -12,13 +12,25 @@ exports.addToWatchlist = async (req, res) => {
             return res.status(400).json({ status: false, message: 'Invalid payload' });
         }
 
-        const entry = await WatchlistModel.create({
+        const whereClause = {
             user_id,
             type,
             movie_id: type === 'movie' ? movie_id : null,
             shortfilm_id: type === 'shortfilm' ? shortfilm_id : null,
             season_episode_id: type === 'season_episode' ? season_episode_id : null,
-        });
+        };
+
+        const existing = await WatchlistModel.findOne({ where: whereClause });
+
+        if (existing) {
+            return res.status(200).json({
+                status: false,
+                message: "Already exists in watchlist."
+            });
+        }
+
+        const entry = await WatchlistModel.create(whereClause);
+
         res.status(201).json({ status: true, message: "Watchlist created successfully.", entry });
     } catch (error) {
         res.status(500).json({ status: false, message: error.message });
