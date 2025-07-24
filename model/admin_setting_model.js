@@ -12,6 +12,10 @@ const AdminSetting = sequelize.define('AdminSetting', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  required_version: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   admin_upi: {
     type: DataTypes.STRING,
     allowNull: true,
