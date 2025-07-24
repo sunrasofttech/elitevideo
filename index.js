@@ -41,6 +41,8 @@ const SeriesCastCrewRoute = require('./routes/series_cast_crew_route');
 const SeriesRatingRoute = require('./routes/series_rating_route');
 const ContinueWatchingRoutes = require('./routes/continue_watching_route');
 const searchAllContentRoutes = require('./routes/search_routes');
+const PaymentHistoryRoutes = require('./routes/payment_history_route');
+const RazoprPayOrderRoute = require('./routes/order_routes');
 require('./cron/subscription_cron');
 require('./cron/deactive_user_cron');
 
@@ -85,6 +87,8 @@ app.use(`${baseUrl}/notification`,NotificationRoutes);
 app.use(`${baseUrl}/like`,LikeRoutes);
 app.use(`${baseUrl}/continue-watching`,ContinueWatchingRoutes);
 app.use(`${baseUrl}/search`,searchAllContentRoutes);
+app.use(`${baseUrl}/payment-history`,PaymentHistoryRoutes);
+app.use(`${baseUrl}/order`,RazoprPayOrderRoute);
 
 const PORT = process.env.PORT || 3000;
 
