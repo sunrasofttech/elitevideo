@@ -111,7 +111,6 @@ exports.getAllSeasonEpisodes = async (req, res) => {
   }
 };
 
-
 exports.getSeasonEpisodeById = async (req, res) => {
   try {
     const episode = await SeasonEpisodeModel.findByPk(req.params.id);
@@ -124,10 +123,22 @@ exports.getSeasonEpisodeById = async (req, res) => {
       });
     }
 
+    const episodeJson = episode.toJSON();
+
+    // Get Ads for this episode
+    const EpisodeAdsList = await EpisodeAdsModel.findAll({
+      where: { season_episode_id: episode.id },
+      include: [
+        { model: VideoAdsModel, as: 'video_ad' },
+      ],
+    });
+
+    episodeJson.ads = EpisodeAdsList;
+
     res.status(200).json({
       status: true,
       message: 'Episode fetched successfully',
-      data: episode,
+      data: episodeJson,
     });
   } catch (error) {
     res.status(500).json({
@@ -137,6 +148,7 @@ exports.getSeasonEpisodeById = async (req, res) => {
     });
   }
 };
+
 
 exports.updateSeasonEpisode = async (req, res) => {
   try {

@@ -220,14 +220,24 @@ exports.getMovieById = async (req, res) => {
             });
         }
 
+        const movieData = movie.toJSON();
+
+        // 🎭 Cast & Crew
         const castCrewList = await CastCrew.findAll({
             where: { movie_id: id }
         });
-
-        const movieData = movie.toJSON();
         movieData.cast_crew = castCrewList;
 
-        // Calculate average rating
+        // 📺 Ads
+        const MovieAdsList = await MovieAdsModel.findAll({
+            where: { movie_id: id },
+            include: [
+                { model: VideoAdsModel, as: 'video_ad' },
+            ]
+        });
+        movieData.ads = MovieAdsList;
+
+        // ⭐ Rating
         const ratings = movieData.ratings || [];
         if (ratings.length > 0) {
             const totalRating = ratings.reduce((sum, r) => sum + r.rating, 0);
@@ -239,7 +249,7 @@ exports.getMovieById = async (req, res) => {
             movieData.total_ratings = 0;
         }
 
-        // Show recommended movies
+        // 🎬 Recommended Movies
         const recommendedMovies = await Movie.findAll({
             where: {
                 movie_category: movie.movie_category,
@@ -252,7 +262,6 @@ exports.getMovieById = async (req, res) => {
             ],
             limit: 10
         });
-
         movieData.recommended_movies = recommendedMovies;
 
         res.json({
@@ -268,6 +277,7 @@ exports.getMovieById = async (req, res) => {
         });
     }
 };
+
 
 exports.deleteMovie = async (req, res) => {
     try {
