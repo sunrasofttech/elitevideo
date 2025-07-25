@@ -82,12 +82,12 @@ exports.getAllSeasonEpisodes = async (req, res) => {
       const EpisodeAdsList = await EpisodeAdsModel.findAll({
         where: { season_episode_id: episode.id },
         include: [
-          { model: SeasonEpisodeModel, as: 'season_episode' },
+          // { model: SeasonEpisodeModel, as: 'season_episode' },
           { model: VideoAdsModel, as: 'video_ad' },
         ],
       });
 
-      episodeJson.episode_ad = EpisodeAdsList;
+      episodeJson.ads = EpisodeAdsList;
 
       return episodeJson;
     }));

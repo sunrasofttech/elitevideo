@@ -139,11 +139,11 @@ exports.getAllShortFilms = async (req, res) => {
             const shortfilmAds = await ShortfilmAdsModel.findAll({
                 where: { shortfilm_id: film.id },
                 include: [
-                    { model: ShortFilmModel, as: 'shortfilm' },
+                    // { model: ShortFilmModel, as: 'shortfilm' },
                     { model: VideoAdsModel, as: 'video_ad' },
                 ]
             });
-            filmJson.shortfilm_ads = shortfilmAds;
+            filmJson.ads = shortfilmAds;
 
             // Cast/Crew
             const castCrewList = await ShortFilmCastCrewModel.findAll({

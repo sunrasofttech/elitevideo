@@ -129,11 +129,11 @@ exports.getAllMovies = async (req, res) => {
             const MovieAdsList = await MovieAdsModel.findAll({
                 where: { movie_id: movie.id },
                 include: [
-                    { model: Movie, as: 'movie' },
+                    // { model: Movie, as: 'movie' },
                     { model: VideoAdsModel, as: 'video_ad' },
                 ]
             });
-            movieJson.movie_ad = MovieAdsList;
+            movieJson.ads = MovieAdsList;
 
             const ratings = movieJson.ratings || [];
             if (ratings.length > 0) {
