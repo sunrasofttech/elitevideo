@@ -282,6 +282,10 @@ exports.updateUser = async (req, res) => {
 
     const updates = req.body;
 
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
+    }
+
     if (req.file) {
       updates.profile_picture = req.file.path;
     }
@@ -296,6 +300,7 @@ exports.updateUser = async (req, res) => {
     res.status(500).json({ status: false, message: error.message });
   }
 };
+
 
 // Delete User
 exports.deleteUser = async (req, res) => {
