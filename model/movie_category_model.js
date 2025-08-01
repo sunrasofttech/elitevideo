@@ -17,6 +17,10 @@ const MovieCategory = sequelize.define('MovieCategory', {
     allowNull:false,
     defaultValue:false,
   },
+  img:{
+    type:DataTypes.STRING,
+    allowNull:true
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

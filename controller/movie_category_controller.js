@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 exports.createMovieCategory = async (req, res) => {
   try {
     const { name, status } = req.body;
-    
+    const img = req.file ? req.file.filename : null;
     const existingCategory = await MovieCategory.findOne({ where: { name } });
     if (existingCategory) {
       return res.status(409).json({
@@ -13,7 +13,7 @@ exports.createMovieCategory = async (req, res) => {
         message: 'Movie category with this name already exists',
       });
     }
-    const category = await MovieCategory.create({ name, status });
+    const category = await MovieCategory.create({ name, status,img });
     res.status(201).json({status:true,message:"Movie category created successfully.",category});
   } catch (error) {
     res.status(500).json({status:false, message: 'Failed to create movie category' });
@@ -75,14 +75,26 @@ exports.getMovieCategoryById = async (req, res) => {
 exports.updateMovieCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, status } = req.body;
+    const { name,status } = req.body;
    
     const category = await MovieCategory.findByPk(id);
     if (!category) {
       return res.status(404).json({status:false, message: 'Movie category not found' });
     }
 
-    await category.update({ name, status });
+        if (req.file && category.img) {
+          const oldImgPath = path.join(__dirname, '../uploads', category.img);
+          if (fs.existsSync(oldImgPath)) {
+            fs.unlinkSync(oldImgPath);
+          }
+        }
+    
+        // Update fields
+        category.name = name || category.name;
+        category.status = status || category.status;
+        category.img = req.file ? req.file.filename : category.img;
+
+    await category.save();
     res.status(200).json({status:true,message:"Movie category updated successfully",category});
   } catch (error) {
     res.status(500).json({status:false, message: 'Failed to update movie category'});
