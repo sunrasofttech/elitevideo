@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controller/short_film_controller');
-const upload = require('../utils/upload');
+const upload = require('../utils/uploadToSpace');
 
 // Upload multiple fields (name must match front-end form)
 const fileUploads = upload.fields([

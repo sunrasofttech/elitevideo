@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../utils/upload');
+const upload = require('../utils/uploadToSpace');
 const controller = require('../controller/season_episode_controller');
 
 // Create

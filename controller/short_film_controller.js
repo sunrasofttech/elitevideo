@@ -9,7 +9,7 @@ const VideoAdsModel = require('../model/video_ads_model');
 const ContinueWatching = require('../model/continue_watching_model');
 const { Op } = require('sequelize');
 
-const extractFilePath = (file) => (file ? file.path.replace(/\\/g, '/') : null);
+const extractFileLocation = (file) => (file ? file.location : null);
 
 exports.createShortFilm = async (req, res) => {
     try {
@@ -33,7 +33,6 @@ exports.createShortFilm = async (req, res) => {
             show_subscription,
             rented_time_days
         } = req.body;
-
 
         const existingFilm = await ShortFilmModel.findOne({ where: { short_film_title } });
         if (existingFilm) {
@@ -62,9 +61,9 @@ exports.createShortFilm = async (req, res) => {
             show_subscription,
             released_date,
             rented_time_days,
-            cover_img: extractFilePath(req.files?.cover_img?.[0]),
-            poster_img: extractFilePath(req.files?.poster_img?.[0]),
-            short_video: extractFilePath(req.files?.short_video?.[0]),
+            cover_img: extractFileLocation(req.files?.cover_img?.[0]),
+            poster_img: extractFileLocation(req.files?.poster_img?.[0]),
+            short_video: extractFileLocation(req.files?.short_video?.[0]),
         });
 
         return res.status(201).json({
@@ -76,6 +75,40 @@ exports.createShortFilm = async (req, res) => {
         return res.status(500).json({
             status: false,
             message: "Failed to create short film",
+            data: error.message,
+        });
+    }
+};
+
+exports.updateShortFilm = async (req, res) => {
+    try {
+        const film = await ShortFilmModel.findByPk(req.params.id);
+        if (!film) {
+            return res.status(404).json({
+                status: false,
+                message: "Short film not found",
+                data: null,
+            });
+        }
+
+        const updates = {
+            ...req.body,
+            cover_img: extractFileLocation(req.files?.cover_img?.[0]) || film.cover_img,
+            poster_img: extractFileLocation(req.files?.poster_img?.[0]) || film.poster_img,
+            short_video: extractFileLocation(req.files?.short_video?.[0]) || film.short_video,
+        };
+
+        await film.update(updates);
+
+        return res.status(200).json({
+            status: true,
+            message: "Short film updated successfully",
+            data: film,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: "Failed to update short film",
             data: error.message,
         });
     }
@@ -239,40 +272,6 @@ exports.getShortFilmById = async (req, res) => {
     }
 };
 
-
-exports.updateShortFilm = async (req, res) => {
-    try {
-        const film = await ShortFilmModel.findByPk(req.params.id);
-        if (!film) {
-            return res.status(404).json({
-                status: false,
-                message: "Short film not found",
-                data: null,
-            });
-        }
-
-        const updates = {
-            ...req.body,
-            cover_img: extractFilePath(req.files?.cover_img?.[0]) || film.cover_img,
-            poster_img: extractFilePath(req.files?.poster_img?.[0]) || film.poster_img,
-            short_video: extractFilePath(req.files?.short_video?.[0]) || film.short_video,
-        };
-
-        await film.update(updates);
-
-        return res.status(200).json({
-            status: true,
-            message: "Short film updated successfully",
-            data: film,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: "Failed to update short film",
-            data: error.message,
-        });
-    }
-};
 
 exports.deleteShortFilm = async (req, res) => {
   try {

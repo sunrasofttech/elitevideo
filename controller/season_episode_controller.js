@@ -19,8 +19,8 @@ exports.createSeasonEpisode = async (req, res) => {
       is_movie_on_rent,
     } = req.body;
 
-    const cover_img = req.files?.cover_img?.[0]?.path || null;
-    const video = req.files?.video?.[0]?.path || null;
+    const cover_img = req.files?.cover_img?.[0]?.location || null;
+    const video = req.files?.video?.[0]?.location || null;
 
     const newEpisode = await SeasonEpisodeModel.create({
       series_id,
@@ -169,13 +169,13 @@ exports.updateSeasonEpisode = async (req, res) => {
       video_link,
       released_date,
       status,
-       movie_time,
+      movie_time,
       movie_rent_price,
       is_movie_on_rent,
     } = req.body;
 
-    const cover_img = req.files?.cover_img?.[0]?.path || episode.cover_img;
-    const video = req.files?.video?.[0]?.path || episode.video;
+    const cover_img = req.files?.cover_img?.[0]?.location || episode.cover_img;
+    const video = req.files?.video?.[0]?.location || episode.video;
 
     await episode.update({
       series_id,
@@ -187,7 +187,7 @@ exports.updateSeasonEpisode = async (req, res) => {
       status,
       cover_img,
       video,
-       movie_time,
+      movie_time,
       movie_rent_price,
       is_movie_on_rent,
     });
@@ -217,14 +217,14 @@ exports.deleteSeasonEpisode = async (req, res) => {
       });
     }
 
-       await ContinueWatching.destroy({
-            where: {
-                type: 'season_episode',
-                type_id: {
-                 [Op.in]: ids
-                }
-            }
-        });
+    await ContinueWatching.destroy({
+      where: {
+        type: 'season_episode',
+        type_id: {
+          [Op.in]: ids
+        }
+      }
+    });
     const deleted = await SeasonEpisodeModel.destroy({
       where: { id: ids },
     });
