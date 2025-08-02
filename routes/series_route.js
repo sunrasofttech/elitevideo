@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const seriesController = require('../controller/series_controller');
-const upload = require('../utils/upload');
+const upload = require('../utils/uploadToSpace');
 
 const seriesUpload = upload.fields([
   { name: 'cover_img', maxCount: 1 },

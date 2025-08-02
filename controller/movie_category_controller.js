@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 exports.createMovieCategory = async (req, res) => {
   try {
     const { name, status } = req.body;
-    const img = req.file ? req.file.filename : null;
+    const img = req.file ? req.file.location : null;
     const existingCategory = await MovieCategory.findOne({ where: { name } });
     if (existingCategory) {
       return res.status(409).json({
@@ -92,7 +92,7 @@ exports.updateMovieCategory = async (req, res) => {
         // Update fields
         category.name = name || category.name;
         category.status = status || category.status;
-        category.img = req.file ? req.file.filename : category.img;
+        category.img = req.file ? req.file.location : category.img;
 
     await category.save();
     res.status(200).json({status:true,message:"Movie category updated successfully",category});

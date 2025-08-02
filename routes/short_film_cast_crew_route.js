@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const castCrewController = require('../controller/short_film_cast_crew_controller');
-const upload = require('../utils/upload');
+const upload = require('../utils/uploadToSpace');
 
 router.post('/create', upload.single('profile_img'), castCrewController.addCastCrew);
 router.post('/get-all', castCrewController.getAllCastCrew);

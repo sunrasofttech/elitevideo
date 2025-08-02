@@ -1,6 +1,6 @@
 const AdminController = require('../controller/admin_controller');
 const express = require('express');
-const upload = require('../utils/upload');
+const upload = require('../utils/uploadToSpace');
 
 const router = express.Router();
   

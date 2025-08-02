@@ -89,7 +89,7 @@ exports.editAdmin = async (req, reply) => {
   try {
     const { id } = req.params;
     let { name, password, email, role, selectedPermissions = [] } = req.body;
-    const profile_img = req.file ? req.file.path : undefined;
+    const profile_img = req.file ? req.file.location : undefined;
 
     // Parse selectedPermissions if sent as string (from form-data)
     if (typeof selectedPermissions === 'string') {

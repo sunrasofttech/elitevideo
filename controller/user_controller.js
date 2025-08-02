@@ -287,7 +287,7 @@ exports.updateUser = async (req, res) => {
     }
 
     if (req.file) {
-      updates.profile_picture = req.file.path;
+      updates.profile_picture = req.file.location;
     }
 
     Object.keys(updates).forEach(key => {

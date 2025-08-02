@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../utils/upload'); 
+const upload = require('../utils/uploadToSpace'); 
 const userController = require('../controller/user_controller');
 
 router.post('/signup', userController.signup);

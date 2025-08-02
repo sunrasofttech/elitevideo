@@ -6,7 +6,7 @@ exports.addCastCrew = async (req, res) => {
     try {
         const data = {
             ...req.body,
-            profile_img: req.file ? req.file.path : null
+            profile_img: req.file ? req.file.location : null
         };
 
         const castCrew = await ShortFilmCastCrew.create(data);
@@ -126,7 +126,7 @@ exports.updateCastCrew = async (req, res) => {
 
         const updateData = {
             ...req.body,
-            ...(req.file && { profile_img: req.file.path })
+            ...(req.file && { profile_img: req.file.location })
         };
 
         const [updated] = await ShortFilmCastCrew.update(updateData, { where: { id } });

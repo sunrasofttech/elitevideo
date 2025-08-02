@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controller/live_tv_channel_controller');
-const upload = require('../utils/upload');
+const upload = require('../utils/uploadToSpace');
 
 const multiUpload = upload.fields([
   { name: 'cover_img', maxCount: 1 },

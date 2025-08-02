@@ -6,8 +6,8 @@ exports.createMusic = async (req, res) => {
     try {
         const { song_title, song_url, description, watched_count, artist_name, category_id,status } = req.body;
 
-        const coverImg = req.files?.cover_img?.[0]?.path;
-        const songFile = req.files?.song_file?.[0]?.path;
+        const coverImg = req.files?.cover_img?.[0]?.location;
+        const songFile = req.files?.song_file?.[0]?.location;
 
         const newMusic = await MusicModel.create({
             cover_img: coverImg,
@@ -218,8 +218,8 @@ exports.updateMusic = async (req, res) => {
             status,
         } = req.body;
 
-        const coverImg = req.files?.cover_img?.[0]?.path || music.cover_img;
-        const songFile = req.files?.song_file?.[0]?.path || music.song_file;
+        const coverImg = req.files?.cover_img?.[0]?.location || music.cover_img;
+        const songFile = req.files?.song_file?.[0]?.location || music.song_file;
 
         await music.update({
             song_title,

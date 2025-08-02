@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const adminSettingController = require('../controller/admin_setting_controller');
-const upload = require('../utils/upload');
+const upload = require('../utils/uploadToSpace');
 
 const multiUpload = upload.fields([
   { name: 'logo', maxCount: 1 },

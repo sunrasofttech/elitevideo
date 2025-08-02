@@ -6,7 +6,7 @@ const { Op } = require('sequelize');
 exports.createCategory = async (req, res) => {
   try {
     const { name, status } = req.body;
-    const cover_img = req.file ? req.file.filename : null;
+    const cover_img = req.file ? req.file.location : null;
 
     const category = await LiveTvCategory.create({ name, status, cover_img });
 
@@ -106,7 +106,7 @@ exports.updateCategory = async (req, res) => {
     await category.update({
       name,
       status,
-      cover_img: req.file ? req.file.filename : category.cover_img,
+      cover_img: req.file ? req.file.location : category.cover_img,
     });
 
     res.json({

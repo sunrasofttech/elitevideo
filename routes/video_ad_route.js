@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const videoAdsController = require('../controller/video_ads_controller');
-const upload = require('../utils/upload');
+const upload = require('../utils/uploadToSpace');
 
 // Routes
 router.post('/', upload.single('ad_video'), videoAdsController.createVideoAd);

@@ -14,10 +14,10 @@ exports.createOrUpdateAdminSetting = async (req, res) => {
   try {
     const existingSetting = await AdminSetting.findOne();
 
-     const logoPath = req.files['logo'] ? req.files['logo'][0].path : null;
-    const spash_screen_banner_1 = req.files['spash_screen_banner_1'] ? req.files['spash_screen_banner_1'][0].path : null;
-    const spash_screen_banner_2 = req.files['spash_screen_banner_2'] ? req.files['spash_screen_banner_2'][0].path : null;
-    const spash_screen_banner_3 = req.files['spash_screen_banner_3'] ? req.files['spash_screen_banner_3'][0].path : null;
+     const logoPath = req.files['logo'] ? req.files['logo'][0].location : null;
+    const spash_screen_banner_1 = req.files['spash_screen_banner_1'] ? req.files['spash_screen_banner_1'][0].location : null;
+    const spash_screen_banner_2 = req.files['spash_screen_banner_2'] ? req.files['spash_screen_banner_2'][0].location : null;
+    const spash_screen_banner_3 = req.files['spash_screen_banner_3'] ? req.files['spash_screen_banner_3'][0].location : null;
 
 
     const data = {

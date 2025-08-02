@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const movieCategoryController = require('../controller/movie_category_controller');
-const upload = require('../utils/upload');
+const upload = require('../utils/uploadToSpace');
 
 router.post('/',upload.single('img'), movieCategoryController.createMovieCategory);
 router.post('/get-all', movieCategoryController.getAllMovieCategories);
