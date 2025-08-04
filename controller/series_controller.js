@@ -20,7 +20,8 @@ exports.createSeries = async (req, res) => {
       series_rent_price,
       is_series_on_rent,
       show_subscription,
-      rented_time_days
+      rented_time_days,
+      is_highlighted,
     } = req.body;
 
     const cover_img = req.files?.cover_img?.[0]?.location;
@@ -41,6 +42,7 @@ exports.createSeries = async (req, res) => {
       show_subscription,
       cover_img,
       poster_img,
+      is_highlighted
     });
 
     return res.status(201).json({
@@ -200,7 +202,8 @@ exports.updateSeries = async (req, res) => {
       series_rent_price,
       is_series_on_rent,
       show_subscription,
-      rented_time_days
+      rented_time_days,
+      is_highlighted
     } = req.body;
 
     const cover_img = req.files?.cover_img?.[0]?.location || series.cover_img;
@@ -218,6 +221,7 @@ exports.updateSeries = async (req, res) => {
       rented_time_days,
       series_rent_price,
       is_series_on_rent,
+      is_highlighted,
       show_subscription,
       cover_img,
       poster_img,

@@ -90,6 +90,11 @@ const SeriesModel = sequelize.define('SeriesModel', {
         type: DataTypes.INTEGER,
         defaultValue: 0,
     },
+    is_highlighted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
