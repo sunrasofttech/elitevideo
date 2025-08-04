@@ -121,6 +121,11 @@ const AdminSetting = sequelize.define('AdminSetting', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  is_song_on_subscription:{
+     type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue:false
+  },
   createdAt: {
     type: DataTypes.DATEONLY,
     defaultValue: DataTypes.NOW,
