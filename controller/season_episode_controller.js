@@ -17,6 +17,7 @@ exports.createSeasonEpisode = async (req, res) => {
       movie_time,
       movie_rent_price,
       is_movie_on_rent,
+      is_highlighted,
     } = req.body;
 
     const cover_img = req.files?.cover_img?.[0]?.location || null;
@@ -34,6 +35,7 @@ exports.createSeasonEpisode = async (req, res) => {
       movie_time,
       movie_rent_price,
       is_movie_on_rent,
+      is_highlighted,
     });
 
     res.status(201).json({
@@ -172,6 +174,7 @@ exports.updateSeasonEpisode = async (req, res) => {
       movie_time,
       movie_rent_price,
       is_movie_on_rent,
+      is_highlighted,
     } = req.body;
 
     const cover_img = req.files?.cover_img?.[0]?.location || episode.cover_img;
@@ -190,6 +193,7 @@ exports.updateSeasonEpisode = async (req, res) => {
       movie_time,
       movie_rent_price,
       is_movie_on_rent,
+      is_highlighted,
     });
 
     res.status(200).json({
