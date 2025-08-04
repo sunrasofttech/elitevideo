@@ -43,6 +43,7 @@ const ContinueWatchingRoutes = require('./routes/continue_watching_route');
 const searchAllContentRoutes = require('./routes/search_routes');
 const PaymentHistoryRoutes = require('./routes/payment_history_route');
 const RazoprPayOrderRoute = require('./routes/order_routes');
+const HighlightedRoute = require('./routes/highlighted_routes')
 require('./cron/subscription_cron');
 require('./cron/deactive_user_cron');
 
@@ -89,6 +90,7 @@ app.use(`${baseUrl}/continue-watching`,ContinueWatchingRoutes);
 app.use(`${baseUrl}/search`,searchAllContentRoutes);
 app.use(`${baseUrl}/payment-history`,PaymentHistoryRoutes);
 app.use(`${baseUrl}/order`,RazoprPayOrderRoute);
+app.use(`${baseUrl}/highlighted-content`,HighlightedRoute);
 
 const PORT = process.env.PORT || 3000;
 

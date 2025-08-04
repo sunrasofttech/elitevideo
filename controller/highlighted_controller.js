@@ -1,6 +1,6 @@
-const MovieModel = require('../models/movie_model');
-const ShortFilmModel = require('../models/short_film_model');
-const SeriesModel = require('../models/series_model');
+const MovieModel = require('../model/movie_model');
+const ShortFilmModel = require('../model/short_film_model');
+const SeriesModel = require('../model/series_model');
 
 const getHighlightedContent = async (req, res) => {
     try {
