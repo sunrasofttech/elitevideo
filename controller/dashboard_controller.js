@@ -109,7 +109,6 @@ exports.getUserAnalyticsByYear = async (req, res) => {
   }
 };
 
-
 function getMonthsOfYear(year) {
     const months = [];
     for (let i = 1; i <= 12; i++) {
@@ -125,7 +124,6 @@ exports.getMonthlyRevenue = async (req, res) => {
         const startDate = new Date(`${year}-01-01`);
         const endDate = new Date(`${parseInt(year) + 1}-01-01`);
 
-        // Fetch completed payments in that year
         const dbRevenue = await PaymentHistory.findAll({
             where: {
                 status: 'completed',
@@ -142,16 +140,14 @@ exports.getMonthlyRevenue = async (req, res) => {
             raw: true
         });
 
-        // Map DB result
+        // Convert DB results to a map for easy access
         const revenueMap = {};
         dbRevenue.forEach(item => {
             revenueMap[item.month] = parseFloat(item.total_revenue);
         });
 
-        // Generate months of the year
+        // Ensure all months of the year are included
         const months = getMonthsOfYear(year);
-
-        // Merge DB result with all months
         const finalRevenue = months.map(month => ({
             month,
             total_revenue: revenueMap[month] || 0
