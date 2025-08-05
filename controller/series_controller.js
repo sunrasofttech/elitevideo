@@ -22,6 +22,7 @@ exports.createSeries = async (req, res) => {
       show_subscription,
       rented_time_days,
       is_highlighted,
+      show_type,
     } = req.body;
 
     const cover_img = req.files?.cover_img?.[0]?.location;
@@ -40,6 +41,7 @@ exports.createSeries = async (req, res) => {
       series_rent_price,
       is_series_on_rent,
       show_subscription,
+      show_type,
       cover_img,
       poster_img,
       is_highlighted
@@ -108,7 +110,7 @@ exports.getSeriesById = async (req, res) => {
 
 exports.getAllSeries = async (req, res) => {
   try {
-    const { name, language, category, page = 1, limit = 10 } = req.query;
+    const { name, language, category, show_type, page = 1, limit = 10 } = req.query;
 
     const whereClause = {};
     if (name) {
@@ -120,7 +122,9 @@ exports.getAllSeries = async (req, res) => {
     if (category) {
       whereClause.movie_category = category;
     }
-
+    if (show_type) {
+      whereClause.show_type = show_type;
+    }
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
     const { count, rows: seriesList } = await SeriesModel.findAndCountAll({
@@ -203,6 +207,7 @@ exports.updateSeries = async (req, res) => {
       is_series_on_rent,
       show_subscription,
       rented_time_days,
+      show_type,
       is_highlighted
     } = req.body;
 
@@ -222,6 +227,7 @@ exports.updateSeries = async (req, res) => {
       series_rent_price,
       is_series_on_rent,
       is_highlighted,
+      show_type,
       show_subscription,
       cover_img,
       poster_img,

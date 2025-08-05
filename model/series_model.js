@@ -95,6 +95,11 @@ const SeriesModel = sequelize.define('SeriesModel', {
         allowNull: false,
         defaultValue: false,
     },
+    show_type:{
+        type:DataTypes.ENUM('series','tvshows'),
+        allowNull:false,
+        defaultValue:'series'
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
