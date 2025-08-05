@@ -118,9 +118,18 @@ function getMonthsOfYear(year) {
     return months;
 }
 
+// Helper: Get month name from number
+function getMonthName(monthNumber) {
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return monthNames[parseInt(monthNumber, 10) - 1];
+}
+
 exports.getMonthlyRevenue = async (req, res) => {
     try {
-        const year = req.query.year || new Date().getFullYear(); // default: current year
+        const year = req.query.year || new Date().getFullYear();
         const startDate = new Date(`${year}-01-01`);
         const endDate = new Date(`${parseInt(year) + 1}-01-01`);
 
@@ -140,18 +149,22 @@ exports.getMonthlyRevenue = async (req, res) => {
             raw: true
         });
 
-        // Convert DB results to a map for easy access
+        // Map database results by "YYYY-MM" => amount
         const revenueMap = {};
         dbRevenue.forEach(item => {
             revenueMap[item.month] = parseFloat(item.total_revenue);
         });
 
-        // Ensure all months of the year are included
         const months = getMonthsOfYear(year);
-        const finalRevenue = months.map(month => ({
-            month,
-            total_revenue: revenueMap[month] || 0
-        }));
+
+        const finalRevenue = months.map(monthStr => {
+            const [yr, mon] = monthStr.split('-');
+            return {
+                month: getMonthName(mon),
+                year: yr,
+                total_revenue: revenueMap[monthStr] || 0
+            };
+        });
 
         res.status(200).json({
             status: true,
