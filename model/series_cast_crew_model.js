@@ -34,6 +34,11 @@ const SeriesCastCrewModel = sequelize.define('SeriesCastCrewModel', {
         },
         onDelete: 'CASCADE',
     },
+    show_type: {
+        type: DataTypes.ENUM('series', 'tvshows'),
+        allowNull: false,
+        defaultValue: 'series'
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,

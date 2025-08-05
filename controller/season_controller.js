@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 
 exports.createSeason = async (req, res) => {
   try {
-    const { season_name, series_id,status,released_date} = req.body;
+    const { season_name, series_id,status,released_date,show_type} = req.body;
 
     if (!season_name || !series_id) {
       return res.status(400).json({ status: false, message: "Both 'season_name' and 'series_id' are required", data: null });
@@ -17,7 +17,7 @@ exports.createSeason = async (req, res) => {
     }
 
     // Create season
-    const season = await Season.create({ season_name, series_id,status,released_date });
+    const season = await Season.create({ season_name, series_id,status,released_date,show_type });
     res.status(201).json({ status: true, message: "Season created successfully", data: season });
 
   } catch (err) {
@@ -38,7 +38,7 @@ exports.createMultipleSeasons = async (req, res) => {
     const skippedSeasons = [];
 
     for (const season of seasons) {
-      const { season_name, series_id, status, released_date } = season;
+      const { season_name, series_id, status, released_date,show_type } = season;
 
       if (!season_name || !series_id) {
         skippedSeasons.push({ season, reason: "Missing season_name or series_id" });
@@ -51,7 +51,7 @@ exports.createMultipleSeasons = async (req, res) => {
         continue;
       }
 
-      validSeasons.push({ season_name, series_id, status, released_date });
+      validSeasons.push({ season_name, series_id, status, released_date,show_type });
     }
 
     const createdSeasons = await Season.bulkCreate(validSeasons);

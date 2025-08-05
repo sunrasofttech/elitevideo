@@ -3,7 +3,7 @@ const SeriesModel = require('../model/series_model');
 
 exports.addRating = async (req, res) => {
   try {
-    const { series_id, user_id, rating } = req.body;
+    const { series_id, user_id, rating,show_type } = req.body;
 
     if (!series_id || !user_id || !rating) {
       return res.status(400).json({ status: false, message: "All fields are required" });
@@ -24,7 +24,7 @@ exports.addRating = async (req, res) => {
     }
 
     // Create new rating
-    const newRating = await SeriesRating.create({ series_id, user_id, rating });
+    const newRating = await SeriesRating.create({ series_id, user_id, rating,show_type });
     return res.status(201).json({ status: true, message: "Rating added successfully", rating: newRating });
   } catch (error) {
     return res.status(500).json({ status: false, message: "Failed to add rating", error: error.message });

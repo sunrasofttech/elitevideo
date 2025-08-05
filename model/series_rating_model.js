@@ -22,6 +22,11 @@ const SeriesRating = sequelize.define('SeriesRating', {
     type: DataTypes.UUID,
     allowNull: false,
   },
+  show_type: {
+    type: DataTypes.ENUM('series', 'tvshows'),
+    allowNull: false,
+    defaultValue: 'series'
+  },
   rating: {
     type: DataTypes.FLOAT,
     allowNull: false,

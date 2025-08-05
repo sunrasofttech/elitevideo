@@ -28,6 +28,11 @@ const SeasonModel = sequelize.define('SeasonModel', {
         },
         onDelete: 'CASCADE',
     },
+    show_type: {
+        type: DataTypes.ENUM('series', 'tvshows'),
+        allowNull: false,
+        defaultValue: 'series'
+    },
     released_date: {
         type: DataTypes.DATE,
         allowNull: true,

@@ -11,23 +11,28 @@ const SeasonEpisodeAdsModel = sequelize.define('SeasonEpisodeAdsModel', {
     primaryKey: true,
   },
   season_episode_id: {
-        type: DataTypes.UUID,
-        allowNull: true,
-        references: {
-            model: SeasonEpisodeModel,
-            key: 'id',
-        },
-        onDelete: 'CASCADE'
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: SeasonEpisodeModel,
+      key: 'id',
     },
-    video_ad_id: {
-        type: DataTypes.UUID,
-        allowNull: true,
-        references: {
-            model: VideoAdsModel,
-            key: 'id',
-        },
-        onDelete: 'CASCADE'
+    onDelete: 'CASCADE'
+  },
+  show_type: {
+    type: DataTypes.ENUM('series', 'tvshows'),
+    allowNull: false,
+    defaultValue: 'series'
+  },
+  video_ad_id: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: VideoAdsModel,
+      key: 'id',
     },
+    onDelete: 'CASCADE'
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
@@ -38,7 +43,7 @@ const SeasonEpisodeAdsModel = sequelize.define('SeasonEpisodeAdsModel', {
     timestamps: true,
   });
 
-  SeasonEpisodeAdsModel.belongsTo(SeasonEpisodeModel,{foreignKey:'season_episode_id',as:'season_episode'})
-  SeasonEpisodeAdsModel.belongsTo(VideoAdsModel,{foreignKey:'video_ad_id',as:'video_ad'})
+SeasonEpisodeAdsModel.belongsTo(SeasonEpisodeModel, { foreignKey: 'season_episode_id', as: 'season_episode' })
+SeasonEpisodeAdsModel.belongsTo(VideoAdsModel, { foreignKey: 'video_ad_id', as: 'video_ad' })
 
 module.exports = SeasonEpisodeAdsModel;

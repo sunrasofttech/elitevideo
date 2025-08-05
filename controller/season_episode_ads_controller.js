@@ -4,11 +4,12 @@ const VideoAdsModel = require('../model/video_ads_model');
 
 exports.createSeasonEpisodeAd = async (req, res) => {
   try {
-    const { season_episode_id, video_ad_id } = req.body;
+    const { season_episode_id, video_ad_id,show_type } = req.body;
 
     const newAd = await SeasonEpisodeAdsModel.create({
       season_episode_id,
       video_ad_id,
+      show_type,
     });
 
     return res.status(201).json({
@@ -94,7 +95,7 @@ exports.getSeasonEpisodeAdById = async (req, res) => {
 
 exports.updateSeasonEpisodeAd = async (req, res) => {
   try {
-    const { season_episode_id, video_ad_id } = req.body;
+    const { season_episode_id, video_ad_id,show_type } = req.body;
     const { id } = req.params;
 
     const ad = await SeasonEpisodeAdsModel.findByPk(id);
@@ -108,6 +109,7 @@ exports.updateSeasonEpisodeAd = async (req, res) => {
     await ad.update({
       season_episode_id,
       video_ad_id,
+      show_type,
     });
 
     return res.status(200).json({

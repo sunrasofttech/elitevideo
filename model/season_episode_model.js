@@ -39,19 +39,19 @@ const SeasonEpisodeModel = sequelize.define('SeasonEpisodeModel', {
         },
         onDelete: 'CASCADE',
     },
-    episode_name:{
+    episode_name: {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    episode_no:{
+    episode_no: {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    video_link:{
+    video_link: {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    video:{
+    video: {
         type: DataTypes.STRING,
         allowNull: true,
     },
@@ -72,10 +72,15 @@ const SeasonEpisodeModel = sequelize.define('SeasonEpisodeModel', {
         allowNull: false,
         defaultValue: false,
     },
-     is_highlighted: {
+    is_highlighted: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
+    },
+    show_type: {
+        type: DataTypes.ENUM('series', 'tvshows'),
+        allowNull: false,
+        defaultValue: 'series'
     },
     createdAt: {
         type: DataTypes.DATE,
