@@ -135,6 +135,10 @@ const MovieModel = sequelize.define('MovieModel', {
         type: DataTypes.DATE,
         allowNull: true,
     },
+    position:{
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,

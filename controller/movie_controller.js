@@ -9,12 +9,12 @@ const { Op } = require('sequelize');
 const MovieAdsModel = require('../model/movie_ads_model');
 const ContinueWatching = require('../model/continue_watching_model');
 const Message = require('../config/message');
+const { sequelize } = require('../config/db');
 
 
 exports.addMovie = async (req, res) => {
     try {
-        const { movie_name } = req.body;
-        // Check if movie name already exists
+        const { movie_name,position } = req.body;
         const existingMovie = await Movie.findOne({ where: { movie_name } });
         if (existingMovie) {
             return res.status(400).json({
@@ -23,6 +23,18 @@ exports.addMovie = async (req, res) => {
             });
         }
 
+        if (position) {
+            const existingMovieType = await Movie.findOne({
+                where: { position },
+            });
+
+            if (existingMovieType) {
+                return res.status(400).json({
+                    status: false,
+                    message: `Position already set for Movie: ${existingMovieType.name}`,
+                });
+            }
+        } 
         const files = req.files;
 
         const movieData = {
@@ -36,12 +48,12 @@ exports.addMovie = async (req, res) => {
 
         // await Message.sendNotification();
 
-          return res.status(201).json({
+        return res.status(201).json({
             status: true,
             message: "Movie created successfully",
             data: movie
         });
-        
+
     } catch (err) {
         res.status(500).json({
             status: false,
@@ -55,7 +67,24 @@ exports.addMovie = async (req, res) => {
 exports.updateMovie = async (req, res) => {
     try {
         const { id } = req.params;
+        const { position } = req.body;
         const files = req.files;
+
+       if (position) {
+            const existingMovie = await Movie.findOne({
+                where: {
+                    position,
+                    id: { [Op.ne]: id } 
+                }
+            });
+
+            if (existingMovie) {
+                return res.status(400).json({
+                    status: false,
+                    message: `Position already set for Movie: ${existingMovie.movie_name}`,
+                });
+            }
+        }
 
         const updateData = {
             ...req.body,
@@ -75,6 +104,7 @@ exports.updateMovie = async (req, res) => {
         }
 
         const updatedMovie = await Movie.findByPk(id);
+
         res.json({
             status: true,
             message: 'Movie updated successfully',
@@ -88,6 +118,7 @@ exports.updateMovie = async (req, res) => {
         });
     }
 };
+
 
 exports.getAllMovies = async (req, res) => {
     try {
@@ -122,7 +153,9 @@ exports.getAllMovies = async (req, res) => {
             ],
             limit: parseInt(limit),
             offset: parseInt(offset),
-            order: [['createdAt', 'DESC']],
+            order: [
+                [sequelize.literal('ISNULL(position), position ASC')],
+                ['createdAt', 'DESC']],
         });
 
         const enhancedMovies = await Promise.all(rows.map(async (movie) => {
