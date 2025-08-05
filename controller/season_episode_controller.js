@@ -59,7 +59,7 @@ exports.getAllSeasonEpisodes = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-    const { name, season_id, series_id } = req.query;
+    const { name, season_id, series_id,show_type } = req.query;
 
     const whereClause = {};
     if (name) {
@@ -71,7 +71,9 @@ exports.getAllSeasonEpisodes = async (req, res) => {
     if (series_id) {
       whereClause.series_id = series_id;
     }
-
+    if (show_type){
+      whereClause.show_type = show_type;
+    }
 
     const { count, rows } = await SeasonEpisodeModel.findAndCountAll({
       where: whereClause,

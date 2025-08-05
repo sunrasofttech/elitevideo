@@ -73,7 +73,7 @@ exports.createMultipleSeasons = async (req, res) => {
 
 exports.getAllSeasons = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '' } = req.query;
+    const { page = 1, limit = 10, search = '', show_type } = req.query;
     const offset = (page - 1) * limit;
 
     const whereCondition = search
@@ -97,8 +97,13 @@ exports.getAllSeasons = async (req, res) => {
 
     const result = await Promise.all(
       seasons.map(async (season) => {
+        const episodeWhere = { season_id: season.id };
+        if (show_type) {
+          episodeWhere.show_type = show_type;
+        }
+
         const episodes = await SeasonEpisodeModel.findAll({
-          where: { season_id: season.id },
+          where: episodeWhere,
           order: [['createdAt', 'DESC']],
         });
 
@@ -124,6 +129,7 @@ exports.getAllSeasons = async (req, res) => {
     res.status(500).json({ status: false, message: "Error fetching seasons", data: err.message });
   }
 };
+
 
 
 exports.getSeasonById = async (req, res) => {

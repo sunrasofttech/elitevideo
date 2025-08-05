@@ -32,7 +32,14 @@ exports.getAllSeasonEpisodeAds = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
+    const { show_type } = req.query;
+
+    const whereClause = {};
+    if (show_type) {
+      whereClause.show_type = show_type;
+    }
     const { count, rows } = await SeasonEpisodeAdsModel.findAndCountAll({
+      where: whereClause,
       include: [
         { model: SeasonEpisodeModel, as: 'season_episode' },
         { model: VideoAdsModel, as: 'video_ad' },

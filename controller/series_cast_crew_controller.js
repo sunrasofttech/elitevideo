@@ -44,6 +44,9 @@ exports.getAllCastCrew = async (req, res) => {
             filters.series_id = req.query.series_id;
         }
 
+        if (req.query.show_type) {
+            filters.show_type = req.query.show_type;
+        }
         const { count, rows } = await SeriesCastCrewModel.findAndCountAll({
             where: filters,
             include: [{ model: Series, as: 'series' }],
