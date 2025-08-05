@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 
 exports.createSeason = async (req, res) => {
   try {
-    const { season_name, series_id,status,released_date,show_type} = req.body;
+    const { season_name, series_id, status, released_date, show_type } = req.body;
 
     if (!season_name || !series_id) {
       return res.status(400).json({ status: false, message: "Both 'season_name' and 'series_id' are required", data: null });
@@ -17,7 +17,7 @@ exports.createSeason = async (req, res) => {
     }
 
     // Create season
-    const season = await Season.create({ season_name, series_id,status,released_date,show_type });
+    const season = await Season.create({ season_name, series_id, status, released_date, show_type });
     res.status(201).json({ status: true, message: "Season created successfully", data: season });
 
   } catch (err) {
@@ -38,7 +38,7 @@ exports.createMultipleSeasons = async (req, res) => {
     const skippedSeasons = [];
 
     for (const season of seasons) {
-      const { season_name, series_id, status, released_date,show_type } = season;
+      const { season_name, series_id, status, released_date, show_type } = season;
 
       if (!season_name || !series_id) {
         skippedSeasons.push({ season, reason: "Missing season_name or series_id" });
@@ -51,7 +51,7 @@ exports.createMultipleSeasons = async (req, res) => {
         continue;
       }
 
-      validSeasons.push({ season_name, series_id, status, released_date,show_type });
+      validSeasons.push({ season_name, series_id, status, released_date, show_type });
     }
 
     const createdSeasons = await Season.bulkCreate(validSeasons);
@@ -76,14 +76,15 @@ exports.getAllSeasons = async (req, res) => {
     const { page = 1, limit = 10, search = '', show_type } = req.query;
     const offset = (page - 1) * limit;
 
-    const whereCondition = search
-      ? {
-          season_name: {
-            [require('sequelize').Op.like]: `%${search}%`,
-          }
-        }
-      : {};
-
+    const whereCondition = {};
+    if (search) {
+      whereCondition.season_name = {
+        [Op.like]: `%${search}%`,
+      };
+    }
+    if (show_type) {
+      whereCondition.show_type = show_type; 
+    }
     const { count, rows: seasons } = await Season.findAndCountAll({
       where: whereCondition,
       include: {
@@ -97,13 +98,8 @@ exports.getAllSeasons = async (req, res) => {
 
     const result = await Promise.all(
       seasons.map(async (season) => {
-        const episodeWhere = { season_id: season.id };
-        if (show_type) {
-          episodeWhere.show_type = show_type;
-        }
-
         const episodes = await SeasonEpisodeModel.findAll({
-          where: episodeWhere,
+          where: { season_id: season.id },
           order: [['createdAt', 'DESC']],
         });
 
@@ -129,7 +125,6 @@ exports.getAllSeasons = async (req, res) => {
     res.status(500).json({ status: false, message: "Error fetching seasons", data: err.message });
   }
 };
-
 
 
 exports.getSeasonById = async (req, res) => {
