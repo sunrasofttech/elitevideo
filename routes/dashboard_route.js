@@ -4,6 +4,6 @@ const  controller = require('../controller/dashboard_controller');
 
 router.post('/dashboard', controller.getDashboardStats);
 router.post('/user-analytics', controller.getUserAnalyticsByYear);
-
+router.post('/monthly-revenue',controller.getMonthlyRevenue);
 
 module.exports = router;

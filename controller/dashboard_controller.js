@@ -5,6 +5,7 @@ const { Op } = require('sequelize');
 const moment = require('moment');
 const { sequelize } = require('../config/db');
 const { QueryTypes } = require('sequelize');
+const PaymentHistory = require('../model/payment_history_model');;
 
 exports.getDashboardStats = async (req, res) => {
   try {
@@ -106,4 +107,67 @@ exports.getUserAnalyticsByYear = async (req, res) => {
       message: 'Internal server error',
     });
   }
+};
+
+
+function getMonthsOfYear(year) {
+    const months = [];
+    for (let i = 1; i <= 12; i++) {
+        const month = String(i).padStart(2, '0');
+        months.push(`${year}-${month}`);
+    }
+    return months;
+}
+
+exports.getMonthlyRevenue = async (req, res) => {
+    try {
+        const year = req.query.year || new Date().getFullYear(); // default: current year
+        const startDate = new Date(`${year}-01-01`);
+        const endDate = new Date(`${parseInt(year) + 1}-01-01`);
+
+        // Fetch completed payments in that year
+        const dbRevenue = await PaymentHistory.findAll({
+            where: {
+                status: 'completed',
+                createdAt: {
+                    [Op.gte]: startDate,
+                    [Op.lt]: endDate,
+                }
+            },
+            attributes: [
+                [sequelize.fn('DATE_FORMAT', sequelize.col('createdAt'), '%Y-%m'), 'month'],
+                [sequelize.fn('SUM', sequelize.cast(sequelize.col('amount'), 'DECIMAL')), 'total_revenue']
+            ],
+            group: [sequelize.fn('DATE_FORMAT', sequelize.col('createdAt'), '%Y-%m')],
+            raw: true
+        });
+
+        // Map DB result
+        const revenueMap = {};
+        dbRevenue.forEach(item => {
+            revenueMap[item.month] = parseFloat(item.total_revenue);
+        });
+
+        // Generate months of the year
+        const months = getMonthsOfYear(year);
+
+        // Merge DB result with all months
+        const finalRevenue = months.map(month => ({
+            month,
+            total_revenue: revenueMap[month] || 0
+        }));
+
+        res.status(200).json({
+            status: true,
+            message: `Monthly revenue for year ${year} fetched successfully`,
+            data: finalRevenue
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            status: false,
+            message: 'Failed to fetch revenue',
+            data: err.message
+        });
+    }
 };
