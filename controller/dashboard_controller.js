@@ -7,6 +7,7 @@ const { sequelize } = require('../config/db');
 const { QueryTypes } = require('sequelize');
 const PaymentHistory = require('../model/payment_history_model');;
 
+
 exports.getDashboardStats = async (req, res) => {
   try {
     const totalUsers = await User.count();
@@ -30,25 +31,32 @@ exports.getDashboardStats = async (req, res) => {
     });
 
     const recentActivity = recentSubscribers.map((user) => {
-      const timeAgo = moment(user.updatedAt).fromNow();
-      return `${user.name || 'Someone'} became a subscriber ${timeAgo}`;
+      const updatedAt = moment(user.updatedAt);
+      return {
+        title: `${user.name || 'Someone'} became a subscriber ${updatedAt.fromNow()}`,
+        date: updatedAt.format('DD-MM-YYYY'),
+        time: updatedAt.format('HH:mm'),
+      };
     });
 
     return res.status(200).json({
-      status:true,
-      message:"get all data successfully.",
-      data:{totalUsers,
-      activeUsers,
-      subscriberActiveUsers,
-      totalMovies,
-      totalSongs,
-      recentActivity,}
+      status: true,
+      message: "get all data successfully.",
+      data: {
+        totalUsers,
+        activeUsers,
+        subscriberActiveUsers,
+        totalMovies,
+        totalSongs,
+        recentActivity,
+      },
     });
   } catch (error) {
     console.error('Dashboard Error:', error);
-    return res.status(500).json({status:false, message: 'Internal server error' });
+    return res.status(500).json({ status: false, message: 'Internal server error' });
   }
 };
+
 
 exports.getUserAnalyticsByYear = async (req, res) => {
   try {
