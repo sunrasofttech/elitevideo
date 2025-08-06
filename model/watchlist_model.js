@@ -49,7 +49,7 @@ const WatchlistModel = sequelize.define('WatchlistModel', {
         onDelete: 'CASCADE'
     },
     type: {
-        type: DataTypes.ENUM('movie', 'shortfilm','season_episode'),
+        type: DataTypes.ENUM('movie', 'shortfilm','season_episode','tvshows'),
         allowNull: false,
     },
     createdAt: {
