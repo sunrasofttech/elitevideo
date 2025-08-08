@@ -17,6 +17,8 @@ const authenticate = async (req, res, next) => {
       }
     });
 
+    
+
     if (!existing) {
       return res.status(401).json({
         status: false,
