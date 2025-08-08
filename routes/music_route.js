@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../utils/uploadToSpace');
 const musicController = require('../controller/music_controller');
+const Authenticate = require('../middleware/jwt_middleware');
+
 
 router.post(
   '/',
@@ -12,12 +14,12 @@ router.post(
   musicController.createMusic
 );
 
-router.post('/get-all', musicController.getAllMusic);
+router.post('/get-all',Authenticate, musicController.getAllMusic);
 
-router.post('/:id', musicController.getMusicById);
-router.post('/category/:categoryId',musicController.getMusicByCategoryId);
-router.post('/popular', musicController.getPopularMusic);
-router.post('/artist/:artistName', musicController.getMusicByArtistName);
+router.post('/:id',Authenticate, musicController.getMusicById);
+router.post('/category/:categoryId',Authenticate,musicController.getMusicByCategoryId);
+router.post('/popular',Authenticate,musicController.getPopularMusic);
+router.post('/artist/:artistName',Authenticate, musicController.getMusicByArtistName);
 
 
 router.put(

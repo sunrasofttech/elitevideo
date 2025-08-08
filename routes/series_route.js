@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const seriesController = require('../controller/series_controller');
 const upload = require('../utils/uploadToSpace');
+const Authenticate = require('../middleware/jwt_middleware');
 
 const seriesUpload = upload.fields([
   { name: 'cover_img', maxCount: 1 },

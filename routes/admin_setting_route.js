@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const adminSettingController = require('../controller/admin_setting_controller');
 const upload = require('../utils/uploadToSpace');
+const Authenticate = require('../middleware/jwt_middleware');
+
 
 const multiUpload = upload.fields([
   { name: 'logo', maxCount: 1 },
@@ -10,10 +12,10 @@ const multiUpload = upload.fields([
   { name: 'spash_screen_banner_3', maxCount: 1 },
 ]);
 
-router.post('/get', adminSettingController.getAdminSetting);
+router.post('/get',Authenticate, adminSettingController.getAdminSetting);
 
-router.post('/',multiUpload, adminSettingController.createOrUpdateAdminSetting);
+router.post('/',multiUpload,Authenticate, adminSettingController.createOrUpdateAdminSetting);
 
-router.delete('/', adminSettingController.deleteAdminSetting);
+router.delete('/',Authenticate, adminSettingController.deleteAdminSetting);
 
 module.exports = router;

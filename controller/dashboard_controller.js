@@ -7,7 +7,6 @@ const { sequelize } = require('../config/db');
 const { QueryTypes } = require('sequelize');
 const PaymentHistory = require('../model/payment_history_model');;
 
-
 exports.getDashboardStats = async (req, res) => {
   try {
     const totalUsers = await User.count();

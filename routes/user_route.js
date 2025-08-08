@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../utils/uploadToSpace'); 
 const userController = require('../controller/user_controller');
+const Authenticate = require('../middleware/jwt_middleware');
 
 router.post('/signup', userController.signup);
 router.post('/signin', userController.signin);

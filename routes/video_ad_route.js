@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const videoAdsController = require('../controller/video_ads_controller');
 const upload = require('../utils/uploadToSpace');
+const Authenticate = require('../middleware/jwt_middleware');
 
 // Routes
 router.post('/', upload.single('ad_video'), videoAdsController.createVideoAd);

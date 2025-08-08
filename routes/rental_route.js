@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const RentalController = require('../controller/rental_controller');
+const Authenticate = require('../middleware/jwt_middleware');
 
-router.post('/', RentalController.createRental);
-router.post('/get-all', RentalController.getAllRentals);
-router.post('/:id', RentalController.getRentalById);
-router.post('/checkrental/api',RentalController.checkRentalExists);
-router.put('/:id', RentalController.updateRental);
-router.delete('/:id', RentalController.deleteRental);
+
+router.post('/',Authenticate, RentalController.createRental);
+router.post('/get-all',Authenticate, RentalController.getAllRentals);
+router.post('/:id',Authenticate, RentalController.getRentalById);
+router.post('/checkrental/api',Authenticate,RentalController.checkRentalExists);
+router.put('/:id',Authenticate, RentalController.updateRental);
+router.delete('/:id',Authenticate, RentalController.deleteRental);
 
 module.exports = router;
