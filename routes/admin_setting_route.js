@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const adminSettingController = require('../controller/admin_setting_controller');
 const upload = require('../utils/uploadToSpace');
-// const Authenticate = require('../middleware/jwt_middleware');
+ const Authenticate = require('../middleware/jwt_middleware');
 const adminAuthenticate = require('../middleware/admin_auth');
 
 
@@ -13,7 +13,8 @@ const multiUpload = upload.fields([
   { name: 'spash_screen_banner_3', maxCount: 1 },
 ]);
 
-router.post('/get',adminAuthenticate, adminSettingController.getAdminSetting);
+router.post('/admin/get',adminAuthenticate, adminSettingController.getAdminSetting);
+router.post('/get',Authenticate, adminSettingController.getAdminSetting);
 
 router.post('/',multiUpload,adminAuthenticate, adminSettingController.createOrUpdateAdminSetting);
 
