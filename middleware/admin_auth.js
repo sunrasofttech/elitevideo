@@ -25,7 +25,6 @@ const adminAuthenticate = async (req, res, next) => {
       return res.status(401).json({ status: false, message: 'Invalid or expired token' });
     }
 
-    // Attach admin to request
     req.admin = admin;
     next();
   } catch (err) {

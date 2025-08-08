@@ -8,13 +8,14 @@ const adminAuthenticate = require('../middleware/admin_auth');
 router.post('/signup', userController.signup);
 router.post('/signin', userController.signin);
 
-router.post('/change-password',Authenticate, userController.changePassword);
+router.post('/change-password', userController.changePassword);
 router.post('/forgot-password', userController.forgotPassword);
 router.post('/logout',userController.logoutDevice);
 
 router.post('/', adminAuthenticate,userController.getAllUsers);
 router.post('/:id',Authenticate, userController.getUserById);
+router.put('/admin/:id',upload.single('profile_picture'),adminAuthenticate, userController.updateUser);
 router.put('/:id',upload.single('profile_picture'),Authenticate, userController.updateUser);
-router.delete('/:id',Authenticate, userController.deleteUser);
+router.delete('/:id',adminAuthenticate, userController.deleteUser);
 
 module.exports = router;

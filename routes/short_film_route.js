@@ -3,6 +3,7 @@ const router = express.Router();
 const controller = require('../controller/short_film_controller');
 const upload = require('../utils/uploadToSpace');
 const Authenticate = require('../middleware/jwt_middleware');
+const adminAuthenticate = require('../middleware/admin_auth');
 
 
 // Upload multiple fields (name must match front-end form)
@@ -12,10 +13,12 @@ const fileUploads = upload.fields([
     { name: 'short_video', maxCount: 1 },
 ]);
 
-router.post('/create', fileUploads,Authenticate, controller.createShortFilm);
+router.post('/create', fileUploads,adminAuthenticate, controller.createShortFilm);
 router.post('/get-all',Authenticate, controller.getAllShortFilms);
+router.post('/admin/get-all',adminAuthenticate, controller.getAllShortFilms);
 router.post('/:id',Authenticate, controller.getShortFilmById);
-router.put('/:id', fileUploads,Authenticate, controller.updateShortFilm);
-router.delete('/:id',Authenticate, controller.deleteShortFilm);
+router.post('/admin/:id',adminAuthenticate, controller.getShortFilmById);
+router.put('/:id', fileUploads,adminAuthenticate, controller.updateShortFilm);
+router.delete('/:id',adminAuthenticate, controller.deleteShortFilm);
 
 module.exports = router;
