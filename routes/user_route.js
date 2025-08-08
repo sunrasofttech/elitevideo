@@ -3,6 +3,7 @@ const router = express.Router();
 const upload = require('../utils/uploadToSpace'); 
 const userController = require('../controller/user_controller');
 const Authenticate = require('../middleware/jwt_middleware');
+const adminAuthenticate = require('../middleware/admin_auth');
 
 router.post('/signup', userController.signup);
 router.post('/signin', userController.signin);
@@ -11,7 +12,7 @@ router.post('/change-password',Authenticate, userController.changePassword);
 router.post('/forgot-password', userController.forgotPassword);
 router.post('/logout',userController.logoutDevice);
 
-router.post('/', Authenticate,userController.getAllUsers);
+router.post('/', adminAuthenticate,userController.getAllUsers);
 router.post('/:id',Authenticate, userController.getUserById);
 router.put('/:id',upload.single('profile_picture'),Authenticate, userController.updateUser);
 router.delete('/:id',Authenticate, userController.deleteUser);

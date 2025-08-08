@@ -69,19 +69,22 @@ exports.login = async (req, reply) => {
 
     const admin = await Admin.findOne({ where: { name } });
     if (!admin) {
-      return reply.status(404).send({status:false, message: 'Admin not found' });
+      return reply.status(404).send({ status: false, message: 'Admin not found' });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return reply.status(401).send({status:false, message: 'Invalid credentials' });
+      return reply.status(401).send({ status: false, message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: admin.id, name: admin.name }, API_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: admin.id, name: admin.name }, API_SECRET);
 
-    reply.send({status:true, message: 'Login successful', token });
+    admin.jwt_api_token = token;
+    await admin.save();
+
+    reply.send({ status: true, message: 'Login successful', token });
   } catch (error) {
-    reply.status(500).send({status:false, message: 'Server error', message: error.message });
+    reply.status(500).send({ status: false, message: 'Server error', error: error.message });
   }
 };
 
@@ -193,13 +196,13 @@ exports.deleteAdmin = async (req, reply) => {
 
     const admin = await Admin.findByPk(id);
     if (!admin) {
-      return reply.status(404).send({status:false, message: 'Admin not found' });
+      return reply.status(404).send({ status: false, message: 'Admin not found' });
     }
 
     await admin.destroy();
-    reply.send({status:true, message: 'Admin deleted successfully' });
+    reply.send({ status: true, message: 'Admin deleted successfully' });
   } catch (error) {
-    reply.status(500).send({status:false, message: 'Server error', message: error.message });
+    reply.status(500).send({ status: false, message: 'Server error', message: error.message });
   }
 };
 

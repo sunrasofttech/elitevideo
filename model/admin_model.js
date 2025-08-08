@@ -8,28 +8,32 @@ const Admin = sequelize.define('Admin', {
     allowNull: false,
     primaryKey: true,
   },
-  name:{
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  password :{
+  password: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  profile_img:{
+  profile_img: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  email:{
+  email: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  role:{
-    type:DataTypes.ENUM('admin','subadmin'),
-    defaultValue:'subadmin',
-    allowNull:false,
+  role: {
+    type: DataTypes.ENUM('admin', 'subadmin'),
+    defaultValue: 'subadmin',
+    allowNull: false,
   },
-   permissions: {
+  jwt_api_token: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  permissions: {
     type: DataTypes.JSON,
     allowNull: false,
     defaultValue: {},
@@ -39,9 +43,9 @@ const Admin = sequelize.define('Admin', {
     defaultValue: DataTypes.NOW,
   },
 },
-{
-  tableName: 'admin',
-  timestamps: false,
-});
+  {
+    tableName: 'admin',
+    timestamps: false,
+  });
 
 module.exports = Admin;
