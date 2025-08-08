@@ -3,14 +3,14 @@ const router = express.Router();
 const ShortfilmAdsController = require('../controller/shortfilm_ads_controller');
 const Authenticate = require('../middleware/jwt_middleware');
 
-router.post('/', ShortfilmAdsController.createShortfilmAd);
+router.post('/',Authenticate, ShortfilmAdsController.createShortfilmAd);
 
-router.post('/getall', ShortfilmAdsController.getAllShortfilmAds);
+router.post('/getall',Authenticate, ShortfilmAdsController.getAllShortfilmAds);
 
-router.post('/:id', ShortfilmAdsController.getShortfilmAdById);
+router.post('/:id',Authenticate, ShortfilmAdsController.getShortfilmAdById);
 
-router.put('/:id', ShortfilmAdsController.updateShortfilmAd);
+router.put('/:id',Authenticate, ShortfilmAdsController.updateShortfilmAd);
 
-router.delete('/:id', ShortfilmAdsController.deleteShortfilmAd);
+router.delete('/:id',Authenticate, ShortfilmAdsController.deleteShortfilmAd);
 
 module.exports = router;

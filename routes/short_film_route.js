@@ -12,10 +12,10 @@ const fileUploads = upload.fields([
     { name: 'short_video', maxCount: 1 },
 ]);
 
-router.post('/create', fileUploads, controller.createShortFilm);
-router.post('/get-all', controller.getAllShortFilms);
-router.post('/:id', controller.getShortFilmById);
-router.put('/:id', fileUploads, controller.updateShortFilm);
-router.delete('/:id', controller.deleteShortFilm);
+router.post('/create', fileUploads,Authenticate, controller.createShortFilm);
+router.post('/get-all',Authenticate, controller.getAllShortFilms);
+router.post('/:id',Authenticate, controller.getShortFilmById);
+router.put('/:id', fileUploads,Authenticate, controller.updateShortFilm);
+router.delete('/:id',Authenticate, controller.deleteShortFilm);
 
 module.exports = router;

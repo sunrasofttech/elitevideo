@@ -5,10 +5,10 @@ const upload = require('../utils/uploadToSpace');
 const Authenticate = require('../middleware/jwt_middleware');
 
 // Routes
-router.post('/', upload.single('ad_video'), videoAdsController.createVideoAd);
-router.post('/get-all', videoAdsController.getAllVideoAds);
-router.post('/:id', videoAdsController.getVideoAdById);
-router.put('/:id', upload.single('ad_video'), videoAdsController.updateVideoAd);
-router.delete('/:id', videoAdsController.deleteVideoAd);
+router.post('/', upload.single('ad_video'),Authenticate, videoAdsController.createVideoAd);
+router.post('/get-all',Authenticate, videoAdsController.getAllVideoAds);
+router.post('/:id',Authenticate, videoAdsController.getVideoAdById);
+router.put('/:id', upload.single('ad_video'),Authenticate, videoAdsController.updateVideoAd);
+router.delete('/:id',Authenticate, videoAdsController.deleteVideoAd);
 
 module.exports = router;

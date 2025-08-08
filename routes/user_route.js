@@ -7,13 +7,13 @@ const Authenticate = require('../middleware/jwt_middleware');
 router.post('/signup', userController.signup);
 router.post('/signin', userController.signin);
 
-router.post('/change-password', userController.changePassword);
+router.post('/change-password',Authenticate, userController.changePassword);
 router.post('/forgot-password', userController.forgotPassword);
 router.post('/logout',userController.logoutDevice);
 
-router.post('/', userController.getAllUsers);
-router.post('/:id', userController.getUserById);
-router.put('/:id',upload.single('profile_picture'), userController.updateUser);
-router.delete('/:id', userController.deleteUser);
+router.post('/', Authenticate,userController.getAllUsers);
+router.post('/:id',Authenticate, userController.getUserById);
+router.put('/:id',upload.single('profile_picture'),Authenticate, userController.updateUser);
+router.delete('/:id',Authenticate, userController.deleteUser);
 
 module.exports = router;

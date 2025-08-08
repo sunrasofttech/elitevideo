@@ -4,11 +4,11 @@ const castCrewController = require('../controller/series_cast_crew_controller');
 const upload = require('../utils/uploadToSpace');
 const Authenticate = require('../middleware/jwt_middleware');
 
-router.post('/create', upload.single('profile_img'), castCrewController.addCastCrew);
-router.post('/get-all', castCrewController.getAllCastCrew);
-router.post('/:id', castCrewController.getCastCrewById);
-router.put('/:id', upload.single('profile_img'), castCrewController.updateCastCrew);
-router.delete('/:id', castCrewController.deleteCastCrew);
-router.post('/by-series/:seriesId', castCrewController.getCastCrewBySeriesId);
+router.post('/create', upload.single('profile_img'),Authenticate, castCrewController.addCastCrew);
+router.post('/get-all',Authenticate, castCrewController.getAllCastCrew);
+router.post('/:id',Authenticate, castCrewController.getCastCrewById);
+router.put('/:id', upload.single('profile_img'),Authenticate, castCrewController.updateCastCrew);
+router.delete('/:id',Authenticate, castCrewController.deleteCastCrew);
+router.post('/by-series/:seriesId',Authenticate, castCrewController.getCastCrewBySeriesId);
 
 module.exports = router;
