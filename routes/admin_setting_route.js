@@ -13,8 +13,7 @@ const multiUpload = upload.fields([
   { name: 'spash_screen_banner_3', maxCount: 1 },
 ]);
 
-router.post('/admin/get',adminAuthenticate, adminSettingController.getAdminSetting);
-router.post('/get',Authenticate, adminSettingController.getAdminSetting);
+router.post('/get', adminSettingController.getAdminSetting);
 
 router.post('/',multiUpload,adminAuthenticate, adminSettingController.createOrUpdateAdminSetting);
 
