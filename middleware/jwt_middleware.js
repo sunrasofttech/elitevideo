@@ -3,7 +3,7 @@ const UserDevice = require('../model/user_device_model');
 require('dotenv').config();
 const SECRET_KEY = process.env.API_SECRET;
 
-exports.authenticate = async (req, res, next) => {
+const authenticate = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ status: false, message: 'Unauthorized' });
@@ -33,3 +33,5 @@ exports.authenticate = async (req, res, next) => {
     });
   }
 };
+
+module.exports = authenticate;
