@@ -26,7 +26,7 @@ const depositValidation = [
 
 // Routes
 router.post('/webhooks/payment', getabcgatewayPaymentDetails);
-router.post('/', depositValidation, createDepositAbcGateway);
+router.post('/createpayment', depositValidation, createDepositAbcGateway);
 
 
 

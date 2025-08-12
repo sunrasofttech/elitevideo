@@ -93,7 +93,7 @@ app.use(`${baseUrl}/payment-history`,PaymentHistoryRoutes);
 app.use(`${baseUrl}/order`,RazoprPayOrderRoute);
 app.use(`${baseUrl}/highlighted-content`,HighlightedRoute);
 app.use(`${baseUrl}/highlighted-content`,HighlightedRoute);
-app.use(`${baseUrl}/createpayment`,AbcPaymentGatewayRoute);
+app.use(`${baseUrl}`,AbcPaymentGatewayRoute);
 
 const PORT = process.env.PORT || 3000;
 

@@ -183,6 +183,8 @@ exports.createDepositAbcGateway = async (req, res) => {
             userId
         );
 
+        console.log("ABC Gateway response:", createPaymentData);
+
         if (createPaymentData.status === false) {
             return res.status(400).json({
                 status: false,
