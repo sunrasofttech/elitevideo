@@ -1,33 +1,33 @@
-// const express = require('express');
-// const { body } = require('express-validator');
-// const {getabcgatewayPaymentDetails,createDepositAbcGateway} = require('../controller/PaymentCallbackController.js');
+const express = require('express');
+const { body } = require('express-validator');
+const {getabcgatewayPaymentDetails,createDepositAbcGateway} = require('../controller/PaymentCallbackController.js');
 
-// const router = express.Router();
+const router = express.Router();
 
-// // Validation middleware for deposit creation
-// const depositValidation = [
-//   body('userId')
-//     .notEmpty()
-//     .withMessage('User ID is required')
-//     .isUUID()
-//     .withMessage('Invalid User ID format'),
-//   body('amount')
-//     .notEmpty()
-//     .withMessage('Amount is required')
-//     .isFloat({ min: 0.01 })
-//     .withMessage('Amount must be a positive number')
-//     .custom((value) => {
-//       if (parseFloat(value) > 100000) {
-//         throw new Error('Amount cannot exceed 100,000');
-//       }
-//       return true;
-//     })
-// ];
+// Validation middleware for deposit creation
+const depositValidation = [
+  body('userId')
+    .notEmpty()
+    .withMessage('User ID is required')
+    .isUUID()
+    .withMessage('Invalid User ID format'),
+  body('amount')
+    .notEmpty()
+    .withMessage('Amount is required')
+    .isFloat({ min: 0.01 })
+    .withMessage('Amount must be a positive number')
+    .custom((value) => {
+      if (parseFloat(value) > 100000) {
+        throw new Error('Amount cannot exceed 100,000');
+      }
+      return true;
+    })
+];
 
-// // Routes
-// router.post('/webhooks/payment', getabcgatewayPaymentDetails);
-// router.post('/', depositValidation, createDepositAbcGateway);
+// Routes
+router.post('/webhooks/payment', getabcgatewayPaymentDetails);
+router.post('/', depositValidation, createDepositAbcGateway);
 
 
 
-// module.exports = router;
+module.exports = router;

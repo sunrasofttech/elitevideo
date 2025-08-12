@@ -20,6 +20,7 @@ const ShortFilmCastCrewModel = require('../model/short_flim_cast_crew_model');
 // Series extras
 const SeasonModel = require('../model/season_model');
 const SeriesCastCrewModel = require('../model/series_cast_crew_model');
+const SeriesRatingModel = require('../model/series_rating_model');
 
 const getHighlightedContent = async (req, res) => {
     try {
@@ -118,12 +119,24 @@ const getHighlightedContent = async (req, res) => {
             include: [
                 { model: MovieLanguage, as: 'language' },
                 { model: Genre, as: 'genre' },
-                { model: MovieCategory, as: 'category' }
+                { model: MovieCategory, as: 'category' },
+                { model: SeriesRatingModel, as: 'ratings', attributes: ['rating', 'user_id'] }
             ]
         });
 
         const highlightedSeries = await Promise.all(highlightedSeriesRaw.map(async (series) => {
             const seriesJson = series.toJSON();
+
+            // Ratings
+            const ratings = seriesJson.ratings || [];
+            if (ratings.length > 0) {
+                const total = ratings.reduce((sum, r) => sum + r.rating, 0);
+                seriesJson.average_rating = (total / ratings.length).toFixed(2);
+                seriesJson.total_ratings = ratings.length;
+            } else {
+                seriesJson.average_rating = null;
+                seriesJson.total_ratings = 0;
+            }
 
             // Seasons
             seriesJson.seasons = await SeasonModel.findAll({

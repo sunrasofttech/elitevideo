@@ -1,7 +1,7 @@
 // controllers/PaymentCallbackController.js
 const moment = require('moment-timezone');
 const User = require('../model/user_model');
-const Transaction = require('../models/transaction_model');
+const Transaction = require('../model/trasaction_model');
 const Payment = require('../model/payment_model');
 const Deposit = require('../model/deposite_model');
 const PaymentData = require('../model/payment_data_model');
