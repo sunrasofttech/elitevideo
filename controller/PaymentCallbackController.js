@@ -150,6 +150,7 @@ exports.createDepositAbcGateway = async (req, res) => {
     try {
         // Find user
         const user = await User.findByPk(userId);
+        console.log("User found:", user);
         if (!user) {
             return res.status(404).json({
                 status: false,

@@ -31,7 +31,6 @@ router.put(
       { name: 'cover_img', maxCount: 1 },
       { name: 'song_file', maxCount: 1 }
     ]),
-    adminAuthenticate,
     musicController.updateMusic
   );
 
