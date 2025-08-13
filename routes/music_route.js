@@ -22,7 +22,7 @@ router.post('/get-all',Authenticate, musicController.getAllMusic);
 router.post('/:id',Authenticate, musicController.getMusicById);
 router.post('/category/:categoryId',Authenticate,musicController.getMusicByCategoryId);
 router.post('/popular',Authenticate,musicController.getPopularMusic);
-router.post('/artist',Authenticate, musicController.getMusicByArtistName);
+router.get('/artist',Authenticate,musicController.getMusicByArtistName);
 
 
 router.put(

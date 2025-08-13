@@ -196,7 +196,7 @@ exports.getPopularMusic = async (req, res) => {
 
 exports.getMusicByArtistName = async (req, res) => {
     try {
-        const { artist_id, language_id } = req.body;
+        const { artist_id, language_id } = req.query;
 
         const whereClause = {};
         if (artist_id) whereClause.artist_id = artist_id;
