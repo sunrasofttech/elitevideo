@@ -34,7 +34,6 @@ exports.createChoosenForUMusic = async (req, res) => {
         });
     }
 };
-
 // GET - Filter by user_id
 exports.getChoosenForUMusic = async (req, res) => {
     try {
@@ -48,9 +47,28 @@ exports.getChoosenForUMusic = async (req, res) => {
         const records = await ChoosenForUMusic.findAll({
             where: whereClause,
             order: [['createdAt', 'DESC']],
+            attributes: [],
             include: [
-                // { model: UserModel, as: 'user' },
-                { model: MusicModel, as: 'music' }
+                {
+                    model: MusicModel,
+                    as: 'music',
+                    attributes: [
+                        'cover_img',
+                        'category_id',
+                        'artist_id',
+                        'language_id',
+                        'song_title',
+                        'song_url',
+                        'song_file',
+                        'description',
+                        'watched_count',
+                        'status',
+                        'artist_name',
+                        'is_popular',
+                        'createdAt',
+                        'updatedAt'
+                    ]
+                }
             ]
         });
 
@@ -62,10 +80,13 @@ exports.getChoosenForUMusic = async (req, res) => {
             });
         }
 
+        // Flatten music object so fields are top-level
+        const flattenedData = records.map(record => record.music);
+
         return res.status(200).json({
             status: true,
             message: "Records fetched successfully",
-            data: records
+            data: flattenedData
         });
 
     } catch (error) {
