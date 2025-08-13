@@ -58,8 +58,9 @@ const MusicModel = sequelize.define('MusicModel', {
     allowNull: true,
   },
   watched_count: {
-    type: DataTypes.TEXT,
-    allowNull: true,
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0
   },
   status: {
     type: DataTypes.BOOLEAN,
