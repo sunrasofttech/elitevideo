@@ -67,10 +67,11 @@ exports.getMusicArtistById = async (req, res) => {
 exports.updateMusicArtist = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedData = { artist_name };
-        if (profile_img) {
-            updatedData.profile_img = profile_img;
-        }
+        const {artist_name} = req.body;
+        const profile_img = req.file ? req.file.location : null;
+           const updatedData = {};
+        if (artist_name) updatedData.artist_name = artist_name;
+        if (profile_img) updatedData.profile_img = profile_img;
         const artist = await MusicArtist.findByPk(id);
         if (!artist) {
             return res.status(404).json({
