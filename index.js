@@ -45,6 +45,8 @@ const PaymentHistoryRoutes = require('./routes/payment_history_route');
 const RazoprPayOrderRoute = require('./routes/order_routes');
 const HighlightedRoute = require('./routes/highlighted_routes');
 const AbcPaymentGatewayRoute = require('./routes/abc_payment_gateway_routes');
+const musicArtistRoutes = require('./routes/music_artist_route');
+
 require('./cron/subscription_cron');
 require('./cron/deactive_user_cron');
 
@@ -94,6 +96,8 @@ app.use(`${baseUrl}/order`,RazoprPayOrderRoute);
 app.use(`${baseUrl}/highlighted-content`,HighlightedRoute);
 app.use(`${baseUrl}/highlighted-content`,HighlightedRoute);
 app.use(`${baseUrl}`,AbcPaymentGatewayRoute);
+app.use(`${baseUrl}`, musicArtistRoutes);
+
 
 const PORT = process.env.PORT || 3000;
 

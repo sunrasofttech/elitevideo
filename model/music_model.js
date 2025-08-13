@@ -1,6 +1,8 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 const MusicCategoryModel = require('./music_categories_model');
+const MusicArtistModel = require('./music_artist_model');
+const LanguageModel = require('./movie_language_model');
 const MusicModel = sequelize.define('MusicModel', {
   id: {
     type: DataTypes.UUID,
@@ -17,6 +19,24 @@ const MusicModel = sequelize.define('MusicModel', {
     allowNull: true,
     references: {
       model: MusicCategoryModel,
+      key: 'id',
+    },
+    onDelete: 'CASCADE',
+  },
+  artist_id: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: MusicArtistModel,
+      key: 'id',
+    },
+    onDelete: 'CASCADE',
+  },
+  language_id: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: LanguageModel,
       key: 'id',
     },
     onDelete: 'CASCADE',
@@ -41,10 +61,10 @@ const MusicModel = sequelize.define('MusicModel', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  status:{
-    type:DataTypes.BOOLEAN,
-    allowNull:false,
-    defaultValue:false
+  status: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   },
   artist_name: {
     type: DataTypes.STRING,
@@ -66,10 +86,17 @@ const MusicModel = sequelize.define('MusicModel', {
   });
 
 
-  MusicModel.belongsTo(MusicCategoryModel, {
+MusicModel.belongsTo(MusicCategoryModel, {
   foreignKey: 'category_id',
   as: 'category',
 });
-
+MusicModel.belongsTo(MusicArtistModel, {
+  foreignKey: 'artist_id',
+  as: 'artist',
+});
+MusicModel.belongsTo(LanguageModel, {
+  foreignKey: 'language_id',
+  as: 'language',
+});
 
 module.exports = MusicModel;

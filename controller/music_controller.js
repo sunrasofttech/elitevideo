@@ -1,10 +1,11 @@
 const MusicModel = require('../model/music_model');
 const { Op } = require('sequelize');
 const MusicCategoryModel = require('../model/music_categories_model');
-
+const MusicArtistModel = require('../model/music_artist_model');
+const LanguageModel = require('../model/movie_language_model');
 exports.createMusic = async (req, res) => {
     try {
-        const { song_title, song_url, description, watched_count, artist_name, category_id, status, is_popular } = req.body;
+        const { song_title, song_url, description, watched_count, artist_name, category_id, status, is_popular, artist_id, language_id } = req.body;
 
         const coverImg = req.files?.cover_img?.[0]?.location;
         const songFile = req.files?.song_file?.[0]?.location;
@@ -17,6 +18,8 @@ exports.createMusic = async (req, res) => {
             watched_count,
             artist_name,
             category_id,
+            artist_id,
+            language_id,
             status,
             is_popular,
             song_file: songFile
@@ -64,10 +67,20 @@ exports.getAllMusic = async (req, res) => {
             offset: offset,
             limit: parseInt(limit),
             order: [['createdAt', 'DESC']],
-            include: [{
-                model: MusicCategoryModel,
-                as: 'category'
-            }]
+            include: [
+                {
+                    model: MusicCategoryModel,
+                    as: 'category'
+                },
+                {
+                    model: MusicArtistModel,
+                    as: 'artist'
+                },
+                {
+                    model: LanguageModel,
+                    as: 'language'
+                }
+            ]
         });
 
         return res.status(200).json({
@@ -89,15 +102,22 @@ exports.getAllMusic = async (req, res) => {
     }
 };
 
-
-
 exports.getMusicById = async (req, res) => {
     try {
         const music = await MusicModel.findByPk(req.params.id, {
             include: [{
                 model: MusicCategoryModel,
                 as: 'category'
-            }]
+            },
+            {
+                model: MusicArtistModel,
+                as: 'artist'
+            },
+            {
+                model: LanguageModel,
+                as: 'language'
+            }
+            ]
         });
         if (!music) {
             return res.status(404).json({
@@ -150,7 +170,15 @@ exports.getPopularMusic = async (req, res) => {
             include: [{
                 model: MusicCategoryModel,
                 as: 'category',
-            }],
+            },
+            {
+                model: MusicArtistModel,
+                as: 'artist'
+            },
+         {
+                    model:LanguageModel,
+                    as:'language'
+                }],
         });
 
         return res.status(200).json({
@@ -180,7 +208,16 @@ exports.getMusicByArtistName = async (req, res) => {
             include: [{
                 model: MusicCategoryModel,
                 as: 'category'
-            }]
+            },
+            {
+                model: MusicArtistModel,
+                as: 'artist'
+            },
+             {
+                    model:LanguageModel,
+                    as:'language'
+                }
+            ]
         });
 
         return res.status(200).json({
@@ -218,6 +255,8 @@ exports.updateMusic = async (req, res) => {
             watched_count,
             artist_name,
             category_id,
+            artist_id,
+            language_id,
             is_popular,
             status,
         } = req.body;
@@ -232,6 +271,8 @@ exports.updateMusic = async (req, res) => {
             watched_count,
             artist_name,
             category_id,
+            artist_id,
+            language_id,
             is_popular,
             status,
             cover_img: coverImg,

@@ -17,6 +17,7 @@ router.post(
 );
 
 router.post('/get-all',adminAuthenticate, controller.getAllSeasonEpisodes);
+// router.post('/user/get-all',adminAuthenticate, controller.getAllSeasonEpisodes);
 
 router.post('/:id',adminAuthenticate, controller.getSeasonEpisodeById);
 
