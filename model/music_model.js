@@ -50,6 +50,11 @@ const MusicModel = sequelize.define('MusicModel', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  is_popular: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
