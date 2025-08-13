@@ -6,7 +6,7 @@ const Authenticate = require('../middleware/jwt_middleware');
 
 router.post('/',Authenticate, controller.createChoosenForUMusic);
 
-router.get('/', Authenticate, controller.getChoosenForUMusic);
+router.get('/', controller.getChoosenForUMusic);
 
 module.exports = router;
 

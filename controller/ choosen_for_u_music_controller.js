@@ -1,6 +1,9 @@
 const ChoosenForUMusic = require('../model/choose_for_u_music_model');
 const MusicModel = require('../model/music_model');
 const UserModel = require('../model/user_model');
+const MusicCategoryModel = require('../model/music_categories_model');
+const MusicArtistModel = require('../model/music_artist_model');
+const LanguageModel = require('../model/movie_language_model');
 
 // POST - Add new record
 exports.createChoosenForUMusic = async (req, res) => {
@@ -52,6 +55,7 @@ exports.getChoosenForUMusic = async (req, res) => {
                 {
                     model: MusicModel,
                     as: 'music',
+                   
                     attributes: [
                         'cover_img',
                         'category_id',
@@ -67,7 +71,21 @@ exports.getChoosenForUMusic = async (req, res) => {
                         'is_popular',
                         'createdAt',
                         'updatedAt'
-                    ]
+                    ],
+                     include: [
+                        {
+                            model: MusicCategoryModel,
+                            as: 'category'
+                        },
+                        {
+                            model: MusicArtistModel,
+                            as: 'artist'
+                        },
+                        {
+                            model: LanguageModel,
+                            as: 'language'
+                        }
+                    ],
                 }
             ]
         });
