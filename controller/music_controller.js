@@ -196,33 +196,30 @@ exports.getPopularMusic = async (req, res) => {
 
 exports.getMusicByArtistName = async (req, res) => {
     try {
-        const { artistName } = req.params;
+        const { artist_id, language_id } = req.query;
+
+        const whereClause={};
+
+        if (artist_id) {
+            whereClause.artist_id = artist_id;
+        }
+        if (language_id) {
+            whereClause.language_id = language_id;
+        }
 
         const musicList = await MusicModel.findAll({
-            where: {
-                artist_name: {
-                    [Op.like]: `%${artistName}%`
-                }
-            },
+            where: whereClause,
             order: [['createdAt', 'DESC']],
-            include: [{
-                model: MusicCategoryModel,
-                as: 'category'
-            },
-            {
-                model: MusicArtistModel,
-                as: 'artist'
-            },
-             {
-                    model:LanguageModel,
-                    as:'language'
-                }
+            include: [
+                { model: MusicCategoryModel, as: 'category' },
+                { model: MusicArtistModel, as: 'artist' },
+                { model: LanguageModel, as: 'language' }
             ]
         });
 
         return res.status(200).json({
             status: true,
-            message: `Music fetched successfully for artist: ${artistName}`,
+            message: `Music fetched successfully`,
             data: musicList,
         });
 
@@ -234,6 +231,7 @@ exports.getMusicByArtistName = async (req, res) => {
         });
     }
 };
+
 
 exports.updateMusic = async (req, res) => {
     try {
