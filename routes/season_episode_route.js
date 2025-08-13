@@ -16,7 +16,7 @@ router.post(
   controller.createSeasonEpisode
 );
 
-router.post('/get-all',adminAuthenticate, controller.getAllSeasonEpisodes);
+router.post('/get-all', controller.getAllSeasonEpisodes);
 // router.post('/user/get-all',adminAuthenticate, controller.getAllSeasonEpisodes);
 
 router.post('/:id',adminAuthenticate, controller.getSeasonEpisodeById);

@@ -18,3 +18,5 @@ router.post('/get-all',getAllMovieLanguages);
 router.delete('/:id',adminAuthenticate, deleteMovieLanguage);
 
 module.exports = router;
+
+// 
