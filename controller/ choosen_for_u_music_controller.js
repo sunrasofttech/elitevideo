@@ -18,6 +18,19 @@ exports.createChoosenForUMusic = async (req, res) => {
             });
         }
 
+        const existingRecord = await ChoosenForUMusic.findOne({
+            where: { user_id, music_id }
+        });
+
+        if (existingRecord) {
+            return res.status(409).json({
+                status: false,
+                message: "Record already exists",
+                data: null
+            });
+        }
+
+
         const newEntry = await ChoosenForUMusic.create({
             user_id,
             music_id
