@@ -14,7 +14,7 @@ const {
 
 router.post('/', upload.single('cover_img'),adminAuthenticate, createMovieLanguage);
 router.put('/:id', upload.single('cover_img'),adminAuthenticate, updateMovieLanguage);
-router.post('/get-all',adminAuthenticate,getAllMovieLanguages);
+router.post('/get-all',getAllMovieLanguages);
 router.delete('/:id',adminAuthenticate, deleteMovieLanguage);
 
 module.exports = router;
