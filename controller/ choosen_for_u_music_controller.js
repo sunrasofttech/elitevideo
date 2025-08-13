@@ -49,7 +49,7 @@ exports.getChoosenForUMusic = async (req, res) => {
             where: whereClause,
             order: [['createdAt', 'DESC']],
             include: [
-                { model: UserModel, as: 'user' },
+                // { model: UserModel, as: 'user' },
                 { model: MusicModel, as: 'music' }
             ]
         });
