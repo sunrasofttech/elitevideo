@@ -4,7 +4,7 @@ const MusicCategoryModel = require('../model/music_categories_model');
 
 exports.createMusic = async (req, res) => {
     try {
-        const { song_title, song_url, description, watched_count, artist_name, category_id,status,is_popular } = req.body;
+        const { song_title, song_url, description, watched_count, artist_name, category_id, status, is_popular } = req.body;
 
         const coverImg = req.files?.cover_img?.[0]?.location;
         const songFile = req.files?.song_file?.[0]?.location;
@@ -39,7 +39,7 @@ exports.createMusic = async (req, res) => {
 
 exports.getAllMusic = async (req, res) => {
     try {
-        const { page = 1, limit = 10, search = '', category_id } = req.query;
+        const { page = 1, limit = 10, search = '', category_id, is_popular } = req.query;
 
         const offset = (parseInt(page) - 1) * parseInt(limit);
 
@@ -56,7 +56,9 @@ exports.getAllMusic = async (req, res) => {
         if (category_id) {
             whereCondition.category_id = category_id;
         }
-
+        if (is_popular !== undefined) {
+            whereCondition.is_popular = (is_popular === 'true');
+        }
         const { count, rows } = await MusicModel.findAndCountAll({
             where: whereCondition,
             offset: offset,
