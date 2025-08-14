@@ -177,7 +177,7 @@ exports.createDepositAbcGateway = async (req, res) => {
             amount,
             generateCustomerReferenceNumber.substring(0, 8),
             user.name,
-            user.phone,
+            user.mobile_no,
             user.email,
             'upiMoney',
             date,

@@ -13,7 +13,7 @@ exports.searchAllContent = async (req, res) => {
         const seriesWhere = keyword ? { series_name: { [Op.like]: `%${keyword}%` } } : {};
         const seasonEpisodeWhere = keyword ? { episode_name: { [Op.like]: `%${keyword}%` } } : {};
         const seasonWhere = keyword ? { season_name: { [Op.like]: `%${keyword}%` } } : {};
-
+         
         const [movies, shortfilms, series, seasonepisode, season] = await Promise.all([
             MovieModel.findAll({ where: movieWhere }),
             ShortFilmModel.findAll({ where: shortFilmWhere }),
