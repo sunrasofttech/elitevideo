@@ -7,7 +7,7 @@ const adminAuthenticate = require('../middleware/admin_auth');
 
 
 router.post('/',upload.single('img'),adminAuthenticate, movieCategoryController.createMovieCategory);
-router.post('/get-all',adminAuthenticate, movieCategoryController.getAllMovieCategories);
+router.post('/get-all', movieCategoryController.getAllMovieCategories);
 router.post('/:id',adminAuthenticate, movieCategoryController.getMovieCategoryById);
 router.put('/:id',upload.single('img'),adminAuthenticate, movieCategoryController.updateMovieCategory);
 router.delete('/:id',adminAuthenticate, movieCategoryController.deleteMovieCategory);
