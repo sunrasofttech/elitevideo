@@ -4,30 +4,48 @@ const ShortFilmModel = require('../model/short_film_model');
 const SeriesModel = require('../model/series_model');
 const SeasonEpisodeModel = require('../model/season_episode_model');
 const SeasonModel = require('../model/season_model');
+const LiveChannel = require('../model/live_tv_channel_model');
+
 exports.searchAllContent = async (req, res) => {
     try {
         const { keyword } = req.query;
 
         const movieWhere = keyword ? { movie_name: { [Op.like]: `%${keyword}%` } } : {};
         const shortFilmWhere = keyword ? { short_film_title: { [Op.like]: `%${keyword}%` } } : {};
-        const seriesWhere = keyword ? { series_name: { [Op.like]: `%${keyword}%` } } : {};
         const seasonEpisodeWhere = keyword ? { episode_name: { [Op.like]: `%${keyword}%` } } : {};
         const seasonWhere = keyword ? { season_name: { [Op.like]: `%${keyword}%` } } : {};
-         
-        const [movies, shortfilms, series, seasonepisode, season] = await Promise.all([
+
+        // For series & tvshows
+        const seriesWhere = keyword ? { series_name: { [Op.like]: `%${keyword}%` } } : {};
+        const liveTvChannelWhere = keyword ? { name: { [Op.like]: `%${keyword}%` } } : {};
+
+        // get series
+        const [movies, shortfilms, seasonepisode, season, series, tvshows, livechannel] = await Promise.all([
             MovieModel.findAll({ where: movieWhere }),
             ShortFilmModel.findAll({ where: shortFilmWhere }),
-            SeriesModel.findAll({ where: seriesWhere }),
             SeasonEpisodeModel.findAll({ where: seasonEpisodeWhere }),
-            SeasonModel.findAll({ where: seasonWhere })
+            SeasonModel.findAll({ where: seasonWhere }),
+            SeriesModel.findAll({
+                where: {
+                    ...seriesWhere,
+                    show_type: 'series'
+                }
+            }),
+            SeriesModel.findAll({
+                where: {
+                    ...seriesWhere,
+                    show_type: 'tvshows'
+                }
+            }),
+            LiveChannel.findAll({ where: liveTvChannelWhere })
         ]);
 
         return res.status(200).json({
             status: true,
-            message: keyword 
+            message: keyword
                 ? "Search results fetched successfully"
                 : "All content fetched successfully",
-            data: { movies, shortfilms, series, seasonepisode, season }
+            data: { movies, shortfilms, series, tvshows, seasonepisode, season,livechannel }
         });
     } catch (error) {
         return res.status(500).json({
