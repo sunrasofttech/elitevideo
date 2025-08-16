@@ -6,7 +6,7 @@ const adminAuthenticate = require('../middleware/admin_auth');
 
 
 router.post('/',Authenticate, RentalController.createRental);
-router.post('/get-all',adminAuthenticate, RentalController.getAllRentals);
+router.post('/get-all', RentalController.getAllRentals);
 router.post('/:id',adminAuthenticate, RentalController.getRentalById);
 router.post('/checkrental/api',Authenticate,RentalController.checkRentalExists);
 router.put('/:id',adminAuthenticate, RentalController.updateRental);

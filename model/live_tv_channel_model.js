@@ -52,6 +52,11 @@ const LiveTvChannel = sequelize.define('LiveTvChannel', {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
+  is_livetv_on_rent: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
@@ -62,6 +67,6 @@ const LiveTvChannel = sequelize.define('LiveTvChannel', {
     timestamps: true,
   });
 
-LiveTvChannel.belongsTo(LiveTvCategoryModel,{foreignKey:'live_category_id',as:'live_category'})
+LiveTvChannel.belongsTo(LiveTvCategoryModel, { foreignKey: 'live_category_id', as: 'live_category' })
 
 module.exports = LiveTvChannel;

@@ -7,7 +7,7 @@ const { Op } = require('sequelize');
 // ✅ Create Channel
 exports.createChannel = async (req, res) => {
   try {
-    const { name, live_category_id, android_channel_url, ios_channel_url, description, status } = req.body;
+    const { name, live_category_id, android_channel_url, ios_channel_url, description, status,is_livetv_on_rent } = req.body;
 
     const cover_img = req.files?.cover_img?.[0]?.location || null;
     const poster_img = req.files?.poster_img?.[0]?.location || null;
@@ -19,6 +19,7 @@ exports.createChannel = async (req, res) => {
       ios_channel_url,
       description,
       status,
+      is_livetv_on_rent,
       cover_img,
       poster_img
     });
