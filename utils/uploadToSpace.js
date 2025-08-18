@@ -9,7 +9,11 @@ const uploadToSpace = multer({
     bucket: 'bigcinema',
     acl: 'public-read',
     contentType: multerS3.AUTO_CONTENT_TYPE,
-    contentDisposition: 'inline',   // इथे टाकायचं
+    metadata: (req, file, cb) => {
+      cb(null, {
+        'Content-Disposition': 'inline',
+      });
+    },
     key: function (req, file, cb) {
       const fileName = `${Date.now()}-${file.originalname}`;
       cb(null, `movies/${fileName}`);
