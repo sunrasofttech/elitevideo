@@ -19,6 +19,6 @@ router.post('/admin/get-all',adminAuthenticate, controller.getAllShortFilms);
 router.post('/:id',Authenticate, controller.getShortFilmById);
 router.post('/admin/:id',adminAuthenticate, controller.getShortFilmById);
 router.put('/:id', fileUploads,adminAuthenticate, controller.updateShortFilm);
-router.delete('/:id',adminAuthenticate, controller.deleteShortFilm);
+router.delete('/',adminAuthenticate, controller.deleteShortFilm);
 
 module.exports = router;
