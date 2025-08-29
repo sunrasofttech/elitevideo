@@ -59,3 +59,25 @@ exports.getUserPlaylists = async (req, res) => {
         res.status(500).json({ success: 0, message: "Internal Server Error" });
     }
 };
+
+exports.deletePlaylist = async (req, res) => {
+  try {
+    const { playlist_id } = req.params;
+
+    if (!playlist_id) {
+      return res.status(400).json({ status: false, message: "playlist_id required" });
+    }
+
+    const playlist = await PlaylistModel.findByPk(playlist_id);
+    if (!playlist) {
+      return res.status(404).json({ status: false, message: "Playlist not found" });
+    }
+
+    await playlist.destroy();
+
+    res.json({ status: true, message: "Playlist deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting playlist:", error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
