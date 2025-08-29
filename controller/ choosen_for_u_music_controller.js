@@ -68,8 +68,8 @@ exports.getChoosenForUMusic = async (req, res) => {
                 {
                     model: MusicModel,
                     as: 'music',
-                   
                     attributes: [
+                        'id',
                         'cover_img',
                         'category_id',
                         'artist_id',
