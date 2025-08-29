@@ -49,6 +49,7 @@ const musicArtistRoutes = require('./routes/music_artist_route');
 const ChoosenForUMusicRoutes = require('./routes/choosen_for_u_music_routes');
 const RecentSearchRoutes = require('./routes/recent_search_routes');
 const CategoryWiseContentRoutes = require('./routes/category_wise_content_routes');
+const PlaylistRoutes = require('./routes/playlist_routes');
 
 require('./cron/subscription_cron');
 require('./cron/deactive_user_cron');
@@ -103,6 +104,7 @@ app.use(`${baseUrl}`, musicArtistRoutes);
 app.use(`${baseUrl}/choosen-for-u-music`, ChoosenForUMusicRoutes);
 app.use(`${baseUrl}/recent-search`, RecentSearchRoutes);
 app.use(`${baseUrl}`,CategoryWiseContentRoutes);
+app.use(`${baseUrl}/playlist`,PlaylistRoutes)
 
 const PORT = process.env.PORT || 3000;
 
