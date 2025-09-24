@@ -4,7 +4,7 @@ const MusicArtist = require('../model/music_artist_model');
 exports.createMusicArtist = async (req, res) => {
     try {
         const { artist_name } = req.body;
-        const profile_img = req.file ? req.file.location : null;
+        const profile_img = req.file ? req.file.path : null;
         if (!artist_name) {
             return res.status(400).json({
                 status: false,
@@ -68,7 +68,7 @@ exports.updateMusicArtist = async (req, res) => {
     try {
         const { id } = req.params;
         const {artist_name} = req.body;
-        const profile_img = req.file ? req.file.location : null;
+        const profile_img = req.file ? req.file.path : null;
            const updatedData = {};
         if (artist_name) updatedData.artist_name = artist_name;
         if (profile_img) updatedData.profile_img = profile_img;

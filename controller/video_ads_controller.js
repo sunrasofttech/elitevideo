@@ -3,7 +3,7 @@ const VideoAdsModel = require('../model/video_ads_model');
 exports.createVideoAd = async (req, res) => {
   try {
     const { ad_url, video_time, skip_time,title } = req.body;
-    const ad_video = req.file ? req.file.location : null;
+    const ad_video = req.file ? req.file.path : null;
 
     const newAd = await VideoAdsModel.create({
       ad_video,
@@ -69,7 +69,7 @@ exports.updateVideoAd = async (req, res) => {
     if (!ad) return res.status(404).json({ status: false, message: 'Ad not found' });
 
     const {ad_url, video_time, skip_time,title } = req.body;
-    const ad_video = req.file ? req.file.location : ad.ad_video;
+    const ad_video = req.file ? req.file.path : ad.ad_video;
 
     await ad.update({
       ad_video,

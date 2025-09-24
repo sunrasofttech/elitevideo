@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 exports.createMovieLanguage = async (req, res) => {
   try {
     const { name,status } = req.body;
-    const cover_img = req.file ? req.file.location : null;
+    const cover_img = req.file ? req.file.path : null;
 
     const movieLang = await MovieLanguage.create({ name,status,cover_img });
 
@@ -26,7 +26,7 @@ exports.updateMovieLanguage = async (req, res) => {
   try {
     const { id } = req.params;
     const { name,status } = req.body;
-    const cover_img = req.file ? req.file.location : null;
+    const cover_img = req.file ? req.file.path : null;
 
     const movieLang = await MovieLanguage.findByPk(id);
 

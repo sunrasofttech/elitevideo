@@ -21,8 +21,8 @@ exports.createSeasonEpisode = async (req, res) => {
       is_highlighted,
     } = req.body;
 
-    const cover_img = req.files?.cover_img?.[0]?.location || null;
-    const video = req.files?.video?.[0]?.location || null;
+    const cover_img = req.files?.cover_img?.[0]?.path || null;
+    const video = req.files?.video?.[0]?.path || null;
 
     const newEpisode = await SeasonEpisodeModel.create({
       series_id,
@@ -182,8 +182,8 @@ exports.updateSeasonEpisode = async (req, res) => {
       show_type,
     } = req.body;
 
-    const cover_img = req.files?.cover_img?.[0]?.location || episode.cover_img;
-    const video = req.files?.video?.[0]?.location || episode.video;
+    const cover_img = req.files?.cover_img?.[0]?.path || episode.cover_img;
+    const video = req.files?.video?.[0]?.path || episode.video;
 
     await episode.update({
       series_id,

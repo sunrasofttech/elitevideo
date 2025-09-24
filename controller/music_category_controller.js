@@ -6,7 +6,7 @@ const { Op } = require('sequelize');
 exports.createCategory = async (req, res) => {
   try {
     const { name } = req.body;
-    const cover_img = req.file ? req.file.location : null;
+    const cover_img = req.file ? req.file.path : null;
 
     const category = await MusicCategoryModel.create({ name, cover_img });
     res.status(201).json({
@@ -112,7 +112,7 @@ exports.updateCategory = async (req, res) => {
 
     // Update fields
     category.name = name || category.name;
-    category.cover_img = req.file ? req.file.location : category.cover_img;
+    category.cover_img = req.file ? req.file.path : category.cover_img;
 
     await category.save();
 

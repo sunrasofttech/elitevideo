@@ -6,7 +6,7 @@ exports.addCastCrew = async (req, res) => {
     try {
         const data = {
             ...req.body,
-            profile_img: req.file ? req.file.location : null
+            profile_img: req.file ? req.file.path : null
         };
 
         const castCrew = await SeriesCastCrewModel.create(data);
@@ -129,7 +129,7 @@ exports.updateCastCrew = async (req, res) => {
 
         const updateData = {
             ...req.body,
-            ...(req.file && { profile_img: req.file.location })
+            ...(req.file && { profile_img: req.file.path })
         };
 
         const [updated] = await SeriesCastCrewModel.update(updateData, { where: { id } });

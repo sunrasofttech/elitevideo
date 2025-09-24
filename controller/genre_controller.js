@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 exports.createGenre = async (req, res) => {
   try {
     const { name, status } = req.body;
-    const cover_img = req.file ? req.file.location : null;
+    const cover_img = req.file ? req.file.path : null;
 
     const genre = await Genre.create({ name, status, cover_img });
 
@@ -28,7 +28,7 @@ exports.updateGenre = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, status } = req.body;
-    const cover_img = req.file ? req.file.location : null;
+    const cover_img = req.file ? req.file.path : null;
 
     const genre = await Genre.findByPk(id);
     if (!genre) {

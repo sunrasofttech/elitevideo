@@ -39,10 +39,10 @@ exports.addMovie = async (req, res) => {
 
         const movieData = {
             ...req.body,
-            cover_img: files.cover_img ? files.cover_img[0].location : null,
-            poster_img: files.poster_img ? files.poster_img[0].location : null,
-            movie_video: files.movie_video ? files.movie_video[0].location : null,
-            trailor_video: files.trailor_video ? files.trailor_video[0].location : null
+            cover_img: files.cover_img ? files.cover_img[0].path : null,
+            poster_img: files.poster_img ? files.poster_img[0].path : null,
+            movie_video: files.movie_video ? files.movie_video[0].path : null,
+            trailor_video: files.trailor_video ? files.trailor_video[0].path : null
         };
         const movie = await Movie.create(movieData);
 
@@ -88,10 +88,10 @@ exports.updateMovie = async (req, res) => {
 
         const updateData = {
             ...req.body,
-            ...(files.cover_img && { cover_img: files.cover_img[0].location }),
-            ...(files.poster_img && { poster_img: files.poster_img[0].location }),
-            ...(files.movie_video && { movie_video: files.movie_video[0].location }),
-            ...(files.trailor_video && { trailor_video: files.trailor_video[0].location }),
+            ...(files.cover_img && { cover_img: files.cover_img[0].path }),
+            ...(files.poster_img && { poster_img: files.poster_img[0].path }),
+            ...(files.movie_video && { movie_video: files.movie_video[0].path }),
+            ...(files.trailor_video && { trailor_video: files.trailor_video[0].path }),
         };
 
         const [updated] = await Movie.update(updateData, { where: { id } });

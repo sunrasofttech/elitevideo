@@ -9,8 +9,8 @@ exports.createChannel = async (req, res) => {
   try {
     const { name, live_category_id, android_channel_url, ios_channel_url, description, status,is_livetv_on_rent } = req.body;
 
-    const cover_img = req.files?.cover_img?.[0]?.location || null;
-    const poster_img = req.files?.poster_img?.[0]?.location || null;
+    const cover_img = req.files?.cover_img?.[0]?.path || null;
+    const poster_img = req.files?.poster_img?.[0]?.path || null;
 
     const newChannel = await LiveTvChannel.create({
       name,
@@ -134,8 +134,8 @@ exports.updateChannel = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const cover_img = req.files?.cover_img?.[0]?.location;
-    const poster_img = req.files?.poster_img?.[0]?.location;
+    const cover_img = req.files?.cover_img?.[0]?.path;
+    const poster_img = req.files?.poster_img?.[0]?.path;
 
     const updateData = {
       ...req.body,

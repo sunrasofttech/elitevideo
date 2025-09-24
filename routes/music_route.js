@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../utils/uploadToSpace');
+const upload = require('../utils/upload');
 const musicController = require('../controller/music_controller');
 const Authenticate = require('../middleware/jwt_middleware');
 const adminAuthenticate = require('../middleware/admin_auth');

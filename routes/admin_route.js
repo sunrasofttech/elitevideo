@@ -1,6 +1,6 @@
 const AdminController = require('../controller/admin_controller');
 const express = require('express');
-const upload = require('../utils/uploadToSpace');
+const upload = require('../utils/upload');
 // const Authenticate = require('../middleware/jwt_middleware');
 const adminAuthenticate = require('../middleware/admin_auth');
 

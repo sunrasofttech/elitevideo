@@ -1,5 +1,5 @@
 const express = require('express');
-const upload = require('../utils/uploadToSpace');
+const upload = require('../utils/upload');
 
 const {
     createMusicArtist,

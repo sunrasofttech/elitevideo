@@ -9,7 +9,7 @@ const VideoAdsModel = require('../model/video_ads_model');
 const ContinueWatching = require('../model/continue_watching_model');
 const { Op } = require('sequelize');
 
-const extractFileLocation = (file) => (file ? file.location : null);
+const extractFileLocation = (file) => (file ? file.path : null);
 
 exports.createShortFilm = async (req, res) => {
     try {
