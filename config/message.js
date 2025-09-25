@@ -14,7 +14,7 @@ async function sendNotification(title,body) {
         console.log("*", accessToken);
 
         const response = await axios.post(
-            `https://fcm.googleapis.com/v1/projects/bigcinema-f5824/messages:send`,
+            `https://fcm.googleapis.com/v1/projects/elite-fcd30/messages:send`,
             {
                 message: {
                     topic: "all",
@@ -73,7 +73,7 @@ async function sendNotificationToUserDevice(message, deviceToken, title = null) 
     try {
         const accessToken = await getAccessToken();
         const response = await axios.post(
-            `https://fcm.googleapis.com/v1/projects/bigcinema-f5824/messages:send`,
+            `https://fcm.googleapis.com/v1/projects/elite-fcd30/messages:send`,
             {
                 message: {
                     token: deviceToken,
