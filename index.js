@@ -50,6 +50,7 @@ const ChoosenForUMusicRoutes = require('./routes/choosen_for_u_music_routes');
 const RecentSearchRoutes = require('./routes/recent_search_routes');
 const CategoryWiseContentRoutes = require('./routes/category_wise_content_routes');
 const PlaylistRoutes = require('./routes/playlist_routes');
+const TrailorRoutes = require('./routes/trailor_routes');
 
 require('./cron/subscription_cron');
 require('./cron/deactive_user_cron');
@@ -69,6 +70,7 @@ app.use(`${baseUrl}/music-category`,MusicCategoryRoute);
 app.use(`${baseUrl}/music`,MusicRoute);
 app.use(`${baseUrl}/movie-category`,MovieCategoryRoute);
 app.use(`${baseUrl}/movie`,MovieRoute);
+app.use(`${baseUrl}/trailor`,TrailorRoutes);
 app.use(`${baseUrl}/movie/cast-crew`,CastCrewRoute);
 app.use(`${baseUrl}/movie-rating`,MovieRatingRoute);
 app.use(`${baseUrl}/series-rating`,SeriesRatingRoute);
