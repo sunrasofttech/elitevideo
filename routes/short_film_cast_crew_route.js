@@ -6,6 +6,8 @@ const Authenticate = require('../middleware/jwt_middleware');
 const adminAuthenticate = require('../middleware/admin_auth');
 
 
+
+
 router.post('/create', upload.single('profile_img'),adminAuthenticate, castCrewController.addCastCrew);
 router.post('/get-all',adminAuthenticate, castCrewController.getAllCastCrew);
 router.post('/:id',adminAuthenticate, castCrewController.getCastCrewById);
